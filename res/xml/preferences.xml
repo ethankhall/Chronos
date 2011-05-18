@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="Automatic Settings">
+		<ListPreference android:title="Lunch Settings"
+			android:key="automatic_lunch" android:entries="@array/lunch_settings"
+			android:entryValues="@array/NumOneToFour" android:summary="Automatic Lunch Settings"
+			android:defaultValue="1" />
+		<com.kopysoft.chronos.subActivites.TimeSelect
+			android:key="clockout_lunch" android:title="Out for Lunch"
+			android:defaultValue="11:30" />
+		<com.kopysoft.chronos.subActivites.TimeSelect
+			android:key="clockin_lunch" android:title="In for Lunch"
+			android:defaultValue="12:30" />
+
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Display Settings">
+		<CheckBoxPreference android:title="Enable Notification"
+			android:key="NotificationsEnabled" android:summary="Show a notification when clocked in"
+			android:defaultValue="true" />
+		<CheckBoxPreference android:key="showPay"
+			android:title="Display Pay for a Day" android:defaultValue="true" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Time Configurations"
+		android:summary="Configure how time if being handeled">
+		<PreferenceScreen android:title="Tab Setings"
+			android:summary="Set the time format for the tabs" android:icon="@drawable/expander_ic_minimized">
+			<ListPreference android:title="Punch tab" android:key="punchPrefTime"
+				android:entries="@array/TimeFormat" android:entryValues="@array/NumOneToThree"
+				android:summary="Set the time format for the Punch tab"
+				android:defaultValue="1" />
+			<ListPreference android:title="Edit tab" android:key="editPrefTime"
+				android:entries="@array/TimeFormat" android:entryValues="@array/NumOneToThree"
+				android:summary="Set the time format for the Edit tab"
+				android:defaultValue="1" />
+			<ListPreference android:title="View tab" android:key="viewPrefTime"
+				android:entries="@array/TimeFormat" android:entryValues="@array/NumOneToThree"
+				android:summary="Set the time format for the View tab"
+				android:defaultValue="1" />
+		</PreferenceScreen>
+		<PreferenceScreen android:title="PayPeriod Info"
+			android:summary="Set the info for the pay period" android:icon="@drawable/expander_ic_minimized">
+			<com.kopysoft.chronos.subActivites.DateSelect
+				android:key="date" android:title="Start of PayPeriod"
+				android:defaultValue="2011.1.17" />
+			<ListPreference android:title="Weeks in PayPeriod"
+				android:summary="Select the number of weeks in the PayPeriod"
+				android:key="weeks_in_pp" android:defaultValue="2"
+				android:entries="@array/weeks_in_pp_title" android:entryValues="@array/weeks_in_pp_title" />
+		</PreferenceScreen>
+		<PreferenceScreen android:title="Pay Info"
+			android:summary="Set pay information" android:icon="@drawable/expander_ic_minimized">
+			<EditTextPreference android:key="pay_rate"
+				android:title="Pay Rate" android:summary="How much do you make an hour?"
+				android:defaultValue="7.25" android:inputType="numberDecimal" />
+
+			<CheckBoxPreference android:title="Enable Overtime"
+				android:key="overtime_enable" />
+			<EditTextPreference android:key="overtime_rate"
+				android:title="Pay Rate Multiplier" android:defaultValue="1.5"
+				android:inputType="numberDecimal" android:dependency="overtime_enable" />
+			<ListPreference android:title="Overtime Pay Options"
+				android:key="8_or40_hours" android:entryValues="@array/NumOneToTwo"
+				android:entries="@array/eight_or_fourty" android:dependency="overtime_enable" />
+		</PreferenceScreen>
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="E-mail Setings">
+		<Preference android:title="Send e-mail to developer"
+			android:key="emailDev" />
+
+		<ListPreference android:title="Report Level"
+			android:key="reportLevel" android:entries="@array/VerbosLevel"
+			android:entryValues="@array/NumOneToTwo" android:summary="Set the format for E-Mails"
+			android:defaultValue="1" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Backup and Restore">
+		<Preference android:title="Backup Times" android:summary="Creates an CVS file of punches"
+			android:key="backupDB" />
+		<Preference android:title="Restore Times" android:summary="Restores punches from CVS file"
+			android:key="restoreDB" />
+
+	</PreferenceCategory>
+
+</PreferenceScreen>

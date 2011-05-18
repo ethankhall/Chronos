@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<RelativeLayout
+		android:id="@+id/topLayout"
+		android:layout_alignParentTop="true"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<TextView
+			android:text="Date"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:paddingLeft="10dip" />
+
+		<TextView
+			android:text="Hours"
+			android:layout_alignParentTop="true"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:paddingRight="10dip" />
+	</RelativeLayout>
+
+	<LinearLayout
+		android:layout_alignParentBottom="true"
+		android:id="@+id/tempLinear"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="10dip">
+		
+		<Button
+			android:id="@+id/prev"
+			android:text="Prev"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" 
+			android:onClick="callback"/>
+			
+		<Button
+			android:id="@+id/next"
+			android:text="Next"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" 
+			android:onClick="callback"/>
+	</LinearLayout>
+	
+	<ListView
+		android:layout_below="@id/topLayout"
+		android:id="@id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" 
+		android:layout_above="@id/tempLinear" />
+		
+</RelativeLayout>

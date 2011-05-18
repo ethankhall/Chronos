@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.kopysoft.chronos" android:versionCode="23" android:versionName="1.0.3">
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:allowBackup="true" android:name="com.kopysoft.chronos.types.AppContext" android:debuggable="false">
+		<activity android:name=".mainUI" android:label="@string/app_name"
+			android:launchMode="singleTop" android:screenOrientation="portrait">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name="ClockInAndOut" android:screenOrientation="portrait"/>
+
+		<activity android:name=".subActivites.Preferences" android:screenOrientation="portrait" 
+			android:launchMode="singleTop" />
+
+		<activity android:name="WeekView" android:screenOrientation="portrait"/>
+
+		<activity android:name=".subActivites.EditDay" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait" android:launchMode="singleTop"/>
+
+		<activity android:name=".subActivites.EditTime" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait" />
+
+		<activity android:name="PastView" android:screenOrientation="portrait"/>
+
+		<activity android:name="EditPayPeriodOthers" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait"/>
+
+		<service android:name=".service.ChronoService"
+			android:process=":remote" />
+
+		<activity android:name=".note.EditNote" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait" />
+
+		<activity android:name=".note.ViewNote" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait" />
+
+		<activity android:name=".subActivites.AddBreak" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait" />
+		
+		<activity android:name=".subActivites.HelpActivity"  />
+		
+		<receiver android:name=".service.BackgroundUpdate" android:enabled="true" />
+
+	</application>
+
+	<uses-sdk android:minSdkVersion="4" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<!-- <uses-permission android:name="android.permission.INTERNET" />  -->
+
+	<meta-data android:name="com.google.android.backup.api_key"
+		android:value="AEdPqrEAAAAIoW9gpADZ52LDSV-5GNPwgUT7_ZSYG7SkkU4QSw" />
+
+</manifest> 

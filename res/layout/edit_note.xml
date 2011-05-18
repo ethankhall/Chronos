@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/linearLayout1" 
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" 
+	android:orientation="vertical"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:layout_alignParentBottom="true"
+		android:id="@+id/linearLayoutEditNote">
+		
+		<Button android:id="@+id/OkButton"
+			android:layout_weight="1" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Save"
+			android:paddingLeft="20dip"
+			android:onClick="callBack"/>
+			
+		<Button android:id="@+id/CancelButton"
+			android:layout_weight="1" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Cancel" 
+			android:paddingRight="20dip"
+			android:onClick="callBack"/>	
+	</LinearLayout>
+		
+   	<TextView android:text="Note:" 
+   		android:id="@+id/noteTiptool"
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content" 
+    	android:gravity="left" 
+    	android:layout_alignParentTop="true" />
+    	
+   	<MultiAutoCompleteTextView 
+   		android:text="" 
+   		android:layout_below="@id/noteTiptool"
+   		android:id="@+id/multiAutoCompleteTextView1" 
+   		android:layout_width="fill_parent" 
+   		android:layout_height="fill_parent"
+   		android:singleLine="false" 
+   		android:gravity="top"
+   		android:layout_alignParentLeft="true"
+   		android:layout_alignParentRight="true"
+   		android:layout_above="@id/linearLayoutEditNote"/>
+	
+
+</RelativeLayout>
