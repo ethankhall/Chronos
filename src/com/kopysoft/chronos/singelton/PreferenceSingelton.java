@@ -95,7 +95,7 @@ public class PreferenceSingelton {
 		}
 
 		//get overtime enable
-		setOvertimeEnable(app_preferences.getBoolean("overtime_enable", true));
+		setOvertimeEnable(app_preferences.getBoolean("overtime_enable", false));
 		
 		//get overtime setting
 		try{

@@ -145,7 +145,7 @@ public class mainUI extends TabActivity {
 		prefs.setLastCal(cal.getTimeInMillis() - 1000);
 		// add 5 minutes to the calendar object
 		StaticFunctions.setUpAlarm(getApplicationContext(), 
-				cal.getTimeInMillis(), (AlarmManager) getSystemService(ALARM_SERVICE));
+				cal.getTimeInMillis() - 1000, (AlarmManager) getSystemService(ALARM_SERVICE));
 
 	}
 

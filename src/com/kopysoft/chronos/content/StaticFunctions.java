@@ -102,7 +102,9 @@ public class StaticFunctions {
 
 		// Get the AlarmManager service
 		am.setInexactRepeating(AlarmManager.RTC, millis, 
-				AlarmManager.INTERVAL_FIFTEEN_MINUTES, sender);
+			AlarmManager.INTERVAL_FIFTEEN_MINUTES, sender);
+	
+
 	}
 	
 	public static void removeAlarm(Context context, AlarmManager am){
@@ -135,6 +137,7 @@ public class StaticFunctions {
 	 * 
 	 * @param input_time time in milliseconds
 	 * @param format format that will be used
+	 * @param correctForClockin 
 	 * @return String with the time and format specified
 	 */
 	public static String generateTimeString(long input_time, TimeFormat format, 
@@ -153,6 +156,36 @@ public class StaticFunctions {
 		sec = (correctTime) % 60;
 		min = ((correctTime) / 60 ) % 60;
 		hour = (((correctTime) / 60) / 60 ) % 24;
+
+		returnString = generateTimeString((int)hour, (int)min, (int)sec, format);
+		return returnString;
+	}
+	
+	/**
+	 * Creates a string based on the input time and the format
+	 * 
+	 * @param input_time time in milliseconds
+	 * @param format format that will be used
+	 * @param correctForClockin 
+	 * @return String with the time and format specified
+	 */
+	public static String generateTimeWeek(long input_time, TimeFormat format, 
+			boolean correctForClockin) {
+		long correctTime = 0;
+		input_time /= Defines.MS_TO_SECOND;
+
+		if(correctForClockin == true)
+			correctTime = correctForClockIn(input_time);
+		else
+			correctTime = input_time;
+
+		String returnString = "";
+		long hour = 0;
+		long min = 0;
+		long sec = 0;
+		sec = (correctTime) % 60;
+		min = ((correctTime) / 60 ) % 60;
+		hour = (((correctTime) / 60) / 60 );
 
 		returnString = generateTimeString((int)hour, (int)min, (int)sec, format);
 		return returnString;
@@ -181,7 +214,7 @@ public class StaticFunctions {
 		String returnValue = "";
 		//Convert payRate to dollar amount from $/h to $/s
 		double payPerSec = payRate / 60 / 60;
-		double temp = (double)i_time * payPerSec;
+		double temp = (double)i_time * payPerSec / Defines.MS_TO_SECOND;
 		returnValue = String.format("$ %02.3f",temp);
 		return returnValue;
 	}

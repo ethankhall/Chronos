@@ -192,7 +192,7 @@ public class WeekView extends ListActivity {
 		}
 
 		protected void onProgressUpdate(Object... progress) {
-			Log.d(TAG, "Day Punches: " + ((Day)progress[1]).getSize());
+			//Log.d(TAG, "Day Punches: " + ((Day)progress[1]).getSize());
 			adapter.updateDay((Integer)progress[0], (Day)progress[1]);
 		}
 

@@ -82,6 +82,12 @@ public class PastView extends ListActivity{
 		updateAdapt = new updateAdapter();
 		updateAdapt.execute(getApplicationContext());
 		
+		weeks_in_pp = prefs.getWeeksInPP();
+		StringFormat = prefs.getViewStringFormat();
+		overtimeRate = prefs.getOvertimeRate();
+		overtimeEnable = prefs.isOvertimeEnable();
+		overtimeSetting = prefs.getOvertimeSetting();
+		
 		holder.setWeek(date);
 
 		//setListAdapter(adapter);
@@ -204,6 +210,8 @@ public class PastView extends ListActivity{
 		long returnValue = 0;
 		long tempTime;
 		Day temp;
+		
+		//Log.d(TAG, "overtime: " + overtimeEnable);
 		for(int i = 0; i < adapter.getCount(); i++){
 			temp = adapter.getItem(i);
 			if ( temp.getTimeWithBreaks() >= 0 ){
@@ -214,10 +222,11 @@ public class PastView extends ListActivity{
 						returnValue += (tempTime - Defines.SECONDS_IN_HOUR * 8) * overtimeRate;	
 
 					} else {
-						returnValue += temp.getTimeWithBreaks();
+						returnValue += tempTime;
 					}
 				}  else {
-					returnValue += temp.getTimeWithBreaks();
+					returnValue += tempTime;
+					//Log.d(TAG, "time for day: " + tempTime);
 				}
 			}
 		}
@@ -238,10 +247,13 @@ public class PastView extends ListActivity{
 				returnValue += weekTemp;
 			}
 		}
-		return returnValue / Defines.MS_TO_SECOND;
+		//Log.d(TAG, "final: " + StaticFunctions.generateTimeWeek(returnValue,
+		//		StringFormat, false));
+		//Log.d(TAG, "total time: " + returnValue);
+		return returnValue;
 	}
 
-	private long getTime(){
+	/*private long getTime(){
 		long returnValue = 0;
 		Day temp;
 		for(int i = 0; i < adapter.getCount(); i++){
@@ -252,17 +264,19 @@ public class PastView extends ListActivity{
 		}
 
 		return returnValue;
-	}
+	}*/
 
 	private void updateTime(){
-		long time = getTime();
-		long money = getTimeForMoney();
+		//long time = getTime();
+		long time = 0;
+		long money = time = getTimeForMoney();
 		updateTime(time, money);
 	}
 	private void updateTime(long time, long calcTime){
 		TextView timePay = (TextView) findViewById(R.id.pastViewTimeTotal);
+		
 
-		timePay.setText(StaticFunctions.generateTimeString(time, StringFormat, false));
+		timePay.setText(StaticFunctions.generateTimeWeek(time, StringFormat, false));
 
 		String dolAmount = StaticFunctions.generateDollarAmount(calcTime, PAY_RATE);
 

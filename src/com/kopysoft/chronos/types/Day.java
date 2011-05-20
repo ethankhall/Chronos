@@ -67,7 +67,7 @@ public class Day {
 		_todayNote = note;
 		_removed = new ArrayList<Punch>();
 		
-		Log.d(TAG, "Size: " + _punches.size());
+		//Log.d(TAG, "Size: " + _punches.size());
 	}
 	
 	public void setHasLunchBeenTaken(Context context, boolean setLunch){

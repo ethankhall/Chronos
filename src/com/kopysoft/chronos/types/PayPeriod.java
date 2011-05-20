@@ -29,7 +29,6 @@ import java.util.GregorianCalendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
@@ -38,7 +37,7 @@ public class PayPeriod {
 	ArrayList<Day> _days = new ArrayList<Day>();
 	GregorianCalendar _start = null;
 	GregorianCalendar _end = null;
-	private static final String TAG = Defines.TAG + " - PayPeriod";
+	//private static final String TAG = Defines.TAG + " - PayPeriod";
 
 	public PayPeriod(int[] start, int[] end, Context context){
 		//Configure start and end times 
@@ -96,19 +95,19 @@ public class PayPeriod {
 			ArrayOfDayPunches = new ArrayList<Punch>();
 			tempTime = temp.getTimeInMillis();
 			
-			Log.d(TAG, "tempTime: " + tempTime);
-			Log.d(TAG, "end tempTime: " + (tempTime + 24*60*60*1000));
+			//Log.d(TAG, "tempTime: " + tempTime);
+			//Log.d(TAG, "end tempTime: " + (tempTime + 24*60*60*1000));
 			for(int indexArray = 0; indexArray < returnValue.size(); indexArray++){
 				Punch tempPunch = returnValue.get(indexArray);
 				//Log.d(TAG, "Punch Time: " + tempPunch.getTime());
 				
 				if(tempPunch.getTime() > tempTime && tempPunch.getTime() < tempTime + 24*60*60*1000){
 					ArrayOfDayPunches.add(tempPunch);
-					Log.d(TAG, "Instert!");
+					//Log.d(TAG, "Instert!");
 				}
 			}
 			
-			Log.d(TAG, "Size: " + ArrayOfDayPunches.size());
+			//Log.d(TAG, "Size: " + ArrayOfDayPunches.size());
 			
 			Note todayNote = new Note(tempDayInfo, context);
 			

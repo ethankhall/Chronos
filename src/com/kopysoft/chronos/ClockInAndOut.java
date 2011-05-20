@@ -74,11 +74,17 @@ public class ClockInAndOut extends ListActivity {
 	TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
 	GregorianCalendar currentDay = null;
 
+	/**
+	 * onDestory method: Called when the activity is killed and GCed
+	 */
 	public void onDestoy(){
 		super.onDestroy();
 	}
 
 	@Override
+	/**
+	 * onPause method: Called when another activity comes infront of the this one
+	 */
 	public void onPause(){
 		super.onPause();
 		adapter.updateDay(true);
@@ -87,6 +93,10 @@ public class ClockInAndOut extends ListActivity {
 	}
 
 	@Override
+	/**
+	 * onResume method: Called when this activity becomes the displayed activity. This activity
+	 * 	updates the the time, the data and updates the notification.
+	 */
 	public void onResume(){
 		super.onResume();
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "onResume");
@@ -120,6 +130,11 @@ public class ClockInAndOut extends ListActivity {
 	}
 
 	@Override
+	/**
+	 * onCreate method: Called when the activity is created. Connects to the PreferenceSingelton and 
+	 * 	the Service. It gets the adapter and sets it all up.
+	 * @param savedInstanceState
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "onCreate");
@@ -201,7 +216,15 @@ public class ClockInAndOut extends ListActivity {
 	//----------------------------------------------------
 	//			Clikcing stuff
 	//----------------------------------------------------
-	
+	/**
+	 * 	onActivityResult: when the popup dialog calls "OK" or "Cancel"
+	 * 
+	 * @param requestCode I don't use it.
+	 * @param resultCode How the activity was closed, either Activity.RESULT_CANCELED or Activity.RESULT_OK
+	 * @param data The Intent that was sent back from the dialog.
+	 * 
+	 * Can either call add a new punch ( if the id pulled from the Intent is -1) or edit the punch based on the id and the info pulled from the (Intent)data.
+	 */
 	protected void onActivityResult (int requestCode, int resultCode, Intent data){
 		if( resultCode == Activity.RESULT_CANCELED){
 			//do nothing
@@ -299,6 +322,8 @@ public class ClockInAndOut extends ListActivity {
 	}
 
 	private void updateData(long input_time){
+		
+		//input_time /= Defines.MS_TO_SECOND;
 		if( Math.abs(input_time) > 60 * 60 * 24){
 			setTimeString("--:--:--");
 			setValueString("--:--:--");
@@ -306,7 +331,7 @@ public class ClockInAndOut extends ListActivity {
 		if( input_time >= 0){
 			//Log.d(TAG, "in if");
 			//Log.d(TAG, "time string: " + generateTimeString(input_time, StringFormat));
-			setTimeString(generateTimeString(input_time, StringFormat));
+			setTimeString(generateTimeString(input_time / Defines.MS_TO_SECOND, StringFormat));
 			setValueString(generateDollarAmount(input_time, PAY_RATE));
 		} else {
 			//Log.d(TAG, "not in if");
@@ -395,11 +420,11 @@ public class ClockInAndOut extends ListActivity {
 	 * Creates a string in the form H:MM:SS when called
 	 */
 	private String generateTimeString(long time){
-		return generateTimeString(time, TimeFormat.HOUR_MIN_SEC);
+		return generateTimeString(time / Defines.MS_TO_SECOND, TimeFormat.HOUR_MIN_SEC);
 	}
 
 	private String generateTimeString(long i_time, TimeFormat type){
-		return StaticFunctions.generateTimeString(i_time, type, true);
+		return StaticFunctions.generateTimeString(i_time, type, false);
 	}
 
 

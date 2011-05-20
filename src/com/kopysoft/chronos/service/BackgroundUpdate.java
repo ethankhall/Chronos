@@ -64,12 +64,12 @@ public class BackgroundUpdate extends BroadcastReceiver {
 		long timeToday = today.getTimeWithBreaks();
 		boolean lunchBeenTaken = today.hasLunchBeenTaken(context);
 		
-		//Log.d(TAG, "PayRate: " + prefs.getPayRate());
-		//Log.d(TAG, "Lunch: " + prefs.getAutomatic_lunch());
+		//Log.d(TAG, "Lunch: " + autoLunch);
 		//Log.d(TAG, "TimeToday: " + timeToday);
+		//Log.d(TAG, "lunchBeenTaken: " + lunchBeenTaken);
 
 		//check for lunch
-		if(autoLunch >= 2 && !lunchBeenTaken && timeToday < 0){
+		if(autoLunch >= 2 && !lunchBeenTaken && timeToday != 0){
 			GregorianCalendar lunchTime = new GregorianCalendar();
 			lunchTime.setTimeInMillis(currentCal.getTimeInMillis());
 			lunchTime.set(GregorianCalendar.HOUR, endLunch[0]);

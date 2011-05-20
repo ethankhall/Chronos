@@ -108,7 +108,7 @@ public class RowHelperPastView extends BaseAdapter {
 		left = Defines.DAYS[( cal.get(Calendar.DAY_OF_WEEK) - 1 ) % 7] + " " +
 		Defines.MONTHS[cal.get(Calendar.MONTH)] + ", " + cal.get(Calendar.DAY_OF_MONTH); 		
 
-		if (temp.getSeconds() < 0){
+		if (temp.getTimeWithBreaks() < 0){
 			right = "--:--:--";
 		} else {
 			right = StaticFunctions.generateTimeString(temp.getSeconds(), mFormatType, false);
