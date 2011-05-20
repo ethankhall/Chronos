@@ -163,9 +163,13 @@ public class ClockInAndOut extends ListActivity {
 		} else {
 			serviceInfo.setClockAction(false, time);
 		}
-		
-		serviceInfo.setNotification(prefs.isNotificationsEnabled());
-		
+
+		try{
+			serviceInfo.setNotification(prefs.isNotificationsEnabled());
+		} catch (Exception e){
+			Log.e(TAG, e.getMessage());
+		}
+
 		//Set string format
 		StringFormat = prefs.getPunchStringFormat();
 
@@ -193,7 +197,7 @@ public class ClockInAndOut extends ListActivity {
 			public void propertyChange(PropertyChangeEvent event) {
 				//Log.d(TAG, "listerner obj");
 				updateAdapter(true);
-				
+
 				boolean clockedIn = false;
 				long time = adapter.getTimeWithBreaks();
 
@@ -203,7 +207,7 @@ public class ClockInAndOut extends ListActivity {
 				}
 
 				//updates all the adapters
-				
+
 				updateData();
 				serviceInfo.setClockAction(clockedIn, time);
 				currentDay = new GregorianCalendar();
@@ -212,7 +216,7 @@ public class ClockInAndOut extends ListActivity {
 
 		registerForContextMenu(getListView());
 	}
-	
+
 	//----------------------------------------------------
 	//			Clikcing stuff
 	//----------------------------------------------------
@@ -234,8 +238,8 @@ public class ClockInAndOut extends ListActivity {
 			long time = data.getExtras().getLong("time");
 			int actionReason = data.getExtras().getInt("actionReason");
 			int getType = data.getExtras().getInt("type");
-			
-			
+
+
 			if(id == -1){
 				//long i_time, int i_type, long i_id, int i_actionReason
 				Punch temp = new Punch(time, getType, id, actionReason);
@@ -272,12 +276,12 @@ public class ClockInAndOut extends ListActivity {
 			adapter.remove(info.position);
 			//adapter.notifyDataSetChanged();
 		}
-		
+
 		ListenerObj.getInstance().fire();
 
 		return true;
 	}
-	
+
 	//----------------------------------------------------
 	//			END Clikcing stuff
 	//----------------------------------------------------
@@ -322,7 +326,7 @@ public class ClockInAndOut extends ListActivity {
 	}
 
 	private void updateData(long input_time){
-		
+
 		//input_time /= Defines.MS_TO_SECOND;
 		if( Math.abs(input_time) > 60 * 60 * 24){
 			setTimeString("--:--:--");
@@ -387,7 +391,7 @@ public class ClockInAndOut extends ListActivity {
 			clockedIn = false;
 		if(times[Defines.HOLIDAY_TIME] < 0)
 			clockedIn = true;
-		
+
 		if( clockedIn == false ){
 			button.setText("Clock In");
 		} else {
@@ -456,9 +460,9 @@ public class ClockInAndOut extends ListActivity {
 				StaticFunctions.removeAlarm(getApplicationContext(), 
 						(AlarmManager) getSystemService(ALARM_SERVICE));
 			}
-			
+
 			mHandler.postDelayed(mUpdateTimeTask, 1000);
 		}
 	};
-	
+
 }
