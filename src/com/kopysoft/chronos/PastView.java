@@ -81,13 +81,13 @@ public class PastView extends ListActivity{
 
 		updateAdapt = new updateAdapter();
 		updateAdapt.execute(getApplicationContext());
-		
+
 		weeks_in_pp = prefs.getWeeksInPP();
 		StringFormat = prefs.getViewStringFormat();
 		overtimeRate = prefs.getOvertimeRate();
 		overtimeEnable = prefs.isOvertimeEnable();
 		overtimeSetting = prefs.getOvertimeSetting();
-		
+
 		holder.setWeek(date);
 
 		//setListAdapter(adapter);
@@ -95,7 +95,7 @@ public class PastView extends ListActivity{
 		//updateTime();
 		fixNext();
 	}
-	
+
 	@Override
 	public void onPause(){
 		super.onPause();
@@ -110,10 +110,10 @@ public class PastView extends ListActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pastview);
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "PastView");
-		
+
 		prefs = PreferenceSingelton.getInstance();
 		ProgressDialog dialog = ProgressDialog.show(PastView.this, "",
-			"Generating. Please wait...");
+		"Generating. Please wait...");
 
 		prefs = PreferenceSingelton.getInstance();
 		//prefs.updatePreferences(getApplicationContext());
@@ -210,7 +210,7 @@ public class PastView extends ListActivity{
 		long returnValue = 0;
 		long tempTime;
 		Day temp;
-		
+
 		//Log.d(TAG, "overtime: " + overtimeEnable);
 		for(int i = 0; i < adapter.getCount(); i++){
 			temp = adapter.getItem(i);
@@ -233,8 +233,8 @@ public class PastView extends ListActivity{
 
 		if (overtimeSetting == Defines.OVERTIME_40HOUR && overtimeEnable == true ){
 			returnValue = 0;
-			long weekTemp = 0;
 			for(int i = 0; i < prefs.getWeeksInPP(); i++){
+				long weekTemp = 0;
 				for(int j = 0; j < 7; j++){
 					temp = adapter.getItem(i * 7 + j);
 					weekTemp += temp.getTimeWithBreaks();
@@ -253,31 +253,36 @@ public class PastView extends ListActivity{
 		return returnValue;
 	}
 
-	/*private long getTime(){
+	private long getTime(){
 		long returnValue = 0;
+		long tempTime;
 		Day temp;
+		
 		for(int i = 0; i < adapter.getCount(); i++){
 			temp = adapter.getItem(i);
-			if ( temp.getSeconds() >= 0 ){
-				returnValue += temp.getSeconds();
+			if ( temp.getTimeWithBreaks() >= 0 ){
+				tempTime = temp.getTimeWithBreaks();
+
+				returnValue += tempTime;
 			}
 		}
-
 		return returnValue;
-	}*/
+
+	}
 
 	private void updateTime(){
-		//long time = getTime();
-		long time = 0;
-		long money = time = getTimeForMoney();
-		updateTime(time, money);
+		updateTime(getTime(), getTimeForMoney());
 	}
 	private void updateTime(long time, long calcTime){
 		TextView timePay = (TextView) findViewById(R.id.pastViewTimeTotal);
-		
+
 
 		timePay.setText(StaticFunctions.generateTimeWeek(time, StringFormat, false));
 
+		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Pay Rate: " + PAY_RATE);
+		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Dol Amt:" + 
+				StaticFunctions.generateTimeWeek(calcTime, StringFormat, false));
+		
 		String dolAmount = StaticFunctions.generateDollarAmount(calcTime, PAY_RATE);
 
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Amount: " + dolAmount);
@@ -397,16 +402,16 @@ public class PastView extends ListActivity{
 		int[] endOfThisPP = new int[3];
 		int[] startOfThisPP = null;
 		protected void onPreExecute(){
-			
+
 			ViewingPayPeriod holder = ViewingPayPeriod.getInstance();
 			startOfThisPP = holder.getWeek();
-			
+
 			PreferenceSingelton prefs = PreferenceSingelton.getInstance();		
 			int weeks_in_pp = prefs.getWeeksInPP();
 
 			GregorianCalendar cal = new GregorianCalendar(startOfThisPP[0], 
 					startOfThisPP[1], startOfThisPP[2]);
-			
+
 			cal.add(GregorianCalendar.DAY_OF_YEAR, weeks_in_pp * 7);
 			endOfThisPP[0] = cal.get(GregorianCalendar.YEAR);
 			endOfThisPP[1] = cal.get(GregorianCalendar.MONTH);
@@ -424,7 +429,7 @@ public class PastView extends ListActivity{
 		@Override
 		protected Void doInBackground(Context... param) {
 			PayPeriod thisPP = new PayPeriod(date, endOfThisPP, (Context)param[0]);
-			
+
 			for(int i = 0; i < thisPP.size(); i++){
 				publishProgress((Object)i, (Object)thisPP.get(i));
 			}

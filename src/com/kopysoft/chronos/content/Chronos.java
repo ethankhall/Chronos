@@ -31,6 +31,7 @@ import java.util.List;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
@@ -82,7 +83,17 @@ public class Chronos extends SQLiteOpenHelper {
 		}
 
 		Log.d(TAG, "Update");
-		ArrayList<HoldNote> Notes = getNotes(db);
+		ArrayList<HoldNote> Notes = null;
+		try{
+			Notes = getNotes(db);
+		} catch (SQLiteException e){
+			try{
+				Notes = getNotes(db);
+			} catch( SQLiteException e2){
+				throw(e2);
+			}
+		} 
+		
 		ArrayList<Punch> punches = new ArrayList<Punch>();
 		Cursor cursor = db.query(TABLE_NAME_CLOCK, new String[] { "_id","punch_type", "time" }, 
 				null, null, null, null, "_id desc");

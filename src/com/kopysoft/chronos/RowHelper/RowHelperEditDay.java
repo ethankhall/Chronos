@@ -65,6 +65,11 @@ public class RowHelperEditDay extends BaseAdapter {
 	public void setByID( long ID, Punch newPunch){
 		gPunchArray.setByID(ID, newPunch);
 	}
+	
+	public void setByPos( int location, Punch newPunch){
+		gPunchArray.set(location, newPunch);
+	}
+
 
 	public Punch getItem(int arg0) {
 		return gPunchArray.get(arg0);

@@ -178,6 +178,6 @@ public class Email {
 				}
 			}
 		}
-		return returnValue / Defines.MS_TO_SECOND;
+		return returnValue;
 	}
 }

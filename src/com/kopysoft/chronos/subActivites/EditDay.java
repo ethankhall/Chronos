@@ -102,6 +102,14 @@ public class EditDay extends ListActivity {
 				Punch temp = new Punch(time, getType, -1, actionReason);
 				temp.setNeedToUpdate(true);
 				adapter.add(temp);
+			} else if(requestCode == 2) {
+				int position = data.getExtras().getInt("position");
+				Punch temp = adapter.getItem(position);
+				temp.setAction(actionReason);
+				temp.setTime(time);
+				temp.setType(getType);
+				adapter.setByPos(position, temp);
+				
 			} else {
 				Punch temp = adapter.getByID(id);
 				temp.setAction(actionReason);
@@ -128,8 +136,13 @@ public class EditDay extends ListActivity {
 			intent.putExtra("time", temp.getTime());
 			intent.putExtra("type", temp.getType());
 			intent.putExtra("actionReason", temp.getAction());
+			if(temp.getId() == -1){
+				intent.putExtra("position", info.position);
+				startActivityForResult(intent, 2);
+			} else {
+				startActivityForResult(intent, 0);
+			}
 			temp = null;
-			startActivityForResult(intent, 0);
 
 		} else if( menuItemIndex == 1){	//remove
 			if (Defines.DEBUG_PRINT) Log.d(TAG, "Position: " + info.id);

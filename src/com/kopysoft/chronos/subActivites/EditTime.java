@@ -48,6 +48,7 @@ public class EditTime extends Activity {
 	Chronos chronoSaver = null;
 	long id;
 	GregorianCalendar cal = null;
+	int position = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class EditTime extends Activity {
 		long time = getIntent().getExtras().getLong("time");
 		int actionReason = getIntent().getExtras().getInt("actionReason");
 		int getType = getIntent().getExtras().getInt("type");
+		position = getIntent().getExtras().getInt("position", -1);
 
 		int[] timeSet = new int[2];
 		cal = new GregorianCalendar();
@@ -122,6 +124,7 @@ public class EditTime extends Activity {
 			returnIntent.putExtra("time", time);
 			returnIntent.putExtra("type", type);
 			returnIntent.putExtra("actionReason", actionReason);
+			returnIntent.putExtra("position", position);
 			setResult(Activity.RESULT_OK, returnIntent);
 			finish();
 			
