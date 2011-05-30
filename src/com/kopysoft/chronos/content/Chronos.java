@@ -129,7 +129,58 @@ public class Chronos extends SQLiteOpenHelper {
 
 		reloadNotes(db, Notes);
 	}
+	
+	/**
+	 * This method is intended to be used ONLY for testing purposes!!
+	 * 
+	 */
+	public void replacePunches(ArrayList<Punch> punches){
+		
+		SQLiteDatabase db = getWritableDatabase();
+		for(int i = 0; i < punches.size(); i++){
+			Punch temp = punches.get(i);
+			temp.setNeedToUpdate(true);
+			temp.removeId();
+			temp.commitToDb(db);
+		}
+		db.close();
+	}
 
+	/**
+	 * This method is intended to be used ONLY for testing purposes!!
+	 * 
+	 * @return a list of the punches, so it is able to be restored
+	 */
+	public ArrayList<Punch> getPunces(){
+		
+		SQLiteDatabase db = getReadableDatabase();
+		ArrayList<Punch> punches = new ArrayList<Punch>();
+		Cursor cursor = db.query(TABLE_NAME_CLOCK, new String[] { "_id","punch_type", "time" }, 
+				null, null, null, null, "_id desc");
+
+		final int colId = cursor.getColumnIndex("_id");
+		final int colTime = cursor.getColumnIndex("time");
+		final int colType = cursor.getColumnIndex("punch_type");
+		if (cursor.moveToFirst()) {
+			do {				
+
+				long id = cursor.getLong(colId);
+				long time = cursor.getLong(colTime);
+				int type = cursor.getInt(colType);
+				Punch temp = new Punch(time, type, id, Defines.REGULAR_TIME);
+				punches.add(temp);
+
+
+			} while (cursor.moveToNext());
+		}
+
+		if (cursor != null && !cursor.isClosed()) {
+			cursor.close();
+		}
+		db.close();
+		return punches;
+		
+	}
 
 	private void reloadNotes(SQLiteDatabase db, ArrayList<HoldNote> Notes){
 		for( int i = 0; i < Notes.size(); i++ ){
