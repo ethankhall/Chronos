@@ -45,20 +45,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kopysoft.chronos.RowHelper.RowHelperToday;
-import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
+import com.kopysoft.chronos.service.NotificationBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingelton;
-import com.kopysoft.chronos.singelton.ServiceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Punch;
 
 public class ClockInAndOut extends ListActivity {
 
 	private static final String TAG = Defines.TAG + " - CIAO";
-	private static final int MS_TO_SECOND = 1000;
 	private double PAY_RATE = 8.75;
 	private boolean forceUpdate = false;
 
@@ -66,9 +64,6 @@ public class ClockInAndOut extends ListActivity {
 
 	RowHelperToday adapter = null;
 	private Handler mHandler = new Handler();
-
-	ServiceSingleton serviceInfo = null;
-	Chronos chronoSaver = null;
 	PreferenceSingelton prefs = null;
 
 	TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
@@ -100,9 +95,6 @@ public class ClockInAndOut extends ListActivity {
 	public void onResume(){
 		super.onResume();
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "onResume");
-		boolean clockedIn = false;
-
-		serviceInfo = new ServiceSingleton();
 
 		//Updates the pay rate and shows or hides the pay info
 		updatePayRate();
@@ -111,7 +103,6 @@ public class ClockInAndOut extends ListActivity {
 
 		if (time < 0){
 			mHandler.postDelayed(mUpdateTimeTask, 10);
-			clockedIn = true;
 		}
 
 		//updates all the adapters
@@ -124,7 +115,10 @@ public class ClockInAndOut extends ListActivity {
 
 
 		updateData();
-		serviceInfo.setClockAction(clockedIn, time);
+		Intent runIntent = new Intent().setClass(getApplicationContext(), 
+				com.kopysoft.chronos.service.NotificationBroadcast.class);
+		runIntent = NotificationBroadcast.runUpdate(runIntent, time);
+		getApplicationContext().sendBroadcast(runIntent);
 		currentDay = new GregorianCalendar();
 
 	}
@@ -140,9 +134,7 @@ public class ClockInAndOut extends ListActivity {
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "onCreate");
 		setContentView(R.layout.clockinandout);
 
-		prefs = PreferenceSingelton.getInstance();		
-		serviceInfo = new ServiceSingleton();
-		chronoSaver = new Chronos(getApplicationContext());	//Connect to content provider
+		prefs = new PreferenceSingelton();
 
 		GregorianCalendar cal = new GregorianCalendar();
 
@@ -157,21 +149,8 @@ public class ClockInAndOut extends ListActivity {
 
 		long time = adapter.getTimeWithBreaks();
 
-		if (adapter.needToUpdateClock() == true ) {
-			mHandler.postDelayed(mUpdateTimeTask, 10);
-			serviceInfo.setClockAction(true, time);
-		} else {
-			serviceInfo.setClockAction(false, time);
-		}
-
-		try{
-			serviceInfo.setNotification(prefs.isNotificationsEnabled());
-		} catch (Exception e){
-			Log.e(TAG, e.getMessage());
-		}
-
 		//Set string format
-		StringFormat = prefs.getPunchStringFormat();
+		StringFormat = prefs.getPrefPunchTime(getApplicationContext());
 
 		//Updates the pay rate and shows or hides the pay info
 		updatePayRate();
@@ -181,36 +160,50 @@ public class ClockInAndOut extends ListActivity {
 		updateData();
 		currentDay = new GregorianCalendar();
 
-		//for Prefereneces
-		prefs.addPropertyChangeListener(new PropertyChangeListener(){
-
-			public void propertyChange(PropertyChangeEvent event) {
-				//Log.d(TAG, "pref change");
-				StringFormat = prefs.getPunchStringFormat();
-				updateData();
-				updatePayRate();
-			}
-
-		});
-
 		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
-				//Log.d(TAG, "listerner obj");
+				StringFormat = prefs.getPrefPunchTime(getApplicationContext());
+				updateData();
+				updatePayRate();
+				
 				updateAdapter(true);
 
-				boolean clockedIn = false;
 				long time = adapter.getTimeWithBreaks();
 
 				if (time < 0){
 					mHandler.postDelayed(mUpdateTimeTask, 10);
-					clockedIn = true;
 				}
 
 				//updates all the adapters
 
 				updateData();
-				serviceInfo.setClockAction(clockedIn, time);
+				Intent runIntent = new Intent().setClass(getApplicationContext(), 
+						com.kopysoft.chronos.service.NotificationBroadcast.class);
+				runIntent = NotificationBroadcast.runUpdate(runIntent, time);
+				getApplicationContext().sendBroadcast(runIntent);
 				currentDay = new GregorianCalendar();
+			}
+		});
+		
+		ListenerObj.getInstance().addMidnightListener(new PropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event) {
+				GregorianCalendar cal = new GregorianCalendar();
+
+				int[] dateGiven = new int[3];
+				dateGiven[0] = cal.get(Calendar.YEAR);
+				dateGiven[1] = cal.get(Calendar.MONTH);
+				dateGiven[2] = cal.get(Calendar.DAY_OF_MONTH);
+
+				Day today = new Day(dateGiven, getApplicationContext());
+				adapter = new RowHelperToday(getApplicationContext(), today);
+				setListAdapter(adapter);
+
+				StringFormat = prefs.getPrefPunchTime(getApplicationContext());	//Set string format
+				updatePayRate(); //Updates the pay rate and shows or hides the pay info
+
+				updateData();
+				currentDay = new GregorianCalendar();
+
 			}
 		});
 
@@ -299,11 +292,11 @@ public class ClockInAndOut extends ListActivity {
 
 	private void updatePayRate(){
 		//update pay rate
-		PAY_RATE = prefs.getPayRate();
+		PAY_RATE = prefs.getPayRate(getApplicationContext());
 
 		//Hide or show the time amount
 		//boolean showPay = app_preferences.getBoolean("showPay", true);
-		boolean showPay = prefs.isShowPay();
+		boolean showPay = prefs.getShowPay(getApplicationContext());
 		TextView payTitle = (TextView)findViewById(R.id.money_today_text);
 		TextView payValue = (TextView)findViewById(R.id.money_today);
 		if(showPay == false){
@@ -347,10 +340,9 @@ public class ClockInAndOut extends ListActivity {
 
 	public void Callback(View v){
 		int type = Defines.IN;
-		boolean clockedIn;
 		long i_time = 0;
 		GregorianCalendar cal = new GregorianCalendar();
-		long temp = cal.getTimeInMillis() / MS_TO_SECOND;
+		long temp = cal.getTimeInMillis();
 		mHandler.removeCallbacks(mUpdateTimeTask);
 		//Log.d(TAG, "Callback Happened");
 
@@ -358,13 +350,10 @@ public class ClockInAndOut extends ListActivity {
 		if( i_time < 0 ){
 			i_time = i_time + temp;
 			type = Defines.OUT;
-			clockedIn = false;
-
 		} else {
 			i_time = i_time - temp;
 			type = Defines.IN;
 			mHandler.postDelayed(mUpdateTimeTask, 1000);
-			clockedIn = true;
 		}
 
 		long timeAdd = cal.getTimeInMillis();
@@ -375,7 +364,10 @@ public class ClockInAndOut extends ListActivity {
 		adapter.updateDay(false);
 		setButtonText();
 
-		serviceInfo.setClockAction(clockedIn, i_time);
+		Intent runIntent = new Intent().setClass(getApplicationContext(), 
+				com.kopysoft.chronos.service.NotificationBroadcast.class);
+		runIntent = NotificationBroadcast.runUpdate(runIntent, i_time);
+		getApplicationContext().sendBroadcast(runIntent);
 
 	}
 

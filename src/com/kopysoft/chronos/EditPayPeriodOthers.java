@@ -62,11 +62,9 @@ public class EditPayPeriodOthers extends ListActivity {
 	public void onResume(){
 		super.onResume();
 		
-		prefs.updatePreferences(getApplicationContext());
-		
 		chronoSaver = new Chronos(getApplicationContext());	//Connect to content provider
 		//StringFormat = Chronos.TimeFormater(app_preferences.getString("viewPrefTime", "1"));
-		StringFormat = prefs.getEditStringFormat();
+		StringFormat = prefs.getPrefEditTime(getApplicationContext());
 		
 		GregorianCalendar cal = new GregorianCalendar(date[0], 
 				date[1], date[2]);
@@ -90,12 +88,11 @@ public class EditPayPeriodOthers extends ListActivity {
 
 		chronoSaver = new Chronos(getApplicationContext());	//Connect to content provider
 		
-		prefs = PreferenceSingelton.getInstance();
-		prefs.updatePreferences(getApplicationContext());
+		prefs = new PreferenceSingelton();
 
 		//String string_weeks_in_pp = app_preferences.getString("weeks_in_pp", "2");
 		//weeks_in_pp = Integer.parseInt(string_weeks_in_pp);
-		weeks_in_pp = prefs.getWeeksInPP();
+		weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
 		
 		date[0] = getIntent().getExtras().getInt("year");
 		date[1] = getIntent().getExtras().getInt("month");
@@ -112,7 +109,7 @@ public class EditPayPeriodOthers extends ListActivity {
 		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
 		
 		//StringFormat = Chronos.TimeFormater(app_preferences.getString("editPrefTime", "1"));
-		StringFormat = prefs.getEditStringFormat();
+		StringFormat = prefs.getPrefEditTime(getApplicationContext());
 
 		//Set up the list
 		adapter = new RowHelperPayPeriod(getApplicationContext(), thisPP, StringFormat);

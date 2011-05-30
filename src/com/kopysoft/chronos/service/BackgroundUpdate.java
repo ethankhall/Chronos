@@ -28,7 +28,6 @@ import java.util.GregorianCalendar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 import com.kopysoft.chronos.content.StaticFunctions;
@@ -48,14 +47,12 @@ public class BackgroundUpdate extends BroadcastReceiver {
 		int autoLunch = intent.getExtras().getInt("autoLunch");
 		int weeksInPP = intent.getExtras().getInt("weeksInPP");
 		int[] startOfPP = intent.getExtras().getIntArray("startOfPP");
-		boolean notificationsEnabled = intent.getExtras().getBoolean("notificationsEnabled", true);
 
 		GregorianCalendar currentCal = new GregorianCalendar();
 		StaticFunctions.printLog(Defines.ALL, TAG, "Current Calc: " + currentCal.getTimeInMillis());
-
-		Intent i = new Intent().setClass(context, com.kopysoft.chronos.service.ChronoService.class);
-		IBinder tempIBinder = peekService(context, i);
-		IAndroidService remoteService = IAndroidService.Stub.asInterface(tempIBinder);
+		
+		Intent runIntent = new Intent().setClass(context, 
+				com.kopysoft.chronos.service.NotificationBroadcast.class);
 
 		int[] todayInfo = {currentCal.get(GregorianCalendar.YEAR), 
 				currentCal.get(GregorianCalendar.MONTH), currentCal.get(GregorianCalendar.DAY_OF_MONTH)};
@@ -69,7 +66,14 @@ public class BackgroundUpdate extends BroadcastReceiver {
 		//Log.d(TAG, "lunchBeenTaken: " + lunchBeenTaken);
 
 		//check for lunch
-		if(autoLunch >= 2 && !lunchBeenTaken && timeToday != 0){
+		
+		GregorianCalendar outCal = new GregorianCalendar();
+		outCal.set(GregorianCalendar.HOUR_OF_DAY, endLunch[0]);
+		outCal.set(GregorianCalendar.MINUTE, endLunch[1]);
+		outCal.set(GregorianCalendar.SECOND, 0);
+		outCal.set(GregorianCalendar.MILLISECOND, 0);
+		
+		if(autoLunch >= 2 && !lunchBeenTaken && timeToday != 0 && currentCal.compareTo(outCal) >= 0){
 			GregorianCalendar lunchTime = new GregorianCalendar();
 			lunchTime.setTimeInMillis(currentCal.getTimeInMillis());
 			lunchTime.set(GregorianCalendar.HOUR, endLunch[0]);
@@ -89,11 +93,6 @@ public class BackgroundUpdate extends BroadcastReceiver {
 				newPunch = new Punch(inCal.getTimeInMillis(), Defines.IN, -1, Defines.LUNCH_TIME);
 				newPunch.commitToDb(context);
 
-				GregorianCalendar outCal = new GregorianCalendar();
-				outCal.set(GregorianCalendar.HOUR_OF_DAY, endLunch[0]);
-				outCal.set(GregorianCalendar.MINUTE, endLunch[1]);
-				outCal.set(GregorianCalendar.SECOND, 0);
-				outCal.set(GregorianCalendar.MILLISECOND, 0);
 				newPunch = new Punch(outCal.getTimeInMillis(), Defines.OUT, -1, Defines.LUNCH_TIME);
 				newPunch.commitToDb(context);
 
@@ -107,9 +106,11 @@ public class BackgroundUpdate extends BroadcastReceiver {
 				ListenerObj.getInstance().fire();
 				try{
 					if(autoLunch == 2){
-						remoteService.setTextNotification("Lunch", "Don't forget to take a lunch!");
+						runIntent = NotificationBroadcast.setMessage(runIntent, 
+								"Lunch", "Don't forget to take a lunch!");
 					} else if(autoLunch == 4){
-						remoteService.setTextNotification("Lunch", "I took a lunch for you, FYI.");
+						runIntent = NotificationBroadcast.setMessage(runIntent, 
+								"Lunch", "I took a lunch for you, FYI.");
 					}
 				}catch(Exception e){
 					//Log.e(TAG, e.getMessage());
@@ -127,16 +128,15 @@ public class BackgroundUpdate extends BroadcastReceiver {
 		
 		//update clock
 		try{
-			if(notificationsEnabled == true && timeToday < 0){
-				remoteService.setClockAction(true, timeToday);
+			if(timeToday < 0){
+				runIntent = NotificationBroadcast.runUpdate(runIntent, timeToday);
 			} else {
-				remoteService.setClockAction(false, timeToday);
+				runIntent = NotificationBroadcast.runUpdate(runIntent, 0);
 			}
 		}catch(Exception e){
 			//Log.e(TAG, e.getMessage());
 		}
-
-
+		context.sendBroadcast(runIntent);
 
 	}
 

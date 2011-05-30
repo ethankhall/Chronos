@@ -296,7 +296,11 @@ public class Day {
 	}
 
 	public Punch get(int id){
-		return _punches.get(id);
+		try{
+			return _punches.get(id);
+		} catch (Exception e){
+			return null;
+		}
 	}
 
 	public void set(int id, Punch replace){

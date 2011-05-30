@@ -46,6 +46,7 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
+import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingelton;
 import com.kopysoft.chronos.singelton.ViewingPayPeriod;
 import com.kopysoft.chronos.types.Day;
@@ -81,13 +82,7 @@ public class PastView extends ListActivity{
 
 		updateAdapt = new updateAdapter();
 		updateAdapt.execute(getApplicationContext());
-
-		weeks_in_pp = prefs.getWeeksInPP();
-		StringFormat = prefs.getViewStringFormat();
-		overtimeRate = prefs.getOvertimeRate();
-		overtimeEnable = prefs.isOvertimeEnable();
-		overtimeSetting = prefs.getOvertimeSetting();
-
+		
 		holder.setWeek(date);
 
 		//setListAdapter(adapter);
@@ -111,26 +106,25 @@ public class PastView extends ListActivity{
 		setContentView(R.layout.pastview);
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "PastView");
 
-		prefs = PreferenceSingelton.getInstance();
 		ProgressDialog dialog = ProgressDialog.show(PastView.this, "",
 		"Generating. Please wait...");
 
-		prefs = PreferenceSingelton.getInstance();
 		//prefs.updatePreferences(getApplicationContext());
 
 		//chronoSaver = new Chronos(getApplicationContext());	//Connect to content provider
 
-		weeks_in_pp = prefs.getWeeksInPP();
-		StringFormat = prefs.getViewStringFormat();
-		overtimeRate = prefs.getOvertimeRate();
-		overtimeEnable = prefs.isOvertimeEnable();
-		overtimeSetting = prefs.getOvertimeSetting();
+		prefs = new PreferenceSingelton();
+		weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
+		StringFormat = prefs.getPrefViewTime(getApplicationContext());
+		overtimeRate = prefs.getOvertimeRate(getApplicationContext());
+		overtimeEnable = prefs.getOvertimeEnable(getApplicationContext());
+		overtimeSetting = prefs.getOvertimeSetting(getApplicationContext());
 
 		//updatePayRate();		
 
 		//int[] dateHold = Chronos.getDate(ppStart);
-		int[] dateHold = prefs.getStartOfThisPP();
-		weeks_in_pp = prefs.getWeeksInPP();
+		int[] dateHold = prefs.getStartOfThisPP(getApplicationContext());
+		weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
 		int[] startOfThisPP =  Chronos.getPP(dateHold, weeks_in_pp);
 
 		GregorianCalendar cal = new GregorianCalendar(startOfThisPP[0], startOfThisPP[1], startOfThisPP[2]);
@@ -142,14 +136,14 @@ public class PastView extends ListActivity{
 		date = startOfThisPP;
 
 		//for Prefereneces
-		prefs.addPropertyChangeListener(new PropertyChangeListener(){
+		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 
 			public void propertyChange(PropertyChangeEvent event) {	
-				weeks_in_pp = prefs.getWeeksInPP();
-				StringFormat = prefs.getViewStringFormat();
-				overtimeRate = prefs.getOvertimeRate();
-				overtimeEnable = prefs.isOvertimeEnable();
-				overtimeSetting = prefs.getOvertimeSetting();
+				weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
+				StringFormat = prefs.getPrefViewTime(getApplicationContext());
+				overtimeRate = prefs.getOvertimeRate(getApplicationContext());
+				overtimeEnable = prefs.getOvertimeEnable(getApplicationContext());
+				overtimeSetting = prefs.getOvertimeSetting(getApplicationContext());
 				updatePayRate();
 
 				updateTime();
@@ -191,10 +185,10 @@ public class PastView extends ListActivity{
 
 	private void updatePayRate(){
 		//update pay rate
-		PAY_RATE = prefs.getPayRate();	
+		PAY_RATE = prefs.getPayRate(getApplicationContext());	
 
 		//Hide or show the time amount
-		boolean showPay = prefs.isShowPay();
+		boolean showPay = prefs.getShowPay(getApplicationContext());
 		TextView payTitle = (TextView)findViewById(R.id.pastViewAmountMadeLabel);
 		TextView payValue = (TextView)findViewById(R.id.pastViewAmountMade);
 		if(showPay == false){
@@ -233,11 +227,12 @@ public class PastView extends ListActivity{
 
 		if (overtimeSetting == Defines.OVERTIME_40HOUR && overtimeEnable == true ){
 			returnValue = 0;
-			for(int i = 0; i < prefs.getWeeksInPP(); i++){
+			for(int i = 0; i < prefs.getWeeksInPP(getApplicationContext()); i++){
 				long weekTemp = 0;
 				for(int j = 0; j < 7; j++){
 					temp = adapter.getItem(i * 7 + j);
-					weekTemp += temp.getTimeWithBreaks();
+					if(temp.getTimeWithBreaks() > 0)
+						weekTemp += temp.getTimeWithBreaks();
 				}
 				if ( weekTemp > Defines.SECONDS_IN_HOUR * 40){
 					tempTime = weekTemp - Defines.SECONDS_IN_HOUR * 40;
@@ -312,8 +307,8 @@ public class PastView extends ListActivity{
 	private void currentButton(){
 
 		//int[]dateHold = Chronos.getDate(ppStart);
-		int[]dateHold = prefs.getStartOfThisPP();
-		weeks_in_pp = prefs.getWeeksInPP();
+		int[]dateHold = prefs.getStartOfThisPP(getApplicationContext());
+		weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
 		date = Chronos.getPP(dateHold, weeks_in_pp);
 		GregorianCalendar cal = new GregorianCalendar(date[0], date[1], date[2]);
 		cal.add(GregorianCalendar.DAY_OF_YEAR, 7 * weeks_in_pp);
@@ -405,9 +400,8 @@ public class PastView extends ListActivity{
 
 			ViewingPayPeriod holder = ViewingPayPeriod.getInstance();
 			startOfThisPP = holder.getWeek();
-
-			PreferenceSingelton prefs = PreferenceSingelton.getInstance();		
-			int weeks_in_pp = prefs.getWeeksInPP();
+		
+			int weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
 
 			GregorianCalendar cal = new GregorianCalendar(startOfThisPP[0], 
 					startOfThisPP[1], startOfThisPP[2]);

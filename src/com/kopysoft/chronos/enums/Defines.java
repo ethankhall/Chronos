@@ -25,6 +25,9 @@ package com.kopysoft.chronos.enums;
 
 public class Defines {
 	
+	public static final int REPEATING_ALARM = 1;
+	public static final int MIDNIGHT_ALARM = 2;
+	
 	public static final int IN 	= 0;
 	public static final int OUT = 1;
 	public static final int MS_TO_SECOND = 1000;

@@ -104,7 +104,12 @@ public class EditDay extends ListActivity {
 				adapter.add(temp);
 			} else if(requestCode == 2) {
 				int position = data.getExtras().getInt("position");
-				Punch temp = adapter.getItem(position);
+				Punch temp = null;
+				try{
+					temp = adapter.getItem(position);
+				}catch(Exception e){
+					return;
+				}
 				temp.setAction(actionReason);
 				temp.setTime(time);
 				temp.setType(getType);
@@ -177,9 +182,11 @@ public class EditDay extends ListActivity {
 		String newString;
 		if ( time < 0 ){
 			newString = "--:--:--";
+		} else if(time >= Defines.SECONDS_IN_HOUR * 24){
+			newString = "--:--:--";
 		} else {
 			newString = StaticFunctions.generateTimeString(hour, min, sec, StringFormat);
-		}
+		} 
 		tv.setText(newString);
 	}
 
@@ -258,11 +265,10 @@ public class EditDay extends ListActivity {
 			dialog = ProgressDialog.show(EditDay.this, "",
 				"Generating. Please wait...");
 			
-			prefs = PreferenceSingelton.getInstance();
-			prefs.updatePreferences(getApplicationContext());
+			prefs = new PreferenceSingelton();
 
 			//Set string format
-			StringFormat = prefs.getEditStringFormat();
+			StringFormat = prefs.getPrefEditTime(getApplicationContext());
 
 			date[0] = getIntent().getExtras().getInt("year");
 			date[1] = getIntent().getExtras().getInt("month");

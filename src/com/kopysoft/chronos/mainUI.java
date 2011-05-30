@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -46,9 +47,9 @@ import com.kopysoft.chronos.content.Email;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.Verbosity;
+import com.kopysoft.chronos.service.MidnightBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingelton;
-import com.kopysoft.chronos.singelton.ServiceSingleton;
 import com.kopysoft.chronos.singelton.ViewingPayPeriod;
 
 public class mainUI extends TabActivity {
@@ -56,9 +57,6 @@ public class mainUI extends TabActivity {
 
 	private static final String TAG = Defines.TAG + " - Main";
 
-	public final static int NOTIFY_ME_ID = 62051;
-
-	private ServiceSingleton serviceInfo = null;
 	private PreferenceSingelton prefs = null;
 
 	public void onStop(){
@@ -67,12 +65,16 @@ public class mainUI extends TabActivity {
 
 	public void onDestroy(){
 		super.onDestroy();
-		serviceInfo.releaseService();
+		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+		Intent sentIntent = new Intent(getApplicationContext(), MidnightBroadcast.class);
+		PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), 
+				Defines.MIDNIGHT_ALARM, sentIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		am.cancel(sender);
 	}
 
 	public void onResume(){
 		super.onResume();
-		serviceInfo.setNotification(prefs.isNotificationsEnabled());
 	}
 
 	@Override
@@ -80,25 +82,33 @@ public class mainUI extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		prefs = PreferenceSingelton.getInstance();
-		prefs.updatePreferences(getApplicationContext());
+		prefs = new PreferenceSingelton();
 
 		Chronos forUpdate = new Chronos(getApplicationContext());
 		SQLiteDatabase db = forUpdate.getWritableDatabase();
 		db.close();
-		StaticFunctions.fixMidnight(prefs.getStartOfThisPP(), prefs.getWeeksInPP(),
+		StaticFunctions.fixMidnight(prefs.getStartOfThisPP(getApplicationContext()), 
+				prefs.getWeeksInPP(getApplicationContext()),
 				getApplicationContext());
 		//Chronos chrono = new Chronos(getApplicationContext());
 		//chrono.dropAll();
 		//GenerateContent();
 		//chronoSaver.printAll();
 
-		serviceInfo = new ServiceSingleton();
-		serviceInfo.setContext(getApplicationContext());
-		//getIntent();
-		serviceInfo.startService();
-		serviceInfo.bindService();
 		setUpAlarm();
+		
+		GregorianCalendar midnightAlarm = new GregorianCalendar();
+		midnightAlarm.add(Calendar.DAY_OF_YEAR, 1);
+		midnightAlarm.set(Calendar.HOUR_OF_DAY, 0);
+		midnightAlarm.set(Calendar.MINUTE, 0);
+		midnightAlarm.set(Calendar.SECOND, 0);
+		Intent sentIntent = new Intent(getApplicationContext(), MidnightBroadcast.class);
+		PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), 
+				Defines.MIDNIGHT_ALARM, sentIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+		am.setRepeating(AlarmManager.RTC, midnightAlarm.getTimeInMillis(), 
+				AlarmManager.INTERVAL_DAY, sender);
 
 		//Resources res = getResources(); // Resource object to get Drawables
 		TabHost tabHost = getTabHost();  // The activity TabHost
@@ -123,11 +133,8 @@ public class mainUI extends TabActivity {
 		spec = tabHost.newTabSpec("view").setIndicator("View").setContent(intent);
 		tabHost.addTab(spec);
 
-
 		tabHost.setCurrentTab(0);
 
-		serviceInfo.setNotification(prefs.isNotificationsEnabled());
-		
 		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
 				//Log.d(TAG, "Listener");
@@ -142,7 +149,6 @@ public class mainUI extends TabActivity {
 		//Log.d(TAG, "set up Alarm");
 		// get a Calendar object with current time
 		Calendar cal = Calendar.getInstance();
-		prefs.setLastCal(cal.getTimeInMillis() - 1000);
 		// add 5 minutes to the calendar object
 		StaticFunctions.setUpAlarm(getApplicationContext(), 
 				cal.getTimeInMillis() - 1000, (AlarmManager) getSystemService(ALARM_SERVICE));
@@ -196,8 +202,8 @@ public class mainUI extends TabActivity {
 		TabHost tabHost = getTabHost();
 		int currentTab = tabHost.getCurrentTab();
 
-		int[] startOfThisPP = prefs.getStartOfThisPP();
-		int weeks_in_pp = prefs.getWeeksInPP();
+		int[] startOfThisPP = prefs.getStartOfThisPP(getApplicationContext());
+		int weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
 		int[] endOfThisPP = new int[3];
 		{
 			GregorianCalendar cal = new GregorianCalendar(startOfThisPP[0], 
@@ -207,7 +213,7 @@ public class mainUI extends TabActivity {
 			endOfThisPP[1] = cal.get(GregorianCalendar.MONTH);
 			endOfThisPP[2] = cal.get(GregorianCalendar.DAY_OF_YEAR);
 		}
-		Verbosity verbosLevel = prefs.getReportLevelVerbosity();
+		Verbosity verbosLevel = prefs.getReportLevelVerbosity(getApplicationContext());
 
 		//get time for viewed pp
 		ViewingPayPeriod holder = ViewingPayPeriod.getInstance();
@@ -312,23 +318,23 @@ public class mainUI extends TabActivity {
 		new sendEmailTask().execute(newEmail);
 	}
 
-	 private class sendEmailTask extends AsyncTask<Email, Void, Void> {
-		 ProgressDialog dialog = null;
-		 protected void onPreExecute(){
-			 dialog = ProgressDialog.show(mainUI.this, "",
-				"Generating. Please wait..."); 
-		 }
-		 
-		 protected void onPostExecute (Void param){
-			 dialog.dismiss();
-		 }
-		 
+	private class sendEmailTask extends AsyncTask<Email, Void, Void> {
+		ProgressDialog dialog = null;
+		protected void onPreExecute(){
+			dialog = ProgressDialog.show(mainUI.this, "",
+			"Generating. Please wait..."); 
+		}
+
+		protected void onPostExecute (Void param){
+			dialog.dismiss();
+		}
+
 		@Override
 		protected Void doInBackground(Email... param) {
 			sendEmailInit(param[0]);
 			return null;
 		}
-		
+
 		private void sendEmailInit(Email newEmail){
 			String emailBody = new String("Greetings!\n\tHere is my timecard:\n");
 			emailBody += newEmail.generateEmailText();
@@ -344,6 +350,6 @@ public class mainUI extends TabActivity {
 			startActivity(emailIntent);
 
 		}
-	 }
+	}
 
 }

@@ -84,33 +84,32 @@ public class StaticFunctions {
 
 	public static void setUpAlarm(Context context, long millis, AlarmManager am){
 		
-		PreferenceSingelton prefs = PreferenceSingelton.getInstance();
+		PreferenceSingelton prefs = new PreferenceSingelton();
 
 		Intent intent = new Intent(context, BackgroundUpdate.class);
-		int[] startLunch = getIntFromString(prefs.getStartLunch());
-		int[] endLunch = getIntFromString(prefs.getEndLunch());
+		int[] startLunch = getIntFromString(prefs.getClockoutForLunch(context));
+		int[] endLunch = getIntFromString(prefs.getClockinForLunch(context));
 		intent.putExtra("startLunch", startLunch);
 		intent.putExtra("endLunch", endLunch);
-		intent.putExtra("autoLunch", prefs.getAutomatic_lunch());
-		intent.putExtra("weeksInPP", prefs.getWeeksInPP());
-		intent.putExtra("startOfPP", prefs.getStartOfThisPP());
-		intent.putExtra("notificationsEnabled", prefs.isNotificationsEnabled());
+		intent.putExtra("autoLunch", prefs.getAutomaticLunch(context));
+		intent.putExtra("weeksInPP", prefs.getWeeksInPP(context));
+		intent.putExtra("startOfPP", prefs.getStartOfThisPP(context));
+		intent.putExtra("notificationsEnabled", prefs.getNotificationEnabled(context));
 
 		// In reality, you would want to have a static variable for the request code instead of 192837
-		PendingIntent sender = PendingIntent.getBroadcast(context, 276, intent, 
+		PendingIntent sender = PendingIntent.getBroadcast(context, 
+				Defines.REPEATING_ALARM, intent, 
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// Get the AlarmManager service
 		am.setInexactRepeating(AlarmManager.RTC, millis, 
 			AlarmManager.INTERVAL_FIFTEEN_MINUTES, sender);
-	
-
 	}
 	
 	public static void removeAlarm(Context context, AlarmManager am){
 		Intent intent = new Intent(context, BackgroundUpdate.class);
 		
-		PendingIntent sender = PendingIntent.getBroadcast(context, 276, intent, 
+		PendingIntent sender = PendingIntent.getBroadcast(context, Defines.REPEATING_ALARM, intent, 
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		am.cancel(sender);
@@ -175,7 +174,7 @@ public class StaticFunctions {
 		input_time /= Defines.MS_TO_SECOND;
 
 		if(correctForClockin == true)
-			correctTime = correctForClockIn(input_time);
+			correctTime = (correctForClockIn(input_time) * Defines.MS_TO_SECOND);
 		else
 			correctTime = input_time;
 

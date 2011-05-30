@@ -30,6 +30,7 @@ public class ListenerObj{
 	
 	private static ListenerObj instance = null;
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport( this );
+	private final PropertyChangeSupport midnight = new PropertyChangeSupport(this);
 	
 	ListenerObj(){
 	}
@@ -53,6 +54,20 @@ public class ListenerObj{
     public void removePropertyChangeListener( PropertyChangeListener listener )
     {
         this.pcs.removePropertyChangeListener( listener );
+    }
+    
+    public void fireMidnight(){
+		this.midnight.firePropertyChange( "chronos", "update", "" );
+	}
+	
+	public void addMidnightListener( PropertyChangeListener listener )
+    {
+        this.midnight.addPropertyChangeListener( listener );
+    }
+
+    public void removeMidnightListener( PropertyChangeListener listener )
+    {
+        this.midnight.removePropertyChangeListener( listener );
     }
 
 }

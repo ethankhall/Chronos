@@ -69,7 +69,6 @@ public class Email {
 		PayPeriod thisPP = new PayPeriod(i_start, i_end, i_context);
 		Day workingDay = null;
 		Punch tempPunch = null;
-		long timeToday = 0;
 		Note noteTemp;
 
 		int[] tempTime = null;
@@ -79,7 +78,6 @@ public class Email {
 			for(int i = 0; i < thisPP.size(); i++){
 				workingDay = thisPP.get(i);
 				tempTime = workingDay.getDay();
-				timeToday += workingDay.getSeconds();
 
 				cal = new GregorianCalendar(tempTime[0], tempTime[1], tempTime[2]);
 				dateString = Defines.DAYSABBV[( cal.get(GregorianCalendar.DAY_OF_WEEK) - 1 ) % 7] + " " +
@@ -103,7 +101,6 @@ public class Email {
 			for(int i = 0; i < thisPP.size(); i++){
 				workingDay = thisPP.get(i);
 				tempTime = workingDay.getDay();
-				timeToday += workingDay.getTimeWithBreaks();
 
 				cal = new GregorianCalendar(tempTime[0], tempTime[1], tempTime[2]);
 				dateString = Defines.DAYSABBV[( cal.get(GregorianCalendar.DAY_OF_WEEK) - 1 ) % 7] + " " +
@@ -124,11 +121,25 @@ public class Email {
 			break;
 		}
 
-		timeTotal = StaticFunctions.generateTimeString(timeToday, TimeFormat.HOUR_DECIMAL, false);
+		long timeToday = 0;
+		Day temp;
+
+		for(int i = 0; i < thisPP.size(); i++){
+			temp = thisPP.get(i);
+			if ( temp.getTimeWithBreaks() >= 0 ){
+				timeToday += temp.getTimeWithBreaks();
+			}
+		}
+
+		PreferenceSingelton prefs = new PreferenceSingelton();
+		timeTotal = StaticFunctions.generateTimeWeek(timeToday, TimeFormat.HOUR_DECIMAL, false);
 		String payAmount = StaticFunctions.generateDollarAmount(getTimeForMoney(thisPP), 
-				PreferenceSingelton.getInstance().getPayRate());
+				prefs.getPayRate(i_context));
 		returnValue += String.format("\n\tTotal Time:\t %s\n", timeTotal);
 		returnValue += String.format("\tEstimated Pay:\t %s", payAmount);
+		if(timeToday < 0){
+			returnValue += "\n\n\tPlease note that the time above is only an estimate. Your times done add up properly... The time was done based on the time it was sent";
+		}
 		return returnValue;
 	}
 
@@ -136,46 +147,44 @@ public class Email {
 		long returnValue = 0;
 		long tempTime;
 		Day temp;
-		int overtimeSetting = PreferenceSingelton.getInstance().getOvertimeSetting();
-		float overtimeRate = PreferenceSingelton.getInstance().getOvertimeRate();
-		boolean overtimeEnable = PreferenceSingelton.getInstance().isOvertimeEnable();
-		if( overtimeEnable == true){
-			if(overtimeSetting == Defines.OVERTIME_8HOUR){
-				for(int i = 0; i < running.size(); i++){
-					temp = running.get(i);
-					if ( temp.getTimeWithBreaks() >= 0 ){
-						tempTime = temp.getTimeWithBreaks();
-						if(tempTime > Defines.SECONDS_IN_HOUR * 8){
-							returnValue += Defines.SECONDS_IN_HOUR * 8;
-							returnValue += (tempTime - Defines.SECONDS_IN_HOUR * 8) * overtimeRate;	
+		PreferenceSingelton prefs = new PreferenceSingelton();
 
-						} else {
-							returnValue += temp.getTimeWithBreaks();
-						}
+		int overtimeSetting = prefs.getOvertimeSetting(i_context);
+		float overtimeRate = prefs.getOvertimeRate(i_context);
+		boolean overtimeEnable = prefs.getOvertimeEnable(i_context);
+		for(int i = 0; i < running.size(); i++){
+			temp = running.get(i);
+			if ( temp.getTimeWithBreaks() >= 0 ){
+				tempTime = temp.getTimeWithBreaks();
+				if(overtimeSetting == Defines.OVERTIME_8HOUR && overtimeEnable == true){
+					if(tempTime > Defines.SECONDS_IN_HOUR * 8){
+						returnValue += Defines.SECONDS_IN_HOUR * 8;
+						returnValue += (tempTime - Defines.SECONDS_IN_HOUR * 8) * overtimeRate;	
+
+					} else {
+						returnValue += tempTime;
 					}
-				}
-			} else if (overtimeSetting == Defines.OVERTIME_40HOUR ){
-				returnValue = 0;
-				long weekTemp = 0;
-				for(int i = 0; i < PreferenceSingelton.getInstance().getWeeksInPP(); i++){
-					for(int j = 0; j < 7; j++){
-						temp = running.get(i * 7 + j);
-						weekTemp += temp.getTimeWithBreaks();
-					}
-					if ( weekTemp > Defines.SECONDS_IN_HOUR * 40){
-						tempTime = weekTemp - Defines.SECONDS_IN_HOUR * 40;
-						weekTemp = Defines.SECONDS_IN_HOUR * 40;
-						weekTemp += tempTime * overtimeRate;
-					}
-					returnValue += weekTemp;
+				}  else {
+					returnValue += tempTime;
+					//Log.d(TAG, "time for day: " + tempTime);
 				}
 			}
-		} else {
-			for(int i = 0; i < running.size(); i++){
-				temp = running.get(i);
-				if ( temp.getTimeWithBreaks() >= 0 ){
-					returnValue += temp.getTimeWithBreaks();
+		}
+
+		if (overtimeSetting == Defines.OVERTIME_40HOUR && overtimeEnable == true ){
+			returnValue = 0;
+			for(int i = 0; i < prefs.getWeeksInPP(i_context); i++){
+				long weekTemp = 0;
+				for(int j = 0; j < 7; j++){
+					temp = running.get(i * 7 + j);
+					weekTemp += temp.getTimeWithBreaks();
 				}
+				if ( weekTemp > Defines.SECONDS_IN_HOUR * 40){
+					tempTime = weekTemp - Defines.SECONDS_IN_HOUR * 40;
+					weekTemp = Defines.SECONDS_IN_HOUR * 40;
+					weekTemp += tempTime * overtimeRate;
+				}
+				returnValue += weekTemp;
 			}
 		}
 		return returnValue;

@@ -29,9 +29,6 @@
 		<activity android:name="EditPayPeriodOthers" android:theme="@android:style/Theme.Dialog" 
 			android:screenOrientation="portrait"/>
 
-		<service android:name=".service.ChronoService"
-			android:process=":remote" />
-
 		<activity android:name=".note.EditNote" android:theme="@android:style/Theme.Dialog" 
 			android:screenOrientation="portrait" />
 
@@ -44,6 +41,10 @@
 		<activity android:name=".subActivites.HelpActivity"  />
 		
 		<receiver android:name=".service.BackgroundUpdate" android:enabled="true" />
+		
+		<receiver android:name=".service.NotificationBroadcast" android:enabled="true" />
+		
+		<receiver android:name=".service.MidnightBroadcast" android:enabled="true" />
 
 	</application>
 

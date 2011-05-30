@@ -43,6 +43,7 @@ import com.kopysoft.chronos.RowHelper.RowHelperPayPeriod;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
+import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingelton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.PayPeriod;
@@ -69,7 +70,7 @@ public class WeekView extends ListActivity {
 				
 		//weeks_in_pp = prefs.getWeeksInPP();
 		//startOfThisPP = prefs.getStartOfThisPP();
-		StringFormat = prefs.getEditStringFormat();
+		StringFormat = prefs.getPrefEditTime(getApplicationContext());
 		
 		adapter.setFormat(StringFormat);		
 		updateAdapt = new updateAdapter();
@@ -81,13 +82,14 @@ public class WeekView extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.week_view);
 		
-		prefs = PreferenceSingelton.getInstance();
+		prefs = new PreferenceSingelton();
+		
 		ProgressDialog dialog = ProgressDialog.show(WeekView.this, "",
 			"Generating. Please wait...");
 		
-		StringFormat = prefs.getEditStringFormat();
-		weeks_in_pp = prefs.getWeeksInPP();
-		int[] startOfThisPP = prefs.getStartOfThisPP();
+		StringFormat = prefs.getPrefEditTime(getApplicationContext());
+		weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
+		int[] startOfThisPP = prefs.getStartOfThisPP(getApplicationContext());
 		GregorianCalendar cal = new GregorianCalendar(startOfThisPP[0], startOfThisPP[1], startOfThisPP[2]);
 		cal.add(GregorianCalendar.DAY_OF_YEAR, weeks_in_pp * 7);
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
@@ -99,14 +101,12 @@ public class WeekView extends ListActivity {
 		adapter = new RowHelperPayPeriod(getApplicationContext(), thisPP, StringFormat);
 		setListAdapter(adapter);
 		
-		prefs.addPropertyChangeListener(new PropertyChangeListener(){
+		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 
 			public void propertyChange(PropertyChangeEvent event) {
-				
-				StringFormat = prefs.getEditStringFormat();
-				
-				weeks_in_pp = prefs.getWeeksInPP();
-				int[] startOfThisPP2 = prefs.getStartOfThisPP();
+				StringFormat = prefs.getPrefEditTime(getApplicationContext());
+				weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
+				int[] startOfThisPP2 = prefs.getStartOfThisPP(getApplicationContext());
 				
 				adapter.setFormat(StringFormat);		
 				GregorianCalendar cal = new GregorianCalendar(startOfThisPP2[0], 
@@ -176,10 +176,9 @@ public class WeekView extends ListActivity {
 		int[] startOfThisPP = new int[3];
 
 		protected void onPreExecute(){
-			PreferenceSingelton prefs = PreferenceSingelton.getInstance();
 				
-			int[] dateHold = prefs.getStartOfThisPP();
-			int weeks_in_pp = prefs.getWeeksInPP();
+			int[] dateHold = prefs.getStartOfThisPP(getApplicationContext());
+			int weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
 			startOfThisPP =  Chronos.getPP(dateHold, weeks_in_pp);
 
 			GregorianCalendar cal = new GregorianCalendar(startOfThisPP[0], 

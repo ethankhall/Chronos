@@ -34,7 +34,7 @@ import android.preference.PreferenceActivity;
 
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.CVSGenerate;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.ListenerObj;
 
 public class Preferences extends PreferenceActivity {
 	private static final int BACKUP = 0;
@@ -120,6 +120,6 @@ public class Preferences extends PreferenceActivity {
 	@Override
 	public void onPause(){
 		super.onPause();
-		PreferenceSingelton.getInstance().updatePreferences(getApplicationContext());
+		ListenerObj.getInstance().fire();
 	}
 }
