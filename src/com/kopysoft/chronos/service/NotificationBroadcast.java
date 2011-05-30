@@ -43,11 +43,11 @@ public class NotificationBroadcast extends BroadcastReceiver{
 	public final static int NOTIFY_NOTE_ID = 62052;
 	NotificationManager mNotificationManager = null;
 	private static final String TAG = Defines.TAG + " - NB";
+	private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Notification Revieved");
-		Log.d(TAG, "Notification Revieved");
+		if ( DEBUG_PRINT ) Log.d(TAG, "Notification Revieved");
 		boolean runUpdate = intent.getBooleanExtra("runUpdate", true);
 		boolean setMessage = intent.getBooleanExtra("setMessage", false);
 		String noteTitle = intent.getStringExtra("noteTitle");
@@ -59,19 +59,19 @@ public class NotificationBroadcast extends BroadcastReceiver{
 		createNotification(context);	//connect to the notification manager
 
 		if(notificationEnabled == false){
-			Log.d(TAG, "Exit becase of notificationEnabled");
+			if ( DEBUG_PRINT ) Log.d(TAG, "Exit becase of notificationEnabled");
 			removeNotification();
 			return;
 		}
 
 		if(runUpdate == true){
 			runUpdate(timeToday, context);
-			Log.d(TAG, "Run Update:" + timeToday);
+			if ( DEBUG_PRINT ) Log.d(TAG, "Run Update:" + timeToday);
 		}
 
 		if(setMessage == true){
 			postLunchNote(noteTitle, noteMessage, context);
-			Log.d(TAG, "Put Message: " + noteTitle);
+			if ( DEBUG_PRINT ) Log.d(TAG, "Put Message: " + noteTitle);
 		}
 	}
 
@@ -102,8 +102,8 @@ public class NotificationBroadcast extends BroadcastReceiver{
 		GregorianCalendar cal = new GregorianCalendar();
 
 		long temp = timeToday + cal.getTimeInMillis();
-		Log.d(TAG, "Time in MS: " + cal.getTimeInMillis());
-		Log.d(TAG, "Temp: " + temp);
+		if ( DEBUG_PRINT ) Log.d(TAG, "Time in MS: " + cal.getTimeInMillis());
+		if ( DEBUG_PRINT ) Log.d(TAG, "Temp: " + temp);
 
 		if(temp <= 0 || temp > 24 * 60 * 60 * 1000)	{
 			removeTimeNotification();

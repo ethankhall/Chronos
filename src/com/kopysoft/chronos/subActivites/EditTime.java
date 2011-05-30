@@ -49,12 +49,13 @@ public class EditTime extends Activity {
 	long id;
 	GregorianCalendar cal = null;
 	int position = 0;
+	private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edittime);
-		if(Defines.DEBUG_PRINT) Log.d(TAG, "Creating EditTime");
+		if(DEBUG_PRINT) Log.d(TAG, "Creating EditTime");
 
 		id = getIntent().getExtras().getLong("id");
 		long time = getIntent().getExtras().getLong("time");
@@ -68,7 +69,7 @@ public class EditTime extends Activity {
 		timeSet[0] = cal.get(GregorianCalendar.HOUR_OF_DAY);
 		timeSet[1] = cal.get(GregorianCalendar.MINUTE);
 
-		Log.d(TAG, "Input:" + time + "\tHour: " + timeSet[0] + "\tMin: " + timeSet[1]);
+		if(DEBUG_PRINT) Log.d(TAG, "Input:" + time + "\tHour: " + timeSet[0] + "\tMin: " + timeSet[1]);
 
 		TimePicker timePick = (TimePicker) findViewById(R.id.TimePicker01);
 		timePick.setCurrentHour(timeSet[0]);
@@ -103,7 +104,7 @@ public class EditTime extends Activity {
 		cal.set(GregorianCalendar.SECOND, 0);
 		long time = cal.getTimeInMillis();
 		//if(Defines.DEBUG_PRINT) Log.d(TAG, "Return Time:" + cal.getTimeInMillis() + "\tHour: " + hour + "\tMin: " + min);
-		Log.d(TAG, "Return Time:" + cal.getTimeInMillis() + "\tHour: " + hour + "\tMin: " + min);
+		if(DEBUG_PRINT) Log.d(TAG, "Return Time:" + cal.getTimeInMillis() + "\tHour: " + hour + "\tMin: " + min);
 		
 		int type = 0;
 		int actionReason = 0;
@@ -116,7 +117,7 @@ public class EditTime extends Activity {
 		if(spinner.getSelectedItemPosition() != Spinner.INVALID_POSITION)
 			actionReason = (spinner.getSelectedItemPosition());
 		
-		Log.d(TAG, "ID: " + id);
+		if(DEBUG_PRINT) Log.d(TAG, "ID: " + id);
 		
 		if(v.getId() == R.id.OkButton){ 
 			Intent returnIntent = new Intent();
