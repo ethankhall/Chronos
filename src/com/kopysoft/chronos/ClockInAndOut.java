@@ -62,12 +62,11 @@ public class ClockInAndOut extends ListActivity {
 
 	//private long time= 0;	//Time in seconds
 
-	RowHelperToday adapter = null;
+	private RowHelperToday adapter = null;
 	private Handler mHandler = new Handler();
-	PreferenceSingelton prefs = null;
+	private PreferenceSingelton prefs = null;
 
-	TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
-	GregorianCalendar currentDay = null;
+	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
 
 	/**
 	 * onDestory method: Called when the activity is killed and GCed
@@ -119,8 +118,6 @@ public class ClockInAndOut extends ListActivity {
 				com.kopysoft.chronos.service.NotificationBroadcast.class);
 		runIntent = NotificationBroadcast.runUpdate(runIntent, time);
 		getApplicationContext().sendBroadcast(runIntent);
-		currentDay = new GregorianCalendar();
-
 	}
 
 	@Override
@@ -158,7 +155,6 @@ public class ClockInAndOut extends ListActivity {
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Pay Today: " + generateDollarAmount(time, PAY_RATE));
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Current Time: " + generateTimeString(time));
 		updateData();
-		currentDay = new GregorianCalendar();
 
 		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
@@ -181,7 +177,6 @@ public class ClockInAndOut extends ListActivity {
 						com.kopysoft.chronos.service.NotificationBroadcast.class);
 				runIntent = NotificationBroadcast.runUpdate(runIntent, time);
 				getApplicationContext().sendBroadcast(runIntent);
-				currentDay = new GregorianCalendar();
 			}
 		});
 		
@@ -202,8 +197,6 @@ public class ClockInAndOut extends ListActivity {
 				updatePayRate(); //Updates the pay rate and shows or hides the pay info
 
 				updateData();
-				currentDay = new GregorianCalendar();
-
 			}
 		});
 

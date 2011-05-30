@@ -55,22 +55,22 @@ import com.kopysoft.chronos.types.PayPeriod;
 public class PastView extends ListActivity{
 
 	//private Chronos chronoSaver = null;
-	PreferenceSingelton prefs = null;
+	private PreferenceSingelton prefs = null;
 
 	private static final String TAG = Defines.TAG + " - PV";
 
-	RowHelperPastView adapter = null;
+	private RowHelperPastView adapter = null;
 
 	private double PAY_RATE = 8.75;
-	int[] date;
-	int weeks_in_pp;
+	private int[] date;
+	private int weeks_in_pp;
 
-	float overtimeRate;
-	boolean overtimeEnable;
-	int overtimeSetting;
+	private float overtimeRate;
+	private boolean overtimeEnable;
+	private int overtimeSetting;
 
-	TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
-	ViewingPayPeriod holder = null;
+	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
+	private ViewingPayPeriod holder = null;
 	private updateAdapter updateAdapt = null; 
 
 	@Override

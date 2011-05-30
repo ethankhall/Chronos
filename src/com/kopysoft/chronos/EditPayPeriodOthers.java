@@ -47,57 +47,52 @@ import com.kopysoft.chronos.types.PayPeriod;
 public class EditPayPeriodOthers extends ListActivity {
 
 	private static final String TAG = Defines.TAG + " - WV";
-	Chronos chronoSaver = null;
-	RowHelperPayPeriod adapter = null;
-	PreferenceSingelton prefs = null;
-	
-	int weeks_in_pp = 0;
-	
-	ArrayList<Integer> daysToUpdate = new ArrayList<Integer>();
-	TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
-	
+	private RowHelperPayPeriod adapter = null;
+	private PreferenceSingelton prefs = null;
+
+	private int weeks_in_pp = 0;
+
+	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
+
 	int[] date = new int[3];
 
 	@Override
 	public void onResume(){
 		super.onResume();
-		
-		chronoSaver = new Chronos(getApplicationContext());	//Connect to content provider
-		//StringFormat = Chronos.TimeFormater(app_preferences.getString("viewPrefTime", "1"));
+
 		StringFormat = prefs.getPrefEditTime(getApplicationContext());
-		
+
 		GregorianCalendar cal = new GregorianCalendar(date[0], 
 				date[1], date[2]);
 		cal.add(GregorianCalendar.DAY_OF_YEAR, 7 * weeks_in_pp);
 		int[] endOfPP = {
-			cal.get(GregorianCalendar.YEAR),
-			cal.get(GregorianCalendar.MONTH),
-			cal.get(GregorianCalendar.DAY_OF_MONTH)
+				cal.get(GregorianCalendar.YEAR),
+				cal.get(GregorianCalendar.MONTH),
+				cal.get(GregorianCalendar.DAY_OF_MONTH)
 		};
-		
+
 		PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
 		for(int i = 0; i < thisPP.size(); i++){
 			adapter.updateDay(i, thisPP.get(i));
 		}
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_pp_others);
 
-		chronoSaver = new Chronos(getApplicationContext());	//Connect to content provider
-		
+
 		prefs = new PreferenceSingelton();
 
 		//String string_weeks_in_pp = app_preferences.getString("weeks_in_pp", "2");
 		//weeks_in_pp = Integer.parseInt(string_weeks_in_pp);
 		weeks_in_pp = prefs.getWeeksInPP(getApplicationContext());
-		
+
 		date[0] = getIntent().getExtras().getInt("year");
 		date[1] = getIntent().getExtras().getInt("month");
 		date[2] = getIntent().getExtras().getInt("day");
-		
+
 		if(Defines.DEBUG_PRINT) Log.d(TAG, "Input Date: " + 
 				String.format("(%d/%d/%d)", date[0], date[1], date[2]));
 
@@ -105,9 +100,9 @@ public class EditPayPeriodOthers extends ListActivity {
 		cal.add(GregorianCalendar.DAY_OF_YEAR, weeks_in_pp * 7);
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)};
-		
+
 		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
-		
+
 		//StringFormat = Chronos.TimeFormater(app_preferences.getString("editPrefTime", "1"));
 		StringFormat = prefs.getPrefEditTime(getApplicationContext());
 
@@ -129,7 +124,7 @@ public class EditPayPeriodOthers extends ListActivity {
 
 			}
 		});
-		
+
 	}
 
 	protected void onActivityResult (int requestCode, int resultCode, Intent data){
@@ -149,7 +144,7 @@ public class EditPayPeriodOthers extends ListActivity {
 	public void onDestroy() {
 		super.onDestroy();
 	}
-	
+
 	public void callback(View v){
 		switch(v.getId()){
 		case R.id.next:
@@ -162,7 +157,7 @@ public class EditPayPeriodOthers extends ListActivity {
 			break;
 		}
 	}
-	
+
 	private void nextButton(){
 		GregorianCalendar cal = new GregorianCalendar(date[0], date[1], date[2]);
 		GregorianCalendar newCal = new GregorianCalendar();
@@ -170,33 +165,33 @@ public class EditPayPeriodOthers extends ListActivity {
 		if(newCal.compareTo(cal) == -1){
 			return;	//Prevent Time Paradox
 		}
-		
+
 		date[0] = cal.get(Calendar.YEAR);
 		date[1] = cal.get(Calendar.MONTH);
 		date[2] = cal.get(Calendar.DAY_OF_MONTH);
-		
+
 		cal.add(GregorianCalendar.DAY_OF_YEAR, weeks_in_pp * 7);
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)};
-		
+
 		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
 		for(int i = 0; i < thisPP.size(); i++){
 			adapter.updateDay(i, thisPP.get(i));
 		}
 		adapter.notifyDataSetChanged();
 	}
-	
+
 	private void prevButton(){
 		GregorianCalendar cal = new GregorianCalendar(date[0], date[1], date[2]);
 		cal.add(Calendar.DAY_OF_YEAR, weeks_in_pp * -7);
 		date[0] = cal.get(Calendar.YEAR);
 		date[1] = cal.get(Calendar.MONTH);
 		date[2] = cal.get(Calendar.DAY_OF_MONTH);
-		
+
 		cal.add(GregorianCalendar.DAY_OF_YEAR, weeks_in_pp * 7);
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)};
-		
+
 		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
 		for(int i = 0; i < thisPP.size(); i++){
 			adapter.updateDay(i, thisPP.get(i));
