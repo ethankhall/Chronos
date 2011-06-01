@@ -31,6 +31,7 @@ public class ListenerObj{
 	private static ListenerObj instance = null;
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport( this );
 	private final PropertyChangeSupport midnight = new PropertyChangeSupport(this);
+	private final PropertyChangeSupport fling = new PropertyChangeSupport(this);
 	
 	ListenerObj(){
 	}
@@ -69,5 +70,26 @@ public class ListenerObj{
     {
         this.midnight.removePropertyChangeListener( listener );
     }
+    
+    /*  
+     * Fling!
+     */
+    public void fireFlingLeft(){
+		this.fling.firePropertyChange( "chronos", "", "left" );
+	}
+    public void fireFlingRight(){
+		this.fling.firePropertyChange( "chronos", "", "right" );
+	}
+	
+	public void addFlingListener( PropertyChangeListener listener )
+    {
+        this.fling.addPropertyChangeListener( listener );
+    }
+
+    public void removeFlingListener( PropertyChangeListener listener )
+    {
+        this.fling.removePropertyChangeListener( listener );
+    }
+
 
 }

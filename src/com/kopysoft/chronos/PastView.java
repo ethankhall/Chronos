@@ -71,7 +71,7 @@ public class PastView extends ListActivity{
 
 	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
 	private ViewingPayPeriod holder = null;
-	private updateAdapter updateAdapt = null; 
+	private updateAdapter updateAdapt = null;
 
 	@Override
 	public void onResume(){

@@ -72,6 +72,7 @@ public class RowHelperPastView extends BaseAdapter {
 		for(int i = 0; i < gDayArray.size(); i++){
 			gDayArray.get(i).updateDay();
 		}
+		notifyDataSetChanged();
 	}
 
 	public void updateDay( int poition, Day replace){

@@ -54,7 +54,7 @@ import com.kopysoft.chronos.singelton.PreferenceSingelton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Punch;
 
-public class ClockInAndOut extends ListActivity {
+public class ClockInAndOut extends ListActivity{
 
 	private static final String TAG = Defines.TAG + " - CIAO";
 	private double PAY_RATE = 8.75;
@@ -161,7 +161,7 @@ public class ClockInAndOut extends ListActivity {
 				StringFormat = prefs.getPrefPunchTime(getApplicationContext());
 				updateData();
 				updatePayRate();
-				
+
 				updateAdapter(true);
 
 				long time = adapter.getTimeWithBreaks();
@@ -179,7 +179,7 @@ public class ClockInAndOut extends ListActivity {
 				getApplicationContext().sendBroadcast(runIntent);
 			}
 		});
-		
+
 		ListenerObj.getInstance().addMidnightListener(new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
 				GregorianCalendar cal = new GregorianCalendar();
@@ -206,6 +206,7 @@ public class ClockInAndOut extends ListActivity {
 	//----------------------------------------------------
 	//			Clikcing stuff
 	//----------------------------------------------------
+	
 	/**
 	 * 	onActivityResult: when the popup dialog calls "OK" or "Cancel"
 	 * 
@@ -449,5 +450,7 @@ public class ClockInAndOut extends ListActivity {
 			mHandler.postDelayed(mUpdateTimeTask, 1000);
 		}
 	};
+
+	
 
 }

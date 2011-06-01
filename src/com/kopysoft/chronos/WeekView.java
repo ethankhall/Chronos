@@ -59,9 +59,7 @@ public class WeekView extends ListActivity {
 	private int weeks_in_pp = 0;
 	
 	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
-
-	//private Handler mHandler = new Handler();
-
+	
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -147,7 +145,7 @@ public class WeekView extends ListActivity {
 		dialog.cancel();
 		
 	}
-
+	
 	protected void onActivityResult (int requestCode, int resultCode, Intent data){
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG,"Activity Update");
 		if( resultCode == Activity.RESULT_CANCELED){

@@ -23,7 +23,6 @@ package com.kopysoft.chronos;
  *  
  */
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -37,7 +36,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.kopysoft.chronos.RowHelper.RowHelperPayPeriod;
-import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.singelton.PreferenceSingelton;

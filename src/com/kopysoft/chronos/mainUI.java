@@ -54,10 +54,10 @@ import com.kopysoft.chronos.singelton.ViewingPayPeriod;
 
 public class mainUI extends TabActivity {
 	/** Called when the activity is first created. */
-
 	private static final String TAG = Defines.TAG + " - Main";
 
 	private PreferenceSingelton prefs = null;
+	private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
 
 	public void onStop(){
 		super.onStop();
@@ -96,7 +96,7 @@ public class mainUI extends TabActivity {
 		//chronoSaver.printAll();
 
 		setUpAlarm();
-		
+
 		GregorianCalendar midnightAlarm = new GregorianCalendar();
 		midnightAlarm.add(Calendar.DAY_OF_YEAR, 1);
 		midnightAlarm.set(Calendar.HOUR_OF_DAY, 0);
@@ -137,13 +137,12 @@ public class mainUI extends TabActivity {
 
 		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
-				//Log.d(TAG, "Listener");
+				if(DEBUG_PRINT) Log.d(TAG, "Listener");
 				setUpAlarm();
 			}
 		});
-
-
 	}
+
 
 	public void setUpAlarm(){
 		//Log.d(TAG, "set up Alarm");
@@ -351,5 +350,4 @@ public class mainUI extends TabActivity {
 
 		}
 	}
-
 }
