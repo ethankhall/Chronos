@@ -40,7 +40,7 @@ import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 
-public class EditTime extends Activity {
+public class EditTime extends Activity  {
 
 	private static final String TAG = Defines.TAG + " - ET";
 	Cursor mCursor = null;
@@ -85,6 +85,7 @@ public class EditTime extends Activity {
 	public void callBack(View v){
 		
 		TimePicker timePick = (TimePicker) findViewById(R.id.TimePicker01);
+		timePick.clearFocus();
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerType);
 		
 		int hour = timePick.getCurrentHour();
