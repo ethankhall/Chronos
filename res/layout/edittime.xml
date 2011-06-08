@@ -10,18 +10,6 @@
 	android:layout_height="wrap_content"
 	android:addStatesFromChildren="true" />
 	
-<TextView
-	android:layout_width="fill_parent" 
-	android:layout_height="wrap_content" 
-	android:text="Punch Type"
-	android:gravity="center" />
-	
-<ToggleButton android:id="@+id/toggleButtonClock" 
-	android:layout_width="fill_parent" 
-	android:layout_height="wrap_content" 
-	android:textOff="Clocked Out"
-	android:textOn="Clocked In"/>
-	
 <Spinner android:layout_height="wrap_content" 
 	android:id="@+id/spinnerType" 
 	android:layout_width="fill_parent" /> 

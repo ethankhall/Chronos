@@ -85,6 +85,7 @@ public class mainUI extends TabActivity {
 		prefs = new PreferenceSingelton();
 
 		Chronos forUpdate = new Chronos(getApplicationContext());
+		forUpdate.onUpgrade(forUpdate.getWritableDatabase(), 10, 11);
 		SQLiteDatabase db = forUpdate.getWritableDatabase();
 		db.close();
 		StaticFunctions.fixMidnight(prefs.getStartOfThisPP(getApplicationContext()), 

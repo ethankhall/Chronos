@@ -27,10 +27,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
-import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 
 public class PayPeriod {
@@ -44,75 +41,21 @@ public class PayPeriod {
 		_start = new GregorianCalendar(start[0], start[1], start[2]);
 		_end = new GregorianCalendar(end[0], end[1], end[2]);
 		
-		ArrayList<Punch> returnValue = new ArrayList<Punch>();
-		Chronos chrono = new Chronos(AppContext.getAppContext());
-		SQLiteDatabase db = chrono.getReadableDatabase();
-
-		Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK, 
-				new String[] { "_id", "punch_type", "time", "actionReason" }, 
-				"( time >= ? AND time <= ? )", 
-				new String[] {Long.toString(_start.getTimeInMillis()), 
-					Long.toString(_end.getTimeInMillis() + 24 * 60 * 60 * 1000 -1) }, 
-				null, null, "time ASC ");	//Get all time punches between today at midnight and midnight
-
-		final int colType = cursor.getColumnIndex("punch_type");
-		final int colTime = cursor.getColumnIndex("time");
-		final int colId = cursor.getColumnIndex("_id");
-		final int colAR = cursor.getColumnIndex("actionReason");
-
-		int punch, id, actionReason;
-		long time;
-		if (cursor.moveToFirst()) {
-			do {
-				punch = (int)cursor.getLong(colType);
-				time = cursor.getLong(colTime);
-				id = (int)cursor.getLong(colId);
-				actionReason = (int)cursor.getLong(colAR);
-				returnValue.add(new Punch(time, punch, id, actionReason));
-
-			} while (cursor.moveToNext());
-			cursor.close();
-		}
-
-		if (cursor != null && !cursor.isClosed()) {
-			cursor.close();
-		}
-
-		db.close();
-		
 		GregorianCalendar temp = new GregorianCalendar(start[0], start[1], start[2]);
 
 		long difference = _end.getTimeInMillis() - _start.getTimeInMillis();
 		difference = difference / 1000 / 60 / 60 / 24;
-		
-		ArrayList<Punch> ArrayOfDayPunches = null;
+
 		int[] tempDayInfo = new int[3];
-		long tempTime;
 		for(int i = 0; i < difference; i++){
 			tempDayInfo[0] = temp.get(GregorianCalendar.YEAR);
 			tempDayInfo[1] = temp.get(GregorianCalendar.MONTH);
 			tempDayInfo[2] = temp.get(GregorianCalendar.DAY_OF_MONTH);
-			ArrayOfDayPunches = new ArrayList<Punch>();
-			tempTime = temp.getTimeInMillis();
-			
-			//Log.d(TAG, "tempTime: " + tempTime);
-			//Log.d(TAG, "end tempTime: " + (tempTime + 24*60*60*1000));
-			for(int indexArray = 0; indexArray < returnValue.size(); indexArray++){
-				Punch tempPunch = returnValue.get(indexArray);
-				//Log.d(TAG, "Punch Time: " + tempPunch.getTime());
-				
-				if(tempPunch.getTime() > tempTime && tempPunch.getTime() < tempTime + 24*60*60*1000){
-					ArrayOfDayPunches.add(tempPunch);
-					//Log.d(TAG, "Instert!");
-				}
-			}
-			
-			//Log.d(TAG, "Size: " + ArrayOfDayPunches.size());
 			
 			Note todayNote = new Note(tempDayInfo, context);
 			
-			Day instartDay = new Day(tempDayInfo, ArrayOfDayPunches, todayNote);
-			
+			Day instartDay = new Day(tempDayInfo, context, todayNote);
+			instartDay.sort();
 			_days.add(instartDay);
 			temp.add(GregorianCalendar.DAY_OF_YEAR, 1);
 		}

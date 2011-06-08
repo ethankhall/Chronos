@@ -42,12 +42,12 @@ import com.kopysoft.chronos.enums.Defines;
 
 public class Day {
 
-	GregorianCalendar _date = null;
-	ArrayList<Punch> _punches = null;
-	ArrayList<Punch> _removed = null;
-	Note _todayNote = null; 
+	private GregorianCalendar _date = null;
+	private ArrayList<Punch> _punches = null;
+	private ArrayList<Punch> _removed = null;
+	private Note _todayNote = null; 
 	private static final String TAG = Defines.TAG + " - DAY";
-	boolean lunchTaken = false;
+	private boolean printDebug = Defines.DEBUG_PRINT;
 
 	/**
 	 * Creates a Day class
@@ -64,6 +64,15 @@ public class Day {
 	public Day(int dayInfo[], ArrayList<Punch> punches, Note note){
 		_date = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 		_punches = punches;
+		_todayNote = note;
+		_removed = new ArrayList<Punch>();
+		
+		//Log.d(TAG, "Size: " + _punches.size());
+	}
+	
+	public Day(int dayInfo[], Context context, Note note){
+		_date = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
+		_punches = getPunchesForDay(_date);
 		_todayNote = note;
 		_removed = new ArrayList<Punch>();
 		
@@ -156,7 +165,7 @@ public class Day {
 	}
 
 	private synchronized ArrayList<Punch> getPunchesForDay(GregorianCalendar cal){
-		if(Defines.DEBUG_PRINT)  Log.d(TAG, "update day");
+		if(printDebug)  Log.d(TAG, "update day");
 		ArrayList<Punch> returnValue = new ArrayList<Punch>();
 		Chronos chrono = new Chronos(AppContext.getAppContext());
 		SQLiteDatabase db = chrono.getReadableDatabase();
@@ -166,25 +175,23 @@ public class Day {
 		endMilli = startMilli + 24 * 60 * 60 * 1000;
 
 		Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK, 
-				new String[] { "_id", "punch_type", "time", "actionReason" }, 
+				new String[] { "_id", "time", "actionReason" }, 
 				"( time >= ? AND time <= ? )", 
 				new String[] {Long.toString(startMilli), Long.toString(endMilli) }, 
 				null, null, "time ASC ");	//Get all time punches between today at midnight and midnight
 
-		final int colType = cursor.getColumnIndex("punch_type");
 		final int colTime = cursor.getColumnIndex("time");
 		final int colId = cursor.getColumnIndex("_id");
 		final int colAR = cursor.getColumnIndex("actionReason");
 
-		int punch, id, actionReason;
+		int id, actionReason;
 		long time;
 		if (cursor.moveToFirst()) {
 			do {
-				punch = (int)cursor.getLong(colType);
 				time = cursor.getLong(colTime);
 				id = (int)cursor.getLong(colId);
 				actionReason = (int)cursor.getLong(colAR);
-				returnValue.add(new Punch(time, punch, id, actionReason));
+				returnValue.add(new Punch(time, Defines.IN, id, actionReason));
 
 			} while (cursor.moveToNext());
 			cursor.close();
@@ -195,6 +202,32 @@ public class Day {
 		}
 
 		db.close();
+		
+		//Update the day's punch Types
+		returnValue = updateType(returnValue);
+		return returnValue;
+	}
+	
+	private ArrayList<Punch> updateType(ArrayList<Punch> returnValue){
+		//ArrayList<Punch> returnValue = new ArrayList<Punch>();
+		int[] typePunches = new int[Defines.MAX_CLOCK_OPT];
+		for(int i = 0; i < Defines.MAX_CLOCK_OPT; i++)
+			typePunches[i] = 0;
+		for(int i = 0; i< returnValue.size(); i++){
+			Punch tempPunch = returnValue.get(i);
+			int reason = tempPunch.getAction();
+			if((( typePunches[reason]) % 2 ) == 1){
+				tempPunch.setType(Defines.OUT);
+				if(printDebug) Log.d(TAG, "index: " + i + "\tSet Out");
+			} else {
+				tempPunch.setType(Defines.IN);
+			}
+			if(printDebug) Log.d(TAG, "index: " + i + "\t Type: " + tempPunch.getType() + "\tAction: " + tempPunch.getAction());
+			typePunches[reason] = typePunches[reason] + 1;
+			returnValue.set(i, tempPunch);
+		}
+		for(int i = 0; i < Defines.MAX_CLOCK_OPT; i++)
+			if(printDebug) Log.d(TAG, "typePunces[" + i + "]: " + typePunches[i]);
 		return returnValue;
 	}
 
@@ -272,7 +305,7 @@ public class Day {
 		for(int i = 0; i < _punches.size(); i++){
 			if(_punches.get(i).isNeedToUpdate()){
 				_punches.get(i).commitToDb(AppContext.getAppContext());
-				if(Defines.DEBUG_PRINT) Log.d(TAG, "Punch: " + _punches.get(i).getTime());
+				if(printDebug) Log.d(TAG, "Punch: " + _punches.get(i).getTime());
 			}
 		}
 		for(int i = 0; i < _removed.size(); i++){
@@ -287,7 +320,7 @@ public class Day {
 		for(int i = 0; i < _punches.size(); i++){
 			_punches.get(i).setNeedToUpdate(true);
 			_punches.get(i).commitToDb(AppContext.getAppContext());
-			if(Defines.DEBUG_PRINT) Log.d(TAG, "Punch: " + _punches.get(i).getTime());
+			if(printDebug) Log.d(TAG, "Punch: " + _punches.get(i).getTime());
 		}
 	}
 
@@ -341,7 +374,7 @@ public class Day {
 	}
 
 	public void setByID(long id, Punch newPunch){
-		if(Defines.DEBUG_PRINT) Log.d(TAG, "SetByID: " + id);
+		if(printDebug) Log.d(TAG, "SetByID: " + id);
 		for( int i = _punches.size(); i > 0; i--){
 			if(_punches.get(i - 1).getId() == id){
 				_punches.set(i - 1, newPunch);
@@ -376,5 +409,6 @@ public class Day {
 
 	public void sort(){
 		Collections.sort(_punches, new Punch.PunchComparator());
+		_punches = updateType(_punches);
 	}
 }

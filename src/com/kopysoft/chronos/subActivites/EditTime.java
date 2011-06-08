@@ -35,7 +35,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TimePicker;
-import android.widget.ToggleButton;
 
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
@@ -60,7 +59,6 @@ public class EditTime extends Activity {
 		id = getIntent().getExtras().getLong("id");
 		long time = getIntent().getExtras().getLong("time");
 		int actionReason = getIntent().getExtras().getInt("actionReason");
-		int getType = getIntent().getExtras().getInt("type");
 		position = getIntent().getExtras().getInt("position", -1);
 
 		int[] timeSet = new int[2];
@@ -75,13 +73,6 @@ public class EditTime extends Activity {
 		timePick.setCurrentHour(timeSet[0]);
 		timePick.setCurrentMinute(timeSet[1]);
 		timePick.setIs24HourView(DateFormat.is24HourFormat(getApplicationContext()));
-		
-		ToggleButton toggle = (ToggleButton)findViewById(R.id.toggleButtonClock);
-		if ( getType == Defines.IN ){
-			toggle.setChecked(true);
-		}else{
-			toggle.setChecked(false);
-		}
 
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerType);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -94,7 +85,6 @@ public class EditTime extends Activity {
 	public void callBack(View v){
 		
 		TimePicker timePick = (TimePicker) findViewById(R.id.TimePicker01);
-		ToggleButton toggle = (ToggleButton)findViewById(R.id.toggleButtonClock);
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerType);
 		
 		int hour = timePick.getCurrentHour();
@@ -106,14 +96,7 @@ public class EditTime extends Activity {
 		//if(Defines.DEBUG_PRINT) Log.d(TAG, "Return Time:" + cal.getTimeInMillis() + "\tHour: " + hour + "\tMin: " + min);
 		if(DEBUG_PRINT) Log.d(TAG, "Return Time:" + cal.getTimeInMillis() + "\tHour: " + hour + "\tMin: " + min);
 		
-		int type = 0;
 		int actionReason = 0;
-		if (toggle.isChecked()) {
-			type = ( Defines.IN );
-		} else {
-			type = ( Defines.OUT );
-		}
-		
 		if(spinner.getSelectedItemPosition() != Spinner.INVALID_POSITION)
 			actionReason = (spinner.getSelectedItemPosition());
 		
@@ -123,7 +106,6 @@ public class EditTime extends Activity {
 			Intent returnIntent = new Intent();
 			returnIntent.putExtra("id", id);
 			returnIntent.putExtra("time", time);
-			returnIntent.putExtra("type", type);
 			returnIntent.putExtra("actionReason", actionReason);
 			returnIntent.putExtra("position", position);
 			setResult(Activity.RESULT_OK, returnIntent);

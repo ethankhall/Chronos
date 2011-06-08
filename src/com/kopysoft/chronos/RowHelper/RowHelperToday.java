@@ -41,71 +41,87 @@ public class RowHelperToday extends BaseAdapter {
 	Day workingDay = null;
 	//@SuppressWarnings("unused")
 	//private static final String TAG = Defines.TAG + " - RH_TODAY";
+	//private boolean printDebug= true;
 
 	public RowHelperToday(Context context, Day punchArray) {
+		
 		gContext = context;
 		workingDay = punchArray;
 	}
 
 	public int getCount() {
+		
 		//workingDay.updateDay();
 		return workingDay.getSize();
 	}
 	
 	public boolean needToUpdateClock(){
+		
 		return workingDay.needToUpdateClock();
 	}
 
 	public Punch getItem(int arg0) {
+		
 		return workingDay.get(arg0);
 	}
 	
 	public void add(Punch arg0){
+		
 		workingDay.add(arg0);
 		workingDay.updateDay();
-		workingDay.sort();
+		notifyDataSetChanged();	
 	}
 
 	public long getItemId(int arg0) {
+		
 		return arg0;
 	}
 
 	public void updateDay(boolean update){
+		
 		if(update == true){
 			//Log.d(TAG, "updateDay");
 			workingDay.updateDay();
 		}
-		notifyDataSetChanged();
+		sort();
 	}
 	
 	public void remove(int id){
+		
 		workingDay.remove(id);
 		workingDay.updateDay();
-		notifyDataSetChanged();		
+		notifyDataSetChanged();	
 	}
 	
 	public void sort(){
+		
 		workingDay.sort();
+		notifyDataSetChanged();		
 	}
 	
 	public Punch getByID( long ID ){
+		
 		return workingDay.getByID(ID);
 	}
 	
 	public void setByID( long ID, Punch newPunch){
+		
 		workingDay.setByID(ID, newPunch);
+		sort();
 	}
 	
 	public long[] getTime(){
+		
 		return workingDay.getArrayOfTime();
 	}
 	
 	public long getTimeWithBreaks(){
+		
 		return workingDay.getTimeWithBreaks();
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-
+		
 		Punch temp = workingDay.get(position);
 		long time = temp.getTime();
 

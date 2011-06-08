@@ -49,7 +49,7 @@ public class Punch implements Comparable<Punch> {
 	
 	private final static String insertString = 
 		"INSERT INTO " + Chronos.TABLE_NAME_CLOCK + 
-		"(punch_type, time, actionReason) VALUES (?, ?, ?)";
+		"(time, actionReason) VALUES (?, ?)";
 	//@SuppressWarnings("unused")
 	private static final String TAG = Defines.TAG + " - Punch";
 
@@ -72,6 +72,7 @@ public class Punch implements Comparable<Punch> {
 	
 	public Punch(long i_id, Context gContext){
 		id = i_id;
+		type = Defines.IN;
 		genPunch(gContext);	
 	}
 	
@@ -80,19 +81,17 @@ public class Punch implements Comparable<Punch> {
 		Chronos chrono = new Chronos(context);
 		SQLiteDatabase db = chrono.getReadableDatabase();
 		Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK, 
-				new String[] { "_id", "punch_type", "time", "actionReason" }, 
+				new String[] { "_id", "time", "actionReason" }, 
 				" _id = ? ", 
 				new String[] {Long.toString(id) }, 
 				null, null, "time ASC ");	//Get all time punches between today at midnight and midnight
 
-		final int colType = cursor.getColumnIndex("punch_type");
 		final int colTime = cursor.getColumnIndex("time");
 		final int colAR = cursor.getColumnIndex("actionReason");
 		
 		if (cursor.moveToFirst()) {
 			do {
 				time = cursor.getLong(colTime);
-				type = (int)cursor.getLong(colType);
 				actionReason = (int)cursor.getLong(colAR);
 
 			} while (cursor.moveToNext());
@@ -120,6 +119,10 @@ public class Punch implements Comparable<Punch> {
 		return time;
 	}
 
+	/** Method for getType()
+	 * 
+	 * @return returns either Defines.IN or Defines.OUT
+	 */
 	public int getType(){
 		return type;
 	}
@@ -131,7 +134,6 @@ public class Punch implements Comparable<Punch> {
 	}
 
 	public void setType(int i_type){
-		needToUpdate = true;
 		type = i_type;
 	}
 	
@@ -152,13 +154,14 @@ public class Punch implements Comparable<Punch> {
 
 	public String generateTypeString(Context contex){
 		String[] stringArray = contex.getResources().getStringArray(R.array.TimeTitles);
-		String returnValue = stringArray[ actionReason ];
+		String actReason = stringArray[ actionReason ];
+		String returnValue = "";
 		if(Defines.DEBUG_PRINT) Log.d(TAG, "Action_Reason:" + actionReason + "\tID: " + id);
 		if(Defines.DEBUG_PRINT) Log.d(TAG, "Reason: " + returnValue);
 		if( type == Defines.IN ){
-			returnValue += " - I";
+			returnValue = "In  - ("  + actReason + ")";
 		} else {
-			returnValue += " - O";
+			returnValue = "Out - ("  + actReason + ")";
 		}
 		return returnValue;
 	}
@@ -187,9 +190,8 @@ public class Punch implements Comparable<Punch> {
 			SQLiteStatement insertStmt = db.compileStatement(insertString);
 			long temp = time - (time % 1000);
 			
-			insertStmt.bindLong(1, type);
-			insertStmt.bindLong(2, temp);
-			insertStmt.bindLong(3, actionReason);
+			insertStmt.bindLong(1, temp);
+			insertStmt.bindLong(2, actionReason);
 			returnValue = insertStmt.executeInsert();
 			id = returnValue;
 			
@@ -199,7 +201,6 @@ public class Punch implements Comparable<Punch> {
 		} else if(needToUpdate == true){
 			if(Defines.DEBUG_PRINT) Log.d(TAG, "time: " + time);
 			ContentValues newConent = new ContentValues();
-			newConent.put("punch_type", type);
 			newConent.put("time", time);
 			newConent.put("actionReason", actionReason);
 			if(Defines.DEBUG_PRINT) Log.d(TAG, "ID: " + id);

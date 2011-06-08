@@ -23,6 +23,10 @@ package com.kopysoft.chronos.content;
  *  
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -34,6 +38,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Environment;
 import android.util.Log;
 
 import com.kopysoft.chronos.enums.Defines;
@@ -47,14 +52,16 @@ public class Chronos extends SQLiteOpenHelper {
 	private static final String TAG = "Chronos - SQL";
 
 	//0.9 = 7
-	//1.0.1 = 10
-	private static final int DATABASE_VERSION = 10;
+	//1.0.1 - 1.1.0 = 10
+	//1.2.0	= 11
+
+	private static final int DATABASE_VERSION = 11;
 	public static final String TABLE_NAME_CLOCK = "clockactions";
 	public static final String TABLE_NAME_NOTE = "notes";
 	public static final String TABLE_NAME_OTHER = "misc";
 	public static final String DATABASE_NAME = "Chronos";
 
-	String insertString = "INSERT INTO " + TABLE_NAME_CLOCK + "(punch_type, time, actionReason) VALUES (?, ?, ?)";
+	String insertString = "INSERT INTO " + TABLE_NAME_CLOCK + "(time, actionReason) VALUES (?, ?, ?)";
 	String insertNote = "INSERT INTO " + TABLE_NAME_NOTE + "(note_string, time) VALUES (?, ?)";
 	public static final String insertLunch = "INSERT INTO " + 
 	TABLE_NAME_OTHER + "(day, lunchTaken) VALUES (?, ?)";
@@ -66,7 +73,7 @@ public class Chronos extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE " + TABLE_NAME_CLOCK + 
-		" ( _id INTEGER PRIMARY KEY NOT NULL, punch_type INTEGER NOT NULL, time LONG NOT NULL, actionReason INTEGER NOT NULL )");
+		" ( _id INTEGER PRIMARY KEY NOT NULL, time LONG NOT NULL, actionReason INTEGER NOT NULL )");
 		db.execSQL("CREATE TABLE " + TABLE_NAME_NOTE + 
 		" ( _id LONG PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
 		db.execSQL("CREATE TABLE " + TABLE_NAME_OTHER + 
@@ -77,9 +84,26 @@ public class Chronos extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(TAG, "Upgrading database, this will drop tables and recreate.");
 		Log.w(TAG, "oldVerion: " + oldVersion + "\tnewVersion: " + newVersion);
-		if ( oldVersion == 3 ){
-			db.execSQL("CREATE TABLE " + TABLE_NAME_NOTE + 
-			" ( _id INTEGER PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
+
+		try {
+			File sd = Environment.getExternalStorageDirectory();
+			File data = Environment.getDataDirectory();
+			if (sd.canWrite()) {
+				String currentDBPath = "/data/com.kopysoft.chronos/databases/" + DATABASE_NAME;
+				String backupDBPath = DATABASE_NAME + ".db";
+				File currentDB = new File(data, currentDBPath);
+				File backupDB = new File(sd, backupDBPath);
+				if (currentDB.exists()) {
+					FileChannel src = new FileInputStream(currentDB).getChannel();
+					FileChannel dst = new FileOutputStream(backupDB).getChannel();
+					dst.transferFrom(src, 0, src.size());
+					src.close();
+					dst.close();
+				}
+			}
+		}catch (Exception e) {
+			Log.e(TAG, "ERROR: Can not move file");
+			new Exception();
 		}
 
 		Log.d(TAG, "Update");
@@ -93,21 +117,21 @@ public class Chronos extends SQLiteOpenHelper {
 				throw(e2);
 			}
 		} 
-		
+
 		ArrayList<Punch> punches = new ArrayList<Punch>();
-		Cursor cursor = db.query(TABLE_NAME_CLOCK, new String[] { "_id","punch_type", "time" }, 
+		Cursor cursor = db.query(TABLE_NAME_CLOCK, new String[] { "_id", "time", "actionReason" }, 
 				null, null, null, null, "_id desc");
 
 		final int colId = cursor.getColumnIndex("_id");
 		final int colTime = cursor.getColumnIndex("time");
-		final int colType = cursor.getColumnIndex("punch_type");
+		final int colAR = cursor.getColumnIndex("actionReason");
 		if (cursor.moveToFirst()) {
 			do {				
 
 				long id = cursor.getLong(colId);
 				long time = cursor.getLong(colTime);
-				int type = cursor.getInt(colType);
-				Punch temp = new Punch(time, type, id, Defines.REGULAR_TIME);
+				int type = cursor.getInt(colAR);
+				Punch temp = new Punch(time, Defines.IN, id, type);
 				punches.add(temp);
 
 
@@ -129,13 +153,13 @@ public class Chronos extends SQLiteOpenHelper {
 
 		reloadNotes(db, Notes);
 	}
-	
+
 	/**
 	 * This method is intended to be used ONLY for testing purposes!!
 	 * 
 	 */
 	public void replacePunches(ArrayList<Punch> punches){
-		
+
 		SQLiteDatabase db = getWritableDatabase();
 		for(int i = 0; i < punches.size(); i++){
 			Punch temp = punches.get(i);
@@ -152,7 +176,7 @@ public class Chronos extends SQLiteOpenHelper {
 	 * @return a list of the punches, so it is able to be restored
 	 */
 	public ArrayList<Punch> getPunces(){
-		
+
 		SQLiteDatabase db = getReadableDatabase();
 		ArrayList<Punch> punches = new ArrayList<Punch>();
 		Cursor cursor = db.query(TABLE_NAME_CLOCK, new String[] { "_id","punch_type", "time" }, 
@@ -179,7 +203,7 @@ public class Chronos extends SQLiteOpenHelper {
 		}
 		db.close();
 		return punches;
-		
+
 	}
 
 	private void reloadNotes(SQLiteDatabase db, ArrayList<HoldNote> Notes){

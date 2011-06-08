@@ -81,7 +81,6 @@ public class ClockInAndOut extends ListActivity{
 	 */
 	public void onPause(){
 		super.onPause();
-		adapter.updateDay(true);
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Pause");
 		mHandler.removeCallbacks(mUpdateTimeTask);	//Remove the callbacks
 	}
@@ -224,21 +223,18 @@ public class ClockInAndOut extends ListActivity{
 			long id = data.getExtras().getLong("id");
 			long time = data.getExtras().getLong("time");
 			int actionReason = data.getExtras().getInt("actionReason");
-			int getType = data.getExtras().getInt("type");
 
 
 			if(id == -1){
 				//long i_time, int i_type, long i_id, int i_actionReason
-				Punch temp = new Punch(time, getType, id, actionReason);
+				Punch temp = new Punch(time, Defines.IN, id, actionReason);
 				adapter.add(temp);
 			} else {
 				Punch temp = adapter.getByID(id);
 				temp.setAction(actionReason);
 				temp.setTime(time);
-				temp.setType(getType);
 				adapter.setByID(id, temp);
 			}
-			adapter.sort();
 		}
 	}
 
@@ -402,7 +398,7 @@ public class ClockInAndOut extends ListActivity{
 		double payPerSec = payRate / 60 / 60;
 		long correctTime = StaticFunctions.correctForClockIn(i_time);
 		double temp = (double)correctTime * payPerSec;
-		returnValue = String.format("$ %02.3f",temp);
+		returnValue = String.format("$ %02.2f",temp);
 		return returnValue;
 	}
 

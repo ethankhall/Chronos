@@ -414,6 +414,7 @@ public class PastView extends ListActivity{
 
 		protected void onProgressUpdate(Object... progress) {
 			adapter.updateDay((Integer)progress[0], (Day)progress[1]);
+			updateTime();
 		}
 
 		protected void onPostExecute (Void param){

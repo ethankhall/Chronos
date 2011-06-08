@@ -132,14 +132,20 @@ public class Email {
 		}
 
 		PreferenceSingelton prefs = new PreferenceSingelton();
+		boolean clockedInStill = false;
+		if(timeToday < 0){
+			clockedInStill = true;
+			timeToday += GregorianCalendar.getInstance().getTimeInMillis();
+		}
 		timeTotal = StaticFunctions.generateTimeWeek(timeToday, TimeFormat.HOUR_DECIMAL, false);
 		String payAmount = StaticFunctions.generateDollarAmount(getTimeForMoney(thisPP), 
 				prefs.getPayRate(i_context));
 		returnValue += String.format("\n\tTotal Time:\t %s\n", timeTotal);
 		returnValue += String.format("\tEstimated Pay:\t %s", payAmount);
-		if(timeToday < 0){
+		if(clockedInStill){
 			returnValue += "\n\n\tPlease note that the time above is only an estimate. Your times done add up properly... The time was done based on the time it was sent";
-		}
+		} 
+		
 		return returnValue;
 	}
 
