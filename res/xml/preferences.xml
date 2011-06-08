@@ -25,7 +25,7 @@
 
 	<PreferenceCategory android:title="Time Configurations"
 		android:summary="Configure how time if being handeled">
-		<PreferenceScreen android:title="Tab Setings"
+		<PreferenceScreen android:title="Tab Settings"
 			android:summary="Set the time format for the tabs" android:icon="@drawable/expander_ic_minimized">
 			<ListPreference android:title="Punch tab" android:key="punchPrefTime"
 				android:entries="@array/TimeFormat" android:entryValues="@array/NumOneToThree"
