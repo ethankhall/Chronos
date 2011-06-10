@@ -103,7 +103,6 @@ public class Chronos extends SQLiteOpenHelper {
 			}
 		}catch (Exception e) {
 			Log.e(TAG, "ERROR: Can not move file");
-			new Exception();
 		}
 
 		Log.d(TAG, "Update");
