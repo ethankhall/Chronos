@@ -141,7 +141,8 @@ public class Email {
 		String payAmount = StaticFunctions.generateDollarAmount(getTimeForMoney(thisPP), 
 				prefs.getPayRate(i_context));
 		returnValue += String.format("\n\tTotal Time:\t %s\n", timeTotal);
-		returnValue += String.format("\tEstimated Pay:\t %s", payAmount);
+		if(prefs.getShowPay(i_context))
+			returnValue += String.format("\tEstimated Pay:\t %s", payAmount);
 		if(clockedInStill){
 			returnValue += "\n\n\tPlease note that the time above is only an estimate. Your times done add up properly... The time was done based on the time it was sent";
 		} 
