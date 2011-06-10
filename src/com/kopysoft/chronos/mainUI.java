@@ -210,7 +210,7 @@ public class mainUI extends TabActivity {
 			cal.add(GregorianCalendar.DAY_OF_YEAR, 7 * weeks_in_pp);
 			endOfThisPP[0] = cal.get(GregorianCalendar.YEAR);
 			endOfThisPP[1] = cal.get(GregorianCalendar.MONTH);
-			endOfThisPP[2] = cal.get(GregorianCalendar.DAY_OF_YEAR);
+			endOfThisPP[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
 		}
 		Verbosity verbosLevel = prefs.getReportLevelVerbosity(getApplicationContext());
 
@@ -224,7 +224,7 @@ public class mainUI extends TabActivity {
 			cal.add(GregorianCalendar.DAY_OF_YEAR, 7 * weeks_in_pp);
 			endOfViewed[0] = cal.get(GregorianCalendar.YEAR);
 			endOfViewed[1] = cal.get(GregorianCalendar.MONTH);
-			endOfViewed[2] = cal.get(GregorianCalendar.DAY_OF_YEAR);
+			endOfViewed[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
 		}
 
 		if(Defines.DEBUG_PRINT){
