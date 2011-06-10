@@ -83,5 +83,7 @@
 			android:key="restoreDB" />
 
 	</PreferenceCategory>
+	<Preference android:title="Read ULA" android:summary="Read the User License Agreement"
+			android:key="readULA" />
 
 </PreferenceScreen>

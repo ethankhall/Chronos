@@ -23,6 +23,9 @@
 
 		<activity android:name=".subActivites.EditTime" android:theme="@android:style/Theme.Dialog" 
 			android:screenOrientation="portrait" />
+			
+		<activity android:name=".subActivites.ULA" android:theme="@android:style/Theme.Dialog" 
+			android:screenOrientation="portrait" />
 
 		<activity android:name="PastView" android:screenOrientation="portrait"/>
 

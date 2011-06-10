@@ -51,7 +51,8 @@ public class Preferences extends PreferenceActivity {
 
 			public boolean onPreferenceClick(Preference preference) {
 				Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-				emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "ethan@kopysoft.com" });
+				emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, 
+						new String[] { "ethan@kopysoft.com" });
 	            emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Chronos");
 				emailIntent.setType("message/rfc822");
 				startActivity(emailIntent);
@@ -76,6 +77,18 @@ public class Preferences extends PreferenceActivity {
 
 			public boolean onPreferenceClick(Preference preference) {
 				showDialog(RESTORE);
+				return true;
+			}
+		});
+		
+		Preference readUla = (Preference) findPreference("readULA");
+		readUla.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				Intent intent = new Intent().setClass(getApplicationContext(), 
+						com.kopysoft.chronos.subActivites.ULA.class);
+				startActivity(intent);
+
 				return true;
 			}
 		});

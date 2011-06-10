@@ -9,21 +9,21 @@ package com.kopysoft.chronos;
 
 public final class R {
     public static final class array {
-        public static final int HelpOptions=0x7f05000e;
-        public static final int NumOneToFour=0x7f050006;
-        public static final int NumOneToSix=0x7f050007;
-        public static final int NumOneToThree=0x7f050005;
-        public static final int NumOneToTwo=0x7f050008;
-        public static final int TimeFormat=0x7f050004;
-        public static final int TimeTitles=0x7f05000c;
-        public static final int VerbosLevel=0x7f050009;
-        public static final int editTimeArray=0x7f050002;
-        public static final int eight_or_fourty=0x7f05000a;
-        public static final int lengthEntries=0x7f05000d;
-        public static final int lunch_settings=0x7f05000b;
-        public static final int menu=0x7f050003;
-        public static final int weeks_in_pp=0x7f050000;
-        public static final int weeks_in_pp_title=0x7f050001;
+        public static final int HelpOptions=0x7f06000e;
+        public static final int NumOneToFour=0x7f060006;
+        public static final int NumOneToSix=0x7f060007;
+        public static final int NumOneToThree=0x7f060005;
+        public static final int NumOneToTwo=0x7f060008;
+        public static final int TimeFormat=0x7f060004;
+        public static final int TimeTitles=0x7f06000c;
+        public static final int VerbosLevel=0x7f060009;
+        public static final int editTimeArray=0x7f060002;
+        public static final int eight_or_fourty=0x7f06000a;
+        public static final int lengthEntries=0x7f06000d;
+        public static final int lunch_settings=0x7f06000b;
+        public static final int menu=0x7f060003;
+        public static final int weeks_in_pp=0x7f060000;
+        public static final int weeks_in_pp_title=0x7f060001;
     }
     public static final class attr {
     }
@@ -36,46 +36,48 @@ public final class R {
         public static final int icon=0x7f020005;
     }
     public static final class id {
-        public static final int CancelButton=0x7f080006;
-        public static final int ClockButton=0x7f08000a;
-        public static final int EditDayTime=0x7f080014;
-        public static final int OkButton=0x7f080005;
-        public static final int TimePicker01=0x7f080018;
-        public static final int addBreak=0x7f080026;
-        public static final int addNote=0x7f080021;
-        public static final int addPunch=0x7f080016;
-        public static final int clock_in_and_out_button=0x7f08000b;
-        public static final int current=0x7f08001e;
-        public static final int dayTime=0x7f080007;
-        public static final int editMore=0x7f080020;
-        public static final int email=0x7f080022;
-        public static final int emailCurrent=0x7f080025;
-        public static final int emailOption=0x7f080023;
-        public static final int emailThis=0x7f080024;
-        public static final int help=0x7f080027;
-        public static final int linearLayout1=0x7f08000c;
-        public static final int linearLayoutEditDay=0x7f080015;
-        public static final int linearLayoutEditNote=0x7f08000d;
-        public static final int money_today=0x7f080009;
-        public static final int money_today_text=0x7f080008;
-        public static final int multiAutoCompleteTextView1=0x7f08000f;
-        public static final int next=0x7f080013;
-        public static final int noteTiptool=0x7f08000e;
-        public static final int noteTiptoolEditDay=0x7f080017;
-        public static final int pastViewAmountMade=0x7f08001d;
-        public static final int pastViewAmountMadeLabel=0x7f08001c;
-        public static final int pastViewTimeTotal=0x7f08001b;
-        public static final int pastViewTimeTotalLabel=0x7f08001a;
-        public static final int preferences=0x7f08001f;
-        public static final int prev=0x7f080012;
-        public static final int spinnerLength=0x7f080003;
-        public static final int spinnerType=0x7f080004;
-        public static final int startBreak=0x7f080001;
-        public static final int tempLinear=0x7f080011;
-        public static final int text=0x7f080019;
-        public static final int textView1=0x7f080000;
-        public static final int textView2=0x7f080002;
-        public static final int topLayout=0x7f080010;
+        public static final int CancelButton=0x7f090006;
+        public static final int ClockButton=0x7f09000a;
+        public static final int EditDayTime=0x7f090014;
+        public static final int OkButton=0x7f090005;
+        public static final int TimePicker01=0x7f090018;
+        public static final int addBreak=0x7f090028;
+        public static final int addNote=0x7f090023;
+        public static final int addPunch=0x7f090016;
+        public static final int clock_in_and_out_button=0x7f09000b;
+        public static final int current=0x7f09001e;
+        public static final int dayTime=0x7f090007;
+        public static final int editMore=0x7f090022;
+        public static final int email=0x7f090024;
+        public static final int emailCurrent=0x7f090027;
+        public static final int emailOption=0x7f090025;
+        public static final int emailThis=0x7f090026;
+        public static final int help=0x7f090029;
+        public static final int linearLayout1=0x7f09000c;
+        public static final int linearLayoutEditDay=0x7f090015;
+        public static final int linearLayoutEditNote=0x7f09000d;
+        public static final int money_today=0x7f090009;
+        public static final int money_today_text=0x7f090008;
+        public static final int multiAutoCompleteTextView1=0x7f09000f;
+        public static final int next=0x7f090013;
+        public static final int noteTiptool=0x7f09000e;
+        public static final int noteTiptoolEditDay=0x7f090017;
+        public static final int pastViewAmountMade=0x7f09001d;
+        public static final int pastViewAmountMadeLabel=0x7f09001c;
+        public static final int pastViewTimeTotal=0x7f09001b;
+        public static final int pastViewTimeTotalLabel=0x7f09001a;
+        public static final int preferences=0x7f090021;
+        public static final int prev=0x7f090012;
+        public static final int spinnerLength=0x7f090003;
+        public static final int spinnerType=0x7f090004;
+        public static final int startBreak=0x7f090001;
+        public static final int tempLinear=0x7f090011;
+        public static final int text=0x7f090019;
+        public static final int textView1=0x7f090000;
+        public static final int textView2=0x7f090002;
+        public static final int topLayout=0x7f090010;
+        public static final int ulaClose=0x7f090020;
+        public static final int ulaText=0x7f09001f;
     }
     public static final class layout {
         public static final int addbreak=0x7f030000;
@@ -88,22 +90,26 @@ public final class R {
         public static final int help_dialog=0x7f030007;
         public static final int main=0x7f030008;
         public static final int pastview=0x7f030009;
-        public static final int view_note=0x7f03000a;
-        public static final int week_view=0x7f03000b;
+        public static final int ula=0x7f03000a;
+        public static final int view_note=0x7f03000b;
+        public static final int week_view=0x7f03000c;
     }
     public static final class menu {
-        public static final int menu=0x7f070000;
+        public static final int menu=0x7f080000;
+    }
+    public static final class raw {
+        public static final int ula=0x7f050000;
     }
     public static final class string {
-        public static final int add_punch=0x7f060003;
-        public static final int app_name=0x7f060001;
-        public static final int edit_day=0x7f060007;
-        public static final int edit_note=0x7f060006;
-        public static final int edit_punch=0x7f060005;
-        public static final int email_punches=0x7f060008;
-        public static final int hello=0x7f060000;
-        public static final int remove_punch=0x7f060004;
-        public static final int spinnerprompt=0x7f060002;
+        public static final int add_punch=0x7f070003;
+        public static final int app_name=0x7f070001;
+        public static final int edit_day=0x7f070007;
+        public static final int edit_note=0x7f070006;
+        public static final int edit_punch=0x7f070005;
+        public static final int email_punches=0x7f070008;
+        public static final int hello=0x7f070000;
+        public static final int remove_punch=0x7f070004;
+        public static final int spinnerprompt=0x7f070002;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;
