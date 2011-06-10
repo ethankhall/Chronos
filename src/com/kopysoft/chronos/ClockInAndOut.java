@@ -54,7 +54,7 @@ import com.kopysoft.chronos.singelton.PreferenceSingelton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Punch;
 
-public class ClockInAndOut extends ListActivity{
+public class ClockInAndOut extends ListActivity{ 
 
 	private static final String TAG = Defines.TAG + " - CIAO";
 	private double PAY_RATE = 8.75;
