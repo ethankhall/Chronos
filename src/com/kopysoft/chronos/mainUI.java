@@ -47,6 +47,7 @@ import com.kopysoft.chronos.content.Email;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.Verbosity;
+import com.kopysoft.chronos.service.EnableWidget;
 import com.kopysoft.chronos.service.MidnightBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingelton;
@@ -70,7 +71,14 @@ public class mainUI extends TabActivity {
 		PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), 
 				Defines.MIDNIGHT_ALARM, sentIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
-		am.cancel(sender);
+		am.cancel(sender);        
+	}
+	
+	public void onPause(){
+		super.onPause();
+		Intent intent = new Intent(getApplicationContext(), com.kopysoft.chronos.service.EnableWidget.class);
+        intent.setAction(EnableWidget.UPDATE_FROM_APP);
+        getApplicationContext().sendBroadcast(intent);
 	}
 
 	public void onResume(){

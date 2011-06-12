@@ -48,6 +48,16 @@
 		<receiver android:name=".service.NotificationBroadcast" android:enabled="true" />
 		
 		<receiver android:name=".service.MidnightBroadcast" android:enabled="true" />
+		
+		<receiver android:name=".service.EnableWidget">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+				<action android:name="com.kopysoft.chronos.service.EnableWidget.CLOCK" />
+				<action android:name="com.kopysoft.chronos.service.EnableWidget.UPDATE" />
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider"
+				android:resource="@xml/enable_widget" />
+		</receiver>
 
 	</application>
 
