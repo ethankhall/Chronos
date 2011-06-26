@@ -67,7 +67,7 @@ public class AddBreak extends Activity {
 		Spinner spinnerBreak = (Spinner) findViewById(R.id.spinnerLength);
 		int actionReason = 0;
 		int length = 0;
-		int addto = 0;
+		int addto;
 		
 		GregorianCalendar startBreak = new GregorianCalendar();
 		GregorianCalendar endBreak = new GregorianCalendar();

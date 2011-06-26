@@ -118,7 +118,7 @@ public class Chronos extends SQLiteOpenHelper {
 		} 
 
 		ArrayList<Punch> punches = new ArrayList<Punch>();
-		Cursor cursor = db.query(TABLE_NAME_CLOCK, new String[] { "_id", "time", "actionReason" }, 
+		Cursor cursor = db.query(TABLE_NAME_CLOCK, null, 
 				null, null, null, null, "_id desc");
 
 		final int colId = cursor.getColumnIndex("_id");
@@ -129,7 +129,10 @@ public class Chronos extends SQLiteOpenHelper {
 
 				long id = cursor.getLong(colId);
 				long time = cursor.getLong(colTime);
-				int type = cursor.getInt(colAR);
+				int type = Defines.REGULAR_TIME;
+				if(colAR != -1){
+					type = cursor.getInt(colAR);
+				}
 				Punch temp = new Punch(time, Defines.IN, id, type);
 				punches.add(temp);
 

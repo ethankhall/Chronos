@@ -36,6 +36,7 @@ public final class R {
         public static final int icon=0x7f020005;
         public static final int widget_disabled=0x7f020006;
         public static final int widget_enabled=0x7f020007;
+        public static final int widget_idle=0x7f020008;
     }
     public static final class id {
         public static final int CancelButton=0x7f090006;
@@ -43,19 +44,19 @@ public final class R {
         public static final int EditDayTime=0x7f090014;
         public static final int OkButton=0x7f090005;
         public static final int TimePicker01=0x7f090018;
-        public static final int addBreak=0x7f09002a;
-        public static final int addNote=0x7f090025;
+        public static final int addBreak=0x7f090029;
+        public static final int addNote=0x7f090024;
         public static final int addPunch=0x7f090016;
         public static final int clock_in_and_out_button=0x7f09000b;
         public static final int current=0x7f09001e;
         public static final int dayTime=0x7f090007;
-        public static final int editMore=0x7f090024;
-        public static final int email=0x7f090026;
-        public static final int emailCurrent=0x7f090029;
-        public static final int emailOption=0x7f090027;
-        public static final int emailThis=0x7f090028;
-        public static final int help=0x7f09002b;
-        public static final int imageButton=0x7f090022;
+        public static final int editMore=0x7f090023;
+        public static final int email=0x7f090025;
+        public static final int emailCurrent=0x7f090028;
+        public static final int emailOption=0x7f090026;
+        public static final int emailThis=0x7f090027;
+        public static final int help=0x7f09002a;
+        public static final int imageButton=0x7f090021;
         public static final int linearLayout1=0x7f09000c;
         public static final int linearLayoutEditDay=0x7f090015;
         public static final int linearLayoutEditNote=0x7f09000d;
@@ -69,9 +70,8 @@ public final class R {
         public static final int pastViewAmountMadeLabel=0x7f09001c;
         public static final int pastViewTimeTotal=0x7f09001b;
         public static final int pastViewTimeTotalLabel=0x7f09001a;
-        public static final int preferences=0x7f090023;
+        public static final int preferences=0x7f090022;
         public static final int prev=0x7f090012;
-        public static final int scrollerView0=0x7f090021;
         public static final int spinnerLength=0x7f090003;
         public static final int spinnerType=0x7f090004;
         public static final int startBreak=0x7f090001;

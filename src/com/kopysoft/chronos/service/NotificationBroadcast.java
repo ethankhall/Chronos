@@ -44,7 +44,7 @@ public class NotificationBroadcast extends BroadcastReceiver{
 	NotificationManager mNotificationManager = null;
 	private static final String TAG = Defines.TAG + " - NB";
 	//private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
-	private static final boolean DEBUG_PRINT = true;
+	private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {

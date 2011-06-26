@@ -143,19 +143,21 @@ public class CVSGenerate {
 		Chronos chrono = new Chronos(context);
 		SQLiteDatabase db = chrono.getReadableDatabase();
 		ArrayList<Punch> punches = new ArrayList<Punch>();
-		Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK, new String[] { "_id","punch_type", "time" }, 
+		Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK, null, 
 				null, null, null, null, "_id desc");
 
 		final int colId = cursor.getColumnIndex("_id");
 		final int colTime = cursor.getColumnIndex("time");
-		final int colType = cursor.getColumnIndex("punch_type");
+		//final int colType = cursor.getColumnIndex("punch_type");
+		final int colAR = cursor.getColumnIndex("actionReason");
 		if (cursor.moveToFirst()) {
 			do {				
 
 				long id = cursor.getLong(colId);
 				long time = cursor.getLong(colTime);
-				int type = cursor.getInt(colType);
-				Punch temp = new Punch(time, type, id, Defines.REGULAR_TIME);
+				//int type = cursor.getInt(colType);
+				int actionReason = cursor.getInt(colAR);
+				Punch temp = new Punch(time, Defines.IN, id, actionReason);
 				punches.add(temp);
 
 
