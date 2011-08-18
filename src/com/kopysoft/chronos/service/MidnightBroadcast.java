@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.singelton.ListenerObj;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 
 import android.content.BroadcastReceiver;
@@ -43,7 +43,7 @@ public class MidnightBroadcast extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "Midnight Revieved");	
-		PreferenceSingelton prefs = new PreferenceSingelton();
+		PreferenceSingleton prefs = new PreferenceSingleton();
 		StaticFunctions.fixMidnight(prefs.getStartOfThisPP(context), 
 				prefs.getWeeksInPP(context), context);
 		ListenerObj.getInstance().fireMidnight();

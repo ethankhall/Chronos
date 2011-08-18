@@ -33,7 +33,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.enums.Verbosity;
 
-public class PreferenceSingelton {
+public class PreferenceSingleton {
 		
 	public TimeFormat getPrefViewTime(Context appContext){
 		SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -152,6 +152,24 @@ public class PreferenceSingelton {
 	public String getClockinForLunch(Context appContext){
 		SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
 		return app_preferences.getString("clockin_lunch", "12:30");
+	}
+
+    public double getRegularTime(Context appContext){
+        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+		try{
+			return Double.valueOf(app_preferences.getString("regular_time","40"));
+		} catch(NumberFormatException e) {
+			return 40;
+		}
+	}
+
+	public double getDoubleTime(Context appContext){
+        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+		try{
+			return Double.valueOf(app_preferences.getString("double_time","60"));
+		} catch(NumberFormatException e) {
+			return 60;
+		}
 	}
 	
 	public boolean getNotificationEnabled(Context appContext){

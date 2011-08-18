@@ -38,7 +38,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.kopysoft.chronos.RowHelper.RowHelperPayPeriod;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.PayPeriod;
 
@@ -46,7 +46,7 @@ public class EditPayPeriodOthers extends ListActivity {
 
 	private static final String TAG = Defines.TAG + " - WV";
 	private RowHelperPayPeriod adapter = null;
-	private PreferenceSingelton prefs = null;
+	private PreferenceSingleton prefs = null;
 
 	private int weeks_in_pp = 0;
 
@@ -81,7 +81,7 @@ public class EditPayPeriodOthers extends ListActivity {
 		setContentView(R.layout.edit_pp_others);
 
 
-		prefs = new PreferenceSingelton();
+		prefs = new PreferenceSingleton();
 
 		//String string_weeks_in_pp = app_preferences.getString("weeks_in_pp", "2");
 		//weeks_in_pp = Integer.parseInt(string_weeks_in_pp);

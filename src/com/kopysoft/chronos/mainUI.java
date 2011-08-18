@@ -50,14 +50,14 @@ import com.kopysoft.chronos.enums.Verbosity;
 import com.kopysoft.chronos.service.EnableWidget;
 import com.kopysoft.chronos.service.MidnightBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.singelton.ViewingPayPeriod;
 
 public class mainUI extends TabActivity {
 	/** Called when the activity is first created. */
 	private static final String TAG = Defines.TAG + " - Main";
 
-	private PreferenceSingelton prefs = null;
+	private PreferenceSingleton prefs = null;
 	private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
 
 	public void onStop(){
@@ -90,7 +90,7 @@ public class mainUI extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		prefs = new PreferenceSingelton();
+		prefs = new PreferenceSingleton();
 
 		Chronos forUpdate = new Chronos(getApplicationContext());
 		SQLiteDatabase db = forUpdate.getWritableDatabase();

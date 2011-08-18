@@ -30,7 +30,7 @@ import android.content.Context;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.enums.Verbosity;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.PayPeriod;
@@ -51,9 +51,6 @@ public class Email {
 
 	/**
 	 * Generates a report for a given week
-	 * @param date Start of the pay period
-	 * @param weeks_in_pp Number of weeks in the pay period
-	 * @param verbosity Verbose level
 	 * @return String with the text to be put into an email
 	 */
 	public String generateEmailText(){
@@ -131,7 +128,7 @@ public class Email {
 			}
 		}
 
-		PreferenceSingelton prefs = new PreferenceSingelton();
+		PreferenceSingleton prefs = new PreferenceSingleton();
 		boolean clockedInStill = false;
 		if(timeToday < 0){
 			clockedInStill = true;
@@ -154,7 +151,7 @@ public class Email {
 		long returnValue = 0;
 		long tempTime;
 		Day temp;
-		PreferenceSingelton prefs = new PreferenceSingelton();
+		PreferenceSingleton prefs = new PreferenceSingleton();
 
 		int overtimeSetting = prefs.getOvertimeSetting(i_context);
 		float overtimeRate = prefs.getOvertimeRate(i_context);

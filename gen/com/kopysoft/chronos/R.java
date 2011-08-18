@@ -41,22 +41,23 @@ public final class R {
     public static final class id {
         public static final int CancelButton=0x7f090006;
         public static final int ClockButton=0x7f09000a;
+        public static final int CloseButton=0x7f090021;
         public static final int EditDayTime=0x7f090014;
         public static final int OkButton=0x7f090005;
         public static final int TimePicker01=0x7f090018;
-        public static final int addBreak=0x7f090029;
-        public static final int addNote=0x7f090024;
+        public static final int addBreak=0x7f09002a;
+        public static final int addNote=0x7f090025;
         public static final int addPunch=0x7f090016;
         public static final int clock_in_and_out_button=0x7f09000b;
         public static final int current=0x7f09001e;
         public static final int dayTime=0x7f090007;
-        public static final int editMore=0x7f090023;
-        public static final int email=0x7f090025;
-        public static final int emailCurrent=0x7f090028;
-        public static final int emailOption=0x7f090026;
-        public static final int emailThis=0x7f090027;
-        public static final int help=0x7f09002a;
-        public static final int imageButton=0x7f090021;
+        public static final int editMore=0x7f090024;
+        public static final int email=0x7f090026;
+        public static final int emailCurrent=0x7f090029;
+        public static final int emailOption=0x7f090027;
+        public static final int emailThis=0x7f090028;
+        public static final int help=0x7f09002b;
+        public static final int imageButton=0x7f090022;
         public static final int linearLayout1=0x7f09000c;
         public static final int linearLayoutEditDay=0x7f090015;
         public static final int linearLayoutEditNote=0x7f09000d;
@@ -70,7 +71,7 @@ public final class R {
         public static final int pastViewAmountMadeLabel=0x7f09001c;
         public static final int pastViewTimeTotal=0x7f09001b;
         public static final int pastViewTimeTotalLabel=0x7f09001a;
-        public static final int preferences=0x7f090022;
+        public static final int preferences=0x7f090023;
         public static final int prev=0x7f090012;
         public static final int spinnerLength=0x7f090003;
         public static final int spinnerType=0x7f090004;
@@ -95,9 +96,10 @@ public final class R {
         public static final int main=0x7f030008;
         public static final int pastview=0x7f030009;
         public static final int ula=0x7f03000a;
-        public static final int view_note=0x7f03000b;
-        public static final int week_view=0x7f03000c;
-        public static final int widget_layout=0x7f03000d;
+        public static final int view_day=0x7f03000b;
+        public static final int view_note=0x7f03000c;
+        public static final int week_view=0x7f03000d;
+        public static final int widget_layout=0x7f03000e;
     }
     public static final class menu {
         public static final int menu=0x7f080000;

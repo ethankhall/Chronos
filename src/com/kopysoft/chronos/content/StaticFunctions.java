@@ -36,7 +36,7 @@ import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.service.BackgroundUpdate;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.PayPeriod;
 
 public class StaticFunctions {
@@ -84,7 +84,7 @@ public class StaticFunctions {
 
 	public static void setUpAlarm(Context context, long millis, AlarmManager am){
 		
-		PreferenceSingelton prefs = new PreferenceSingelton();
+		PreferenceSingleton prefs = new PreferenceSingleton();
 
 		Intent intent = new Intent(context, BackgroundUpdate.class);
 		int[] startLunch = getIntFromString(prefs.getClockoutForLunch(context));

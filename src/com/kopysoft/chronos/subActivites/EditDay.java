@@ -50,7 +50,7 @@ import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.singelton.ListenerObj;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
@@ -66,7 +66,7 @@ public class EditDay extends ListActivity {
 	int date[] = new int[3];
 
 	TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
-	PreferenceSingelton prefs = null;
+	PreferenceSingleton prefs = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -265,7 +265,7 @@ public class EditDay extends ListActivity {
 			dialog = ProgressDialog.show(EditDay.this, "",
 				"Generating. Please wait...");
 			
-			prefs = new PreferenceSingelton();
+			prefs = new PreferenceSingleton();
 
 			//Set string format
 			StringFormat = prefs.getPrefEditTime(getApplicationContext());

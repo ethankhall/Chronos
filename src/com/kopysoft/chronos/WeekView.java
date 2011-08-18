@@ -44,7 +44,7 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.singelton.ListenerObj;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.PayPeriod;
 
@@ -52,7 +52,7 @@ public class WeekView extends ListActivity {
 
 	private static final String TAG = Defines.TAG + " - WV";
 	private RowHelperPayPeriod adapter = null;
-	private PreferenceSingelton prefs = null;
+	private PreferenceSingleton prefs = null;
 	//SharedPreferences app_preferences = null;
 	private updateAdapter updateAdapt = null; 
 
@@ -80,7 +80,7 @@ public class WeekView extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.week_view);
 		
-		prefs = new PreferenceSingelton();
+		prefs = new PreferenceSingleton();
 		
 		ProgressDialog dialog = ProgressDialog.show(WeekView.this, "",
 			"Generating. Please wait...");

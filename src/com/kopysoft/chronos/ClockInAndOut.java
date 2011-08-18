@@ -50,7 +50,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.service.NotificationBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Punch;
 
@@ -64,16 +64,9 @@ public class ClockInAndOut extends ListActivity{
 
 	private RowHelperToday adapter = null;
 	private Handler mHandler = new Handler();
-	private PreferenceSingelton prefs = null;
+	private PreferenceSingleton prefs = null;
 
 	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
-
-	/**
-	 * onDestory method: Called when the activity is killed and GCed
-	 */
-	public void onDestoy(){
-		super.onDestroy();
-	}
 
 	@Override
 	/**
@@ -121,7 +114,7 @@ public class ClockInAndOut extends ListActivity{
 
 	@Override
 	/**
-	 * onCreate method: Called when the activity is created. Connects to the PreferenceSingelton and 
+	 * onCreate method: Called when the activity is created. Connects to the PreferenceSingleton and
 	 * 	the Service. It gets the adapter and sets it all up.
 	 * @param savedInstanceState
 	 */
@@ -130,7 +123,7 @@ public class ClockInAndOut extends ListActivity{
 		if ( Defines.DEBUG_PRINT ) Log.d(TAG, "onCreate");
 		setContentView(R.layout.clockinandout);
 
-		prefs = new PreferenceSingelton();
+		prefs = new PreferenceSingleton();
 
 		GregorianCalendar cal = new GregorianCalendar();
 
@@ -251,7 +244,6 @@ public class ClockInAndOut extends ListActivity{
 			intent.putExtra("time", temp.getTime());
 			intent.putExtra("type", temp.getType());
 			intent.putExtra("actionReason", temp.getAction());
-			temp = null;
 			startActivityForResult(intent, 0);
 
 		} else if( menuItemIndex == 1){	//remove
@@ -289,7 +281,7 @@ public class ClockInAndOut extends ListActivity{
 		boolean showPay = prefs.getShowPay(getApplicationContext());
 		TextView payTitle = (TextView)findViewById(R.id.money_today_text);
 		TextView payValue = (TextView)findViewById(R.id.money_today);
-		if(showPay == false){
+		if(!showPay){
 			payTitle.setVisibility(View.GONE);
 			payValue.setVisibility(View.GONE);
 		} else {
@@ -330,7 +322,7 @@ public class ClockInAndOut extends ListActivity{
 
 	public void Callback(View v){
 		int type = Defines.IN;
-		long i_time = 0;
+		long i_time;
 		GregorianCalendar cal = new GregorianCalendar();
 		long temp = cal.getTimeInMillis();
 		mHandler.removeCallbacks(mUpdateTimeTask);
@@ -374,7 +366,7 @@ public class ClockInAndOut extends ListActivity{
 		if(times[Defines.HOLIDAY_TIME] < 0)
 			clockedIn = true;
 
-		if( clockedIn == false ){
+		if(!clockedIn){
 			button.setText("Clock In");
 		} else {
 			button.setText("Clock Out");
@@ -393,7 +385,7 @@ public class ClockInAndOut extends ListActivity{
 	}
 
 	private String generateDollarAmount(long i_time, double payRate){
-		String returnValue = "";
+		String returnValue;
 		//Convert payRate to dollar amount from $/h to $/s
 		double payPerSec = payRate / 60 / 60;
 		long correctTime = StaticFunctions.correctForClockIn(i_time);
@@ -418,10 +410,10 @@ public class ClockInAndOut extends ListActivity{
 		public void run(){
 			mHandler.removeCallbacks(mUpdateTimeTask);
 
-			if (forceUpdate == true){
+			if (forceUpdate){
 				forceUpdate = false;
 
-				if (adapter.needToUpdateClock() == true){
+				if (adapter.needToUpdateClock()){
 					mHandler.postDelayed(mUpdateTimeTask, 10);
 				}
 

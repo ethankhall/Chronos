@@ -35,7 +35,7 @@ import android.util.Log;
 
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.singelton.PreferenceSingelton;
+import com.kopysoft.chronos.singelton.PreferenceSingleton;
 
 public class NotificationBroadcast extends BroadcastReceiver{
 
@@ -55,7 +55,7 @@ public class NotificationBroadcast extends BroadcastReceiver{
 		String noteMessage = intent.getStringExtra("noteMessage");
 		long timeToday = intent.getLongExtra("timeToday", 0);
 
-		PreferenceSingelton pref = new PreferenceSingelton();
+		PreferenceSingleton pref = new PreferenceSingleton();
 		boolean notificationEnabled = pref.getNotificationEnabled(context);
 		createNotification(context);	//connect to the notification manager
 

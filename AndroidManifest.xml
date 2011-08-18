@@ -42,6 +42,9 @@
         <activity android:name=".subActivites.AddBreak" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
+        <activity android:name=".subActivites.ViewDay" android:theme="@android:style/Theme.Dialog"
+                  android:screenOrientation="portrait"/>
+
         <activity android:name=".subActivites.HelpActivity"/>
 
         <receiver android:name=".service.BackgroundUpdate" android:enabled="true"/>
