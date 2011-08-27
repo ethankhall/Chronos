@@ -24,20 +24,19 @@ package com.kopysoft.chronos.types;
  *  
  */
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
-
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 
 
 public class Day {
@@ -45,38 +44,46 @@ public class Day {
 	private GregorianCalendar _date = null;
 	private ArrayList<Punch> _punches = null;
 	private ArrayList<Punch> _removed = null;
-	private Note _todayNote = null; 
+    private int _jobNumber;
 	private static final String TAG = Defines.TAG + " - DAY";
 	private boolean printDebug = Defines.DEBUG_PRINT;
 
 	/**
 	 * Creates a Day class
-	 * @param dayTime Total time for the day
 	 * @param dayInfo Day information [year, month, day]
+     * @param jobNumber job number
+     * @param context Context for this app
 	 */
-	public Day(int dayInfo[], Context context){
+	public Day(int dayInfo[], int jobNumber, Context context){
 		_date = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 		_punches = getPunchesForDay(_date);
-		_todayNote = new Note(dayInfo, context);
 		_removed = new ArrayList<Punch>();
+        _jobNumber = jobNumber;
 	}
-	
-	public Day(int dayInfo[], ArrayList<Punch> punches, Note note){
+
+    /**
+     *
+     * @param dayInfo   Day information [year, month, day]
+     * @param punches   List of punches
+     * @param jobNumber Job Number
+     */
+	public Day(int dayInfo[], ArrayList<Punch> punches, int jobNumber){
 		_date = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 		_punches = punches;
-		_todayNote = note;
 		_removed = new ArrayList<Punch>();
-		
-		//Log.d(TAG, "Size: " + _punches.size());
+        _jobNumber = jobNumber;
 	}
-	
-	public Day(int dayInfo[], Context context, Note note){
+
+    /**
+     *
+     * @param dayInfo       Day information [year, month, day]
+     * @param jobNumber     Job Number
+     */
+	public Day(int dayInfo[], int jobNumber){
 		_date = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 		_punches = getPunchesForDay(_date);
-		_todayNote = note;
 		_removed = new ArrayList<Punch>();
-		
-		//Log.d(TAG, "Size: " + _punches.size());
+        _jobNumber = jobNumber;
 	}
 	
 	public void setHasLunchBeenTaken(Context context, boolean setLunch){
@@ -96,12 +103,12 @@ public class Day {
 			fromDB = cursor.getInt(colID);
 		}
 
-		if (cursor != null && !cursor.isClosed()) {
+		if (!cursor.isClosed()) {
 			cursor.close();
 		}
 		
 		int lunchSetting = 0;
-		if(setLunch == true){
+		if(setLunch){
 			lunchSetting = 1;
 		}
 		
@@ -125,7 +132,7 @@ public class Day {
 	}
 
 	public boolean hasLunchBeenTaken(Context context){
-		boolean returnValue = false;
+		boolean returnValue;
 
 		Chronos chrono = new Chronos(context);
 		SQLiteDatabase db = chrono.getReadableDatabase();
@@ -142,11 +149,11 @@ public class Day {
 			fromDB = cursor.getInt(colLunch);
 		}
 
-		if (cursor != null && !cursor.isClosed()) {
+		if (!cursor.isClosed()) {
 			cursor.close();
 		}
 		db.close();
-		
+
 		if(fromDB == 0)
 			returnValue = false;
 		else
@@ -155,6 +162,7 @@ public class Day {
 		return returnValue;
 	}
 
+    /*
 	public String getNote(boolean force){
 		return _todayNote.getNote(force);
 	}
@@ -163,6 +171,7 @@ public class Day {
 		_todayNote.setNote(newNote);
 		_todayNote.update();
 	}
+	*/
 
 	private synchronized ArrayList<Punch> getPunchesForDay(GregorianCalendar cal){
 		if(printDebug)  Log.d(TAG, "update day");
@@ -176,8 +185,8 @@ public class Day {
 
 		Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK, 
 				new String[] { "_id", "time", "actionReason" }, 
-				"( time >= ? AND time <= ? )", 
-				new String[] {Long.toString(startMilli), Long.toString(endMilli) }, 
+				"( time >= ? AND time <= ? ) AND jobNumber = ?",
+				new String[] {Long.toString(startMilli), Long.toString(endMilli), Integer.toString(_jobNumber) },
 				null, null, "time ASC ");	//Get all time punches between today at midnight and midnight
 
 		final int colTime = cursor.getColumnIndex("time");
@@ -191,13 +200,13 @@ public class Day {
 				time = cursor.getLong(colTime);
 				id = (int)cursor.getLong(colId);
 				actionReason = (int)cursor.getLong(colAR);
-				returnValue.add(new Punch(time, Defines.IN, id, actionReason));
+				returnValue.add(new Punch(time, Defines.IN, id, actionReason, _jobNumber));
 
 			} while (cursor.moveToNext());
 			cursor.close();
 		}
 
-		if (cursor != null && !cursor.isClosed()) {
+		if ( !cursor.isClosed()) {
 			cursor.close();
 		}
 
@@ -232,9 +241,8 @@ public class Day {
 	}
 
 	public int[] getDay(){
-		int[] returnValue = {_date.get(Calendar.YEAR), _date.get(Calendar.MONTH), 
-				_date.get(Calendar.DAY_OF_MONTH)};
-		return returnValue;
+        return new int[]{_date.get(Calendar.YEAR), _date.get(Calendar.MONTH),
+                _date.get(Calendar.DAY_OF_MONTH)};
 	}
 
 	public long[] getArrayOfTime(){
@@ -245,16 +253,16 @@ public class Day {
 			returnValue[i] = 0;
 
 		for(int i = Defines.REGULAR_TIME; i < Defines.MAX_CLOCK_OPT; i++){
-			for(int j = 0; j < _punches.size(); j++){
-				if( _punches.get(j).getAction() == i){
-					//if the action reason is what were counting
-					if (_punches.get(j).getType() == Defines.IN){
-						returnValue[i] -= _punches.get(j).getTime();
-					} else {
-						returnValue[i] += _punches.get(j).getTime();
-					}
-				}
-			}
+            for (Punch _punch : _punches) {
+                if (_punch.getAction() == i) {
+                    //if the action reason is what were counting
+                    if (_punch.getType() == Defines.IN) {
+                        returnValue[i] -= _punch.getTime();
+                    } else {
+                        returnValue[i] += _punch.getTime();
+                    }
+                }
+            }
 		}
 		return returnValue;
 	}
@@ -302,20 +310,21 @@ public class Day {
 	}
 
 	public void updateDay(){
-		for(int i = 0; i < _punches.size(); i++){
-			if(_punches.get(i).isNeedToUpdate()){
-				_punches.get(i).commitToDb(AppContext.getAppContext());
-				if(printDebug) Log.d(TAG, "Punch: " + _punches.get(i).getTime());
-			}
-		}
-		for(int i = 0; i < _removed.size(); i++){
-			_removed.get(i).commitToDb(AppContext.getAppContext());
-		}
+        for (Punch _punch : _punches) {
+            if (_punch.isNeedToUpdate()) {
+                _punch.commitToDb(AppContext.getAppContext());
+                if (printDebug) Log.d(TAG, "Punch: " + _punch.getTime());
+            }
+        }
+        for (Punch a_removed : _removed) {
+            a_removed.commitToDb(AppContext.getAppContext());
+        }
 
 		_removed.clear();
 		_punches = getPunchesForDay(_date);
 	}
 
+    /*
 	public void forceWrite(){
 		for(int i = 0; i < _punches.size(); i++){
 			_punches.get(i).setNeedToUpdate(true);
@@ -323,6 +332,7 @@ public class Day {
 			if(printDebug) Log.d(TAG, "Punch: " + _punches.get(i).getTime());
 		}
 	}
+	*/
 
 	public int getSize(){
 		return _punches.size();
@@ -352,7 +362,7 @@ public class Day {
 	}
 
 	public void removeByID(long id){
-		Punch temp = null;
+		Punch temp;
 		for( int i = _punches.size(); i > 0; i++){
 			if(_punches.get(i - 1).getId() == id){
 				temp = _punches.get(i - 1);
@@ -363,7 +373,7 @@ public class Day {
 	}
 
 	public Punch getByID(long id){
-		Punch temp = null;
+		Punch temp;
 		for( int i = _punches.size(); i > 0; i--){
 			if(_punches.get(i - 1).getId() == id){
 				temp = _punches.get(i - 1);
