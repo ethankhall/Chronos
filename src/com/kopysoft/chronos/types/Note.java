@@ -45,6 +45,12 @@ public class Note {
 
     String insertNote = "INSERT INTO " + Chronos.TABLE_NAME_NOTE + "(note_string, time, jobNumber) VALUES (?, ?, ?)";
 
+    /**
+     *
+     * @param date      Date
+     * @param jobNumber Job Number
+     * @param context   App Context
+     */
     public Note(int[] date, int jobNumber,  Context context){
         i_chrono = new Chronos(context);
         i_date = date;
@@ -53,6 +59,12 @@ public class Note {
         i_jobNumber = jobNumber;
     }
 
+     /**
+     *
+     * @param date      Date
+     * @param jobNumber Job Number
+     * @param chronos   Chronos
+     */
     public Note(int[] date, int jobNumber, Chronos chronos){
         i_chrono = chronos;
         i_date = date;
