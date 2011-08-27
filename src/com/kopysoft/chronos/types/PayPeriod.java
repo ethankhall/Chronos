@@ -34,12 +34,14 @@ public class PayPeriod {
 	ArrayList<Day> _days = new ArrayList<Day>();
 	GregorianCalendar _start = null;
 	GregorianCalendar _end = null;
+    private int _jobNumber;
 	//private static final String TAG = Defines.TAG + " - PayPeriod";
 
-	public PayPeriod(int[] start, int[] end, Context context){
+	public PayPeriod(int[] start, int[] end, int i_jobNumber, Context context){
 		//Configure start and end times 
 		_start = new GregorianCalendar(start[0], start[1], start[2]);
 		_end = new GregorianCalendar(end[0], end[1], end[2]);
+        _jobNumber = i_jobNumber;
 		
 		GregorianCalendar temp = new GregorianCalendar(start[0], start[1], start[2]);
 
@@ -67,20 +69,20 @@ public class PayPeriod {
 		for(int i = 0; i < _days.size(); i++){
 			boolean[] needFix = _days.get(i).checkForMidnight();
 
-			if(needFix[Defines.REGULAR_TIME] == true){
-				if(prevNeedFix == false){
+			if(needFix[Defines.REGULAR_TIME]){
+				if(!prevNeedFix){
 					Day temp = _days.get(i);
 					int[] dayInfo= temp.getDay();
 					GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 					cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
 					Punch quickFix = new Punch(cal.getTimeInMillis() - 1000, 
-							Defines.OUT, -1, Defines.REGULAR_TIME);
+							Defines.OUT, -1, Defines.REGULAR_TIME, _jobNumber);
 					quickFix.setNeedToUpdate(true);
 					temp.add(quickFix);
 					_days.get(i).updateDay();
 
 					quickFix = new Punch(cal.getTimeInMillis() + 1000, 
-							Defines.IN, -1, Defines.REGULAR_TIME);
+							Defines.IN, -1, Defines.REGULAR_TIME, _jobNumber);
 					quickFix.setNeedToUpdate(true);
 					
 					if(i + 1 < _days.size()){
@@ -94,7 +96,7 @@ public class PayPeriod {
 					GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 					cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
 					Punch quickFix = new Punch(cal.getTimeInMillis() - 1000, 
-							Defines.OUT, -1, Defines.REGULAR_TIME);
+							Defines.OUT, -1, Defines.REGULAR_TIME, _jobNumber);
 					quickFix.setNeedToUpdate(true);
 					temp.add(quickFix);
 					_days.get(i).updateDay();
@@ -104,13 +106,13 @@ public class PayPeriod {
 
 			//all others
 			for(int j = 1; j < Defines.MAX_CLOCK_OPT; j++){
-				if(needFix[j] == true){
+				if(needFix[j]){
 					Day temp = _days.get(i);
 					int[] dayInfo= temp.getDay();
 					GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
 					cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
 					Punch quickFix = new Punch(cal.getTimeInMillis() - 1000, 
-							Defines.OUT, -1, j);
+							Defines.OUT, -1, j, _jobNumber);
 					quickFix.setNeedToUpdate(true);
 					temp.add(quickFix);
 					_days.get(i).updateDay();
@@ -119,6 +121,7 @@ public class PayPeriod {
 		}
 	}
 
+    /*
 	public long getTimeForDay(int index){
 		return _days.get(index).getTimeWithBreaks();
 	}
@@ -132,6 +135,7 @@ public class PayPeriod {
 		tempDayInfo[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
 		return new Note(tempDayInfo, AppContext.getAppContext());
 	}
+	*/
 
 	public int size(){
 		return _days.size();
