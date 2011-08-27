@@ -54,11 +54,11 @@ public class PayPeriod {
 			tempDayInfo[1] = temp.get(GregorianCalendar.MONTH);
 			tempDayInfo[2] = temp.get(GregorianCalendar.DAY_OF_MONTH);
 			
-			Note todayNote = new Note(tempDayInfo, context);
+			//Note todayNote = new Note(tempDayInfo, _jobNumber, context);
 			
-			Day instartDay = new Day(tempDayInfo, context, todayNote);
-			instartDay.sort();
-			_days.add(instartDay);
+			Day insertDay = new Day(tempDayInfo, _jobNumber, context);
+			insertDay.sort();
+			_days.add(insertDay);
 			temp.add(GregorianCalendar.DAY_OF_YEAR, 1);
 		}
 	}
