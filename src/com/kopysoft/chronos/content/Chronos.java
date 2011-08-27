@@ -146,7 +146,7 @@ public class Chronos extends SQLiteOpenHelper {
                     if(colAR != -1){
                         type = cursor.getInt(colAR);
                     }
-                    Punch temp = new Punch(time, Defines.IN, id, type);
+                    Punch temp = new Punch(time, Defines.IN, id, type, 0);
                     punches.add(temp);
 
 
