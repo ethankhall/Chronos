@@ -26,7 +26,6 @@ package com.kopysoft.chronos.singelton;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
@@ -176,4 +175,10 @@ public class PreferenceSingleton {
 		SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
 		return app_preferences.getBoolean("NotificationsEnabled", true);
 	}
+
+    public static int getDefaultJobNumber(Context appContext){
+		SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+		return app_preferences.getInt("DefaultJobNumber", -1);
+	}
+
 }

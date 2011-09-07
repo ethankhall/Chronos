@@ -23,20 +23,19 @@ package com.kopysoft.chronos.types;
  *
  */
 
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
-
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
 
 public class Punch implements Comparable<Punch> {
 
@@ -114,6 +113,15 @@ public class Punch implements Comparable<Punch> {
         needToUpdate = true;
         actionReason = i_actionReason;
         if(Defines.DEBUG_PRINT) Log.d(TAG, "New Action_Reason:" + actionReason + "\tID: " + id);
+    }
+
+    public int getJobNumber(){
+        return jobNumber;
+    }
+
+    public void setJobNumber(int jn){
+        jobNumber = jn;
+        needToUpdate = true;
     }
 
     public int getAction(){

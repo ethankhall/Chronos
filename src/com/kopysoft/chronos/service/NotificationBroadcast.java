@@ -23,8 +23,6 @@ package com.kopysoft.chronos.service;
  *  
  */
 
-import java.util.GregorianCalendar;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -32,10 +30,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
+
+import java.util.GregorianCalendar;
 
 public class NotificationBroadcast extends BroadcastReceiver{
 
@@ -59,18 +58,18 @@ public class NotificationBroadcast extends BroadcastReceiver{
 		boolean notificationEnabled = pref.getNotificationEnabled(context);
 		createNotification(context);	//connect to the notification manager
 
-		if(notificationEnabled == false){
+		if( !notificationEnabled ){
 			if ( DEBUG_PRINT ) Log.d(TAG, "Exit becase of notificationEnabled");
 			removeNotification();
 			return;
 		}
 
-		if(runUpdate == true){
+		if(runUpdate){
 			runUpdate(timeToday, context);
 			if ( DEBUG_PRINT ) Log.d(TAG, "Run Update:" + timeToday);
 		}
 
-		if(setMessage == true){
+		if(setMessage){
 			postLunchNote(noteTitle, noteMessage, context);
 			if ( DEBUG_PRINT ) Log.d(TAG, "Put Message: " + noteTitle);
 		}
@@ -138,8 +137,8 @@ public class NotificationBroadcast extends BroadcastReceiver{
 
 	private String getTimeString(long time){
 		String returnString;
-		int hour = 0;
-		int min = 0;
+		int hour;
+		int min;
 
 		//Do calculations
 		hour = (int)(( time / 1000) / 60) /60;

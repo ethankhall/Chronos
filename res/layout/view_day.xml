@@ -77,7 +77,8 @@
                     android:layout_alignRight="@+id/noteTiptoolEditDay"
                     android:singleLine="false"
                     android:lines="3"
-                    android:gravity="top|left"/>
+                    android:gravity="top|left"
+                    android:editable="false"/>
         </RelativeLayout>
 
 

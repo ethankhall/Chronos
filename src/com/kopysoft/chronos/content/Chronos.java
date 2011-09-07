@@ -33,6 +33,7 @@ import android.os.Environment;
 import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.HoldNote;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 
 import java.io.File;
@@ -87,8 +88,10 @@ public class Chronos extends SQLiteOpenHelper {
                 " jobNumber INTEGER DEFAULT 0 ) ");
         db.execSQL("CREATE TABLE " + TABLE_NAME_JOBS +
                 " ( _id INTEGER PRIMARY KEY NOT NULL, " +
-                " name String NOT NULL, " +
-                " default INTEGER NOT NULL )");
+                " name String NOT NULL," +
+                " payRate FLOAT NOT NULL, " +
+                " overTime FLOAT NOT NULL, " +
+                " doubleTime FLOAT NOT NULL)");
     }
 
     @Override
@@ -199,6 +202,38 @@ public class Chronos extends SQLiteOpenHelper {
     //				SQL Section
     //
     //---------------------------------------------------------------
+
+    public ArrayList<Job> getJobNumbers(){
+        ArrayList<Job> returnVal = new ArrayList<Job>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME_JOBS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "_id ASC ");
+
+        int jobNumber;
+        String jobName;
+
+        if (cursor.moveToFirst()) {
+            do {
+                final int colNote = cursor.getColumnIndex("_id");
+                final int colName = cursor.getColumnIndex("name");
+                jobNumber = cursor.getInt(colNote);
+                jobName =   cursor.getString(colName);
+                returnVal.add(new Job(jobNumber, jobName));
+
+            } while (cursor.moveToNext());
+        }
+
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        db.close();
+        return returnVal;
+    }
 
     /**
      * @param db database

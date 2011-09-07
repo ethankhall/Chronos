@@ -23,9 +23,6 @@ package com.kopysoft.chronos;
  *  
  */
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -34,13 +31,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-
 import com.kopysoft.chronos.RowHelper.RowHelperPayPeriod;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.PayPeriod;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class EditPayPeriodOthers extends ListActivity {
 
@@ -49,6 +48,7 @@ public class EditPayPeriodOthers extends ListActivity {
 	private PreferenceSingleton prefs = null;
 
 	private int weeks_in_pp = 0;
+    private int gJobNumber;
 
 	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
 
@@ -69,7 +69,7 @@ public class EditPayPeriodOthers extends ListActivity {
 				cal.get(GregorianCalendar.DAY_OF_MONTH)
 		};
 
-		PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
+		PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
 		for(int i = 0; i < thisPP.size(); i++){
 			adapter.updateDay(i, thisPP.get(i));
 		}
@@ -90,6 +90,7 @@ public class EditPayPeriodOthers extends ListActivity {
 		date[0] = getIntent().getExtras().getInt("year");
 		date[1] = getIntent().getExtras().getInt("month");
 		date[2] = getIntent().getExtras().getInt("day");
+        gJobNumber = getIntent().getExtras().getInt("jobNumber");
 
 		if(Defines.DEBUG_PRINT) Log.d(TAG, "Input Date: " + 
 				String.format("(%d/%d/%d)", date[0], date[1], date[2]));
@@ -99,7 +100,7 @@ public class EditPayPeriodOthers extends ListActivity {
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)};
 
-		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
+		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, gJobNumber, getApplicationContext());
 
 		//StringFormat = Chronos.TimeFormater(app_preferences.getString("editPrefTime", "1"));
 		StringFormat = prefs.getPrefEditTime(getApplicationContext());
@@ -117,6 +118,7 @@ public class EditPayPeriodOthers extends ListActivity {
 				intent.putExtra("year", day[0]);
 				intent.putExtra("month", day[1]);
 				intent.putExtra("day", day[2]);
+                intent.putExtra("jobNumber", gJobNumber);
 
 				startActivityForResult(intent,0);
 
@@ -151,6 +153,8 @@ public class EditPayPeriodOthers extends ListActivity {
 		case R.id.prev:
 			prevButton();
 			break;
+        case R.id.close:
+            finish();
 		default:
 			break;
 		}
@@ -172,7 +176,7 @@ public class EditPayPeriodOthers extends ListActivity {
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)};
 
-		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
+		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, gJobNumber, getApplicationContext());
 		for(int i = 0; i < thisPP.size(); i++){
 			adapter.updateDay(i, thisPP.get(i));
 		}
@@ -190,7 +194,7 @@ public class EditPayPeriodOthers extends ListActivity {
 		int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)};
 
-		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, getApplicationContext());
+		PayPeriod thisPP = new PayPeriod(date, endOfThisPP, gJobNumber, getApplicationContext());
 		for(int i = 0; i < thisPP.size(); i++){
 			adapter.updateDay(i, thisPP.get(i));
 		}

@@ -43,6 +43,13 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1" 
 			android:onClick="callback"/>
+        <Button
+			android:id="@+id/close"
+			android:text="Close"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:onClick="callback"/>
 			
 		<Button
 			android:id="@+id/next"

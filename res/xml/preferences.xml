@@ -42,7 +42,7 @@
         </PreferenceScreen>
         <PreferenceScreen android:title="PayPeriod Info"
                           android:summary="Set the info for the pay period" android:icon="@drawable/expander_ic_minimized">
-            <com.kopysoft.chronos.subActivites.DateSelect
+            <com.kopysoft.chronos.subActivites.preferences.DateSelect
                     android:key="date" android:title="Start of PayPeriod"
                     android:defaultValue="2011.1.17" />
             <ListPreference android:title="Weeks in PayPeriod"
