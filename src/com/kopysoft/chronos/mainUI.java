@@ -23,11 +23,6 @@ package com.kopysoft.chronos;
  *  
  */
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -41,7 +36,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
-
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.Email;
 import com.kopysoft.chronos.content.StaticFunctions;
@@ -52,6 +46,11 @@ import com.kopysoft.chronos.service.MidnightBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.singelton.ViewingPayPeriod;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class mainUI extends TabActivity {
 	/** Called when the activity is first created. */
@@ -82,6 +81,9 @@ public class mainUI extends TabActivity {
 	}
 
 	public void onResume(){
+        StaticFunctions.fixMidnight(prefs.getStartOfThisPP(getApplicationContext()),
+				prefs.getWeeksInPP(getApplicationContext()),
+				getApplicationContext());
 		super.onResume();
 	}
 
@@ -115,7 +117,7 @@ public class mainUI extends TabActivity {
 				Defines.MIDNIGHT_ALARM, sentIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-		am.setRepeating(AlarmManager.RTC, midnightAlarm.getTimeInMillis(), 
+		am.setRepeating(AlarmManager.RTC_WAKEUP, midnightAlarm.getTimeInMillis(),
 				AlarmManager.INTERVAL_DAY, sender);
 
 		//Resources res = getResources(); // Resource object to get Drawables

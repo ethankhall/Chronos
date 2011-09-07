@@ -24,20 +24,19 @@ package com.kopysoft.chronos.types;
  *  
  */
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
-
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 
 
 public class Day {
@@ -51,7 +50,7 @@ public class Day {
 
 	/**
 	 * Creates a Day class
-	 * @param dayTime Total time for the day
+	 * @param dayInfo Total time for the day
 	 * @param dayInfo Day information [year, month, day]
 	 */
 	public Day(int dayInfo[], Context context){
