@@ -24,6 +24,7 @@ package com.kopysoft.chronos.types;
  */
 
 import android.content.Context;
+import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class PayPeriod {
     ArrayList<Day> _days = new ArrayList<Day>();
     GregorianCalendar _start = null;
     GregorianCalendar _end = null;
-    //private static final String TAG = Defines.TAG + " - PayPeriod";
+    private static final String TAG = Defines.TAG + " - PayPeriod";
 
     public PayPeriod(int[] start, int[] end, Context context){
         //Configure start and end times
@@ -60,10 +61,14 @@ public class PayPeriod {
         }
     }
 
-    public void fixMidights(){
+    public void fixMidnights(){
         long dayOfWeek =
-                ( _start.getTimeInMillis() - GregorianCalendar.getInstance().getTimeInMillis() )
+                ( GregorianCalendar.getInstance().getTimeInMillis() - _start.getTimeInMillis())
                         / Defines.MS_TO_SECOND / 60 / 60 / 24; //  Seconds in Min / Min in Hour / Hour in day
+
+        long daysInWeek =
+                ( _end.getTimeInMillis() - _start.getTimeInMillis())
+                        / Defines.MS_TO_SECOND / 60 / 60 / 24;
 
         for(int i = 0; i < dayOfWeek; i++){
             long[] times =  _days.get(i).getArrayOfTime();
@@ -77,11 +82,25 @@ public class PayPeriod {
                         Defines.OUT, -1, Defines.REGULAR_TIME);
                 quickFix.setNeedToUpdate(true);
                 temp.add(quickFix);
-                _days.get(i).updateDay();
+                temp.updateDay();
+                //_days.get(i).updateDay();
+
+                Log.d(TAG, "daysInWeek: " + daysInWeek);
+                Log.d(TAG, "index: " + i);
+
+                if(i + 1 <= daysInWeek){
+                    Log.d(TAG, "Update");
+                    temp = _days.get(i+1);
+                    quickFix = new Punch(cal.getTimeInMillis() + 1000,
+                        Defines.IN, -1, Defines.REGULAR_TIME);
+                    quickFix.setNeedToUpdate(true);
+                    temp.add(quickFix);
+                    temp.updateDay();
+
+                }
             }
         }
     }
-
 
     public long getTimeForDay(int index){
         return _days.get(index).getTimeWithBreaks();

@@ -23,21 +23,20 @@ package com.kopysoft.chronos.content;
  *  
  */
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.text.format.DateFormat;
 import android.util.Log;
-
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.service.BackgroundUpdate;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.PayPeriod;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class StaticFunctions {
 
@@ -237,7 +236,7 @@ public class StaticFunctions {
 		};
 
 		PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfPP, context);
-		thisPP.fixMidights();
+		thisPP.fixMidnights();
 
 	}
 }
