@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Job Name"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dip"
+            />
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numeric="integer"
+            android:text="0"
+            android:id="@+id/jobName"
+            />
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Pay Rate"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dip"
+            />
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numeric="decimal"
+            android:text="7.50"
+            android:id="@+id/payRate"
+            />
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Overtime"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dip"
+            />
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numeric="decimal"
+            android:text="40"
+            android:id="@+id/overtime"
+            />
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Double Time"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dip"
+            />
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numeric="integer|decimal"
+            android:text="60"
+            android:id="@+id/doubleTime"
+            />
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/submitButton"
+            android:text="Save"
+            />
+</LinearLayout>
+

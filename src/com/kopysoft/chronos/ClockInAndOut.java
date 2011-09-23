@@ -23,11 +23,6 @@ package com.kopysoft.chronos;
  *  
  */
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ListActivity;
@@ -43,7 +38,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.kopysoft.chronos.RowHelper.RowHelperToday;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
@@ -51,8 +45,14 @@ import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.service.NotificationBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
+import com.kopysoft.chronos.subActivites.selector.EditTime;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Punch;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class ClockInAndOut extends ListActivity{ 
 
@@ -65,6 +65,7 @@ public class ClockInAndOut extends ListActivity{
 	private RowHelperToday adapter = null;
 	private Handler mHandler = new Handler();
 	private PreferenceSingleton prefs = null;
+    private int gJobNumber;
 
 	private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
 
@@ -125,13 +126,15 @@ public class ClockInAndOut extends ListActivity{
 
 		prefs = new PreferenceSingleton();
 
+        gJobNumber = getIntent().getExtras().getInt("jobNumber");
+
 		GregorianCalendar cal = new GregorianCalendar();
 
 		int[] dateGiven = new int[3];
 		dateGiven[0] = cal.get(Calendar.YEAR);
 		dateGiven[1] = cal.get(Calendar.MONTH);
 		dateGiven[2] = cal.get(Calendar.DAY_OF_MONTH);
-		Day today = new Day(dateGiven, getApplicationContext());
+		Day today = new Day(dateGiven, gJobNumber, getApplicationContext());
 
 		adapter = new RowHelperToday(getApplicationContext(), today);
 		setListAdapter(adapter);
@@ -181,7 +184,7 @@ public class ClockInAndOut extends ListActivity{
 				dateGiven[1] = cal.get(Calendar.MONTH);
 				dateGiven[2] = cal.get(Calendar.DAY_OF_MONTH);
 
-				Day today = new Day(dateGiven, getApplicationContext());
+				Day today = new Day(dateGiven, gJobNumber, getApplicationContext());
 				adapter = new RowHelperToday(getApplicationContext(), today);
 				setListAdapter(adapter);
 
@@ -189,6 +192,12 @@ public class ClockInAndOut extends ListActivity{
 				updatePayRate(); //Updates the pay rate and shows or hides the pay info
 
 				updateData();
+			}
+		});
+
+        ListenerObj.getInstance().addJobChangeListener(new PropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event) {
+				gJobNumber = (Integer)event.getNewValue();
 			}
 		});
 
@@ -200,11 +209,11 @@ public class ClockInAndOut extends ListActivity{
 	//----------------------------------------------------
 	
 	/**
-	 * 	onActivityResult: when the popup dialog calls "OK" or "Cancel"
+	 * 	onActivityResult: when the popup selector calls "OK" or "Cancel"
 	 * 
 	 * @param requestCode I don't use it.
 	 * @param resultCode How the activity was closed, either Activity.RESULT_CANCELED or Activity.RESULT_OK
-	 * @param data The Intent that was sent back from the dialog.
+	 * @param data The Intent that was sent back from the selector.
 	 * 
 	 * Can either call add a new punch ( if the id pulled from the Intent is -1) or edit the punch based on the id and the info pulled from the (Intent)data.
 	 */
@@ -220,7 +229,7 @@ public class ClockInAndOut extends ListActivity{
 
 			if(id == -1){
 				//long i_time, int i_type, long i_id, int i_actionReason
-				Punch temp = new Punch(time, Defines.IN, id, actionReason);
+				Punch temp = new Punch(time, Defines.IN, id, gJobNumber, actionReason);
 				adapter.add(temp);
 			} else {
 				Punch temp = adapter.getByID(id);
@@ -237,13 +246,14 @@ public class ClockInAndOut extends ListActivity{
 		int menuItemIndex = item.getItemId();
 
 		if(menuItemIndex == 0){//edit
-			Intent intent = new Intent(getApplicationContext(), com.kopysoft.chronos.subActivites.EditTime.class);
+			Intent intent = new Intent(getApplicationContext(), EditTime.class);
 			Punch temp = adapter.getItem(info.position);
 			if(Defines.DEBUG_PRINT) Log.d(TAG, "getID = " + temp.getId());
 			intent.putExtra("id", temp.getId());
 			intent.putExtra("time", temp.getTime());
 			intent.putExtra("type", temp.getType());
 			intent.putExtra("actionReason", temp.getAction());
+            intent.putExtra("jobNumber", gJobNumber);
 			startActivityForResult(intent, 0);
 
 		} else if( menuItemIndex == 1){	//remove
@@ -321,7 +331,7 @@ public class ClockInAndOut extends ListActivity{
 	}
 
 	public void Callback(View v){
-		int type = Defines.IN;
+		int type;
 		long i_time;
 		GregorianCalendar cal = new GregorianCalendar();
 		long temp = cal.getTimeInMillis();
@@ -340,7 +350,7 @@ public class ClockInAndOut extends ListActivity{
 
 		long timeAdd = cal.getTimeInMillis();
 
-		Punch tempPunch = new Punch(timeAdd, type, -1, Defines.REGULAR_TIME);
+		Punch tempPunch = new Punch(timeAdd, type, Defines.NEW_PUNCH, gJobNumber, Defines.REGULAR_TIME);
 		tempPunch.commitToDb(getApplicationContext());
 		adapter.add(tempPunch);
 		adapter.updateDay(false);

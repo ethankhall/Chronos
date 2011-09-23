@@ -23,26 +23,19 @@ package com.kopysoft.chronos.content;
  *  
  */
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 public class CVSGenerate {
 
@@ -52,7 +45,7 @@ public class CVSGenerate {
 
 	public static void readFromSDCard(Context context){
 		getCardStatus();
-		if(mExternalStorageAvailable == false){
+		if(!mExternalStorageAvailable){
 
 			CharSequence text = "Could not read from SD Card!.";
 			int duration = Toast.LENGTH_SHORT;
@@ -67,7 +60,7 @@ public class CVSGenerate {
 			File backup = new File(directory, "Chronos_Backup.cvs");
 
 			BufferedReader br = new BufferedReader( new FileReader(backup));
-			String strLine = "";
+			String strLine;
 			
 			ArrayList<Punch> listOfPunches = new ArrayList<Punch>();
 			ArrayList<Note> listOfNotes = new ArrayList<Note>();
@@ -81,16 +74,18 @@ public class CVSGenerate {
 				int type = 0;
 				int actionReason = Defines.REGULAR_TIME;
 				String newString = "";
+                int jobNumber = 0;
 				try{
 					//id = Long.parseLong(ParcedString[0]);
 					time = Long.parseLong(ParcedString[1]);
 					type = Integer.parseInt(ParcedString[2]);
 					actionReason = Integer.parseInt(ParcedString[3]);
-					newString = ParcedString[4];
-				} catch(Exception e){
+					jobNumber = Integer.parseInt(ParcedString[4]);
+                    newString = ParcedString[5];
+				} catch(Exception ignored){
 
 				}
-				Punch newPunch = new Punch(time, type, -1, actionReason);
+				Punch newPunch = new Punch(time, type, Defines.NEW_PUNCH, actionReason, jobNumber);
 				listOfPunches.add(newPunch);
 				GregorianCalendar cal = new GregorianCalendar();
 				cal.setTimeInMillis(time);
@@ -99,7 +94,7 @@ public class CVSGenerate {
 						cal.get(GregorianCalendar.MONTH),
 						cal.get(GregorianCalendar.DAY_OF_MONTH)
 				};
-				Note newNote = new Note(newTime, context);
+				Note newNote = new Note(newTime, jobNumber, context);
 				newNote.setNote(newString);
 				listOfNotes.add(newNote);
 				newNote.update();
@@ -107,12 +102,13 @@ public class CVSGenerate {
 			
 			Chronos chrono = new Chronos(context);
 			chrono.dropAll();
-			
-			for(int i = 0; i < listOfPunches.size(); i++)
-				listOfPunches.get(i).commitToDb(context);
-			
-			for(int i = 0; i < listOfNotes.size(); i++)
-				listOfNotes.get(i).update();
+
+            for (Punch currPunch : listOfPunches) currPunch.commitToDb(context);
+
+
+            for ( Note listOfNote : listOfNotes )    listOfNote.update();
+			//for(int i = 0; i < listOfNotes.size(); i++)
+			//	listOfNotes.get(i).update();
 
 		} catch (FileNotFoundException e) {
 			Log.e(Defines.TAG, e.getMessage());
@@ -130,7 +126,7 @@ public class CVSGenerate {
 
 	public static void putDataOnCard(Context context){
 		getCardStatus();
-		if(mExternalStorageWriteable == false){
+		if(!mExternalStorageWriteable){
 
 			CharSequence text = "Could not write to SD Card!.";
 			int duration = Toast.LENGTH_SHORT;
@@ -150,6 +146,7 @@ public class CVSGenerate {
 		final int colTime = cursor.getColumnIndex("time");
 		//final int colType = cursor.getColumnIndex("punch_type");
 		final int colAR = cursor.getColumnIndex("actionReason");
+        final int colJobNumber = cursor.getColumnIndex("jobNumber");
 		if (cursor.moveToFirst()) {
 			do {				
 
@@ -157,14 +154,15 @@ public class CVSGenerate {
 				long time = cursor.getLong(colTime);
 				//int type = cursor.getInt(colType);
 				int actionReason = cursor.getInt(colAR);
-				Punch temp = new Punch(time, Defines.IN, id, actionReason);
+                int jobNumber = cursor.getInt(colJobNumber);
+				Punch temp = new Punch(time, Defines.IN, id, jobNumber, actionReason);
 				punches.add(temp);
 
 
 			} while (cursor.moveToNext());
 		}
 
-		if (cursor != null && !cursor.isClosed()) {
+		if ( !cursor.isClosed()) {
 			cursor.close();
 		}
 		db.close();
@@ -176,12 +174,12 @@ public class CVSGenerate {
 		try{
 			br = new BufferedWriter( new FileWriter(backup));
 
-			for(int i = 0; i < punches.size(); i++){
-				String write = getCVS(punches.get(i), context);
-				br.write(write);
-			}
+            for (Punch punch : punches) {
+                String write = getCVS(punch, context);
+                br.write(write);
+            }
 			br.close();
-		} catch (IOException e){
+		} catch (IOException ignored){
 			
 		}
 
@@ -193,6 +191,7 @@ public class CVSGenerate {
 		long time = punch.getTime();
 		int type = punch.getType();
 		int actionReason = punch.getAction();
+        int jobNumber = punch.getJobNumber();
 
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTimeInMillis(time);
@@ -201,12 +200,13 @@ public class CVSGenerate {
 				cal.get(GregorianCalendar.MONTH),
 				cal.get(GregorianCalendar.DAY_OF_MONTH)
 		};
-		Note newNote = new Note(newTime, context);
+		Note newNote = new Note(newTime, jobNumber, context);
 		String note = newNote.getNote(true);
 
 		returnValue += String.valueOf(id) + ",";
 		returnValue += String.valueOf(time) + ",";
 		returnValue += String.valueOf(type) + ",";
+        returnValue += String.valueOf(jobNumber) + ",";
 		returnValue += String.valueOf(actionReason) + ",";
 		returnValue += note + "\n";
 

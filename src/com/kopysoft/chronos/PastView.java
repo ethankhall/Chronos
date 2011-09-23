@@ -23,11 +23,6 @@ package com.kopysoft.chronos;
  *
  */
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -40,7 +35,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.kopysoft.chronos.RowHelper.RowHelperPastView;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.StaticFunctions;
@@ -51,6 +45,11 @@ import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.singelton.ViewingPayPeriod;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.PayPeriod;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class PastView extends ListActivity{
 
@@ -72,6 +71,7 @@ public class PastView extends ListActivity{
     private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
     private ViewingPayPeriod holder = null;
     private updateAdapter updateAdapt = null;
+    private int gJobNumber;
 
     @Override
     public void onResume(){
@@ -120,6 +120,8 @@ public class PastView extends ListActivity{
         overtimeEnable = prefs.getOvertimeEnable(getApplicationContext());
         overtimeSetting = prefs.getOvertimeSetting(getApplicationContext());
 
+        gJobNumber = getIntent().getExtras().getInt("jobNumber");
+
         //updatePayRate();
 
         //int[] dateHold = Chronos.getDate(ppStart);
@@ -132,7 +134,7 @@ public class PastView extends ListActivity{
         int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
                 cal.get(GregorianCalendar.DAY_OF_MONTH)};
 
-        PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfThisPP, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfThisPP, gJobNumber, getApplicationContext());
         date = startOfThisPP;
 
         //for Prefereneces
@@ -155,6 +157,12 @@ public class PastView extends ListActivity{
 
         });
 
+        ListenerObj.getInstance().addJobChangeListener(new PropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event) {
+				gJobNumber = (Integer)event.getNewValue();
+			}
+		});
+
         adapter = new RowHelperPastView(getApplicationContext(), thisPP, StringFormat);
         adapter.setFormat(StringFormat);
         setListAdapter(adapter);
@@ -172,6 +180,7 @@ public class PastView extends ListActivity{
                 intent.putExtra("year", day[0]);
                 intent.putExtra("month", day[1]);
                 intent.putExtra("day", day[2]);
+                intent.putExtra("jobNumber", gJobNumber);
 
                 startActivity(intent);
 
@@ -337,7 +346,7 @@ public class PastView extends ListActivity{
                 cal.get(GregorianCalendar.DAY_OF_MONTH)
         };
 
-        PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
         for(int i = 0; i < thisPP.size(); i++){
             adapter.updateDay(i, thisPP.get(i));
         }
@@ -369,7 +378,7 @@ public class PastView extends ListActivity{
 
         holder.setWeek(date);
 
-        PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
         for(int i = 0; i < thisPP.size(); i++){
             adapter.updateDay(i, thisPP.get(i));
         }
@@ -389,7 +398,7 @@ public class PastView extends ListActivity{
 
         holder.setWeek(date);
 
-        PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
         for(int i = 0; i < thisPP.size(); i++){
             adapter.updateDay(i, thisPP.get(i));
         }
@@ -442,7 +451,7 @@ public class PastView extends ListActivity{
 
         @Override
         protected Void doInBackground(Context... param) {
-            PayPeriod thisPP = new PayPeriod(date, endOfThisPP, param[0]);
+            PayPeriod thisPP = new PayPeriod(date, endOfThisPP, gJobNumber, param[0]);
 
             for(int i = 0; i < thisPP.size(); i++){
                 publishProgress(i, thisPP.get(i));

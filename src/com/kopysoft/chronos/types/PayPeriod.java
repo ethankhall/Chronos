@@ -31,104 +31,125 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class PayPeriod {
-    ArrayList<Day> _days = new ArrayList<Day>();
-    GregorianCalendar _start = null;
-    GregorianCalendar _end = null;
-    private static final String TAG = Defines.TAG + " - PayPeriod";
+	ArrayList<Day> _days = new ArrayList<Day>();
+	GregorianCalendar _start = null;
+	GregorianCalendar _end = null;
+    private int _jobNumber;
+	//private static final String TAG = Defines.TAG + " - PayPeriod";
 
-    public PayPeriod(int[] start, int[] end, Context context){
-        //Configure start and end times
-        _start = new GregorianCalendar(start[0], start[1], start[2]);
-        _end = new GregorianCalendar(end[0], end[1], end[2]);
+	public PayPeriod(int[] start, int[] end, int i_jobNumber, Context context){
+		//Configure start and end times 
+		_start = new GregorianCalendar(start[0], start[1], start[2]);
+		_end = new GregorianCalendar(end[0], end[1], end[2]);
+        _jobNumber = i_jobNumber;
+		
+		GregorianCalendar temp = new GregorianCalendar(start[0], start[1], start[2]);
 
-        GregorianCalendar temp = new GregorianCalendar(start[0], start[1], start[2]);
+		long difference = _end.getTimeInMillis() - _start.getTimeInMillis();
+		difference = difference / 1000 / 60 / 60 / 24;
 
-        long difference = _end.getTimeInMillis() - _start.getTimeInMillis();
-        difference = difference / 1000 / 60 / 60 / 24;
+		int[] tempDayInfo = new int[3];
+		for(int i = 0; i < difference; i++){
+			tempDayInfo[0] = temp.get(GregorianCalendar.YEAR);
+			tempDayInfo[1] = temp.get(GregorianCalendar.MONTH);
+			tempDayInfo[2] = temp.get(GregorianCalendar.DAY_OF_MONTH);
+			
+			//Note todayNote = new Note(tempDayInfo, _jobNumber, context);
+			
+			Day insertDay = new Day(tempDayInfo, _jobNumber, context);
+			insertDay.sort();
+			_days.add(insertDay);
+			temp.add(GregorianCalendar.DAY_OF_YEAR, 1);
+		}
+	}
 
-        int[] tempDayInfo = new int[3];
-        for(int i = 0; i < difference; i++){
-            tempDayInfo[0] = temp.get(GregorianCalendar.YEAR);
-            tempDayInfo[1] = temp.get(GregorianCalendar.MONTH);
-            tempDayInfo[2] = temp.get(GregorianCalendar.DAY_OF_MONTH);
+	public void fixMidights(){
+		boolean prevNeedFix = false;
 
-            Note todayNote = new Note(tempDayInfo, context);
+		for(int i = 0; i < _days.size(); i++){
+			boolean[] needFix = _days.get(i).checkForMidnight();
 
-            Day instartDay = new Day(tempDayInfo, context, todayNote);
-            instartDay.sort();
-            _days.add(instartDay);
-            temp.add(GregorianCalendar.DAY_OF_YEAR, 1);
-        }
-    }
+			if(needFix[Defines.REGULAR_TIME]){
+				if(!prevNeedFix){
+					Day temp = _days.get(i);
+					int[] dayInfo= temp.getDay();
+					GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
+					cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
+					Punch quickFix = new Punch(cal.getTimeInMillis() - 1000, 
+							Defines.OUT, -1, Defines.REGULAR_TIME, _jobNumber);
+					quickFix.setNeedToUpdate(true);
+					temp.add(quickFix);
+					_days.get(i).updateDay();
 
-    public void fixMidnights(){
-        long dayOfWeek =
-                ( GregorianCalendar.getInstance().getTimeInMillis() - _start.getTimeInMillis())
-                        / Defines.MS_TO_SECOND / 60 / 60 / 24; //  Seconds in Min / Min in Hour / Hour in day
+					quickFix = new Punch(cal.getTimeInMillis() + 1000, 
+							Defines.IN, -1, Defines.REGULAR_TIME, _jobNumber);
+					quickFix.setNeedToUpdate(true);
+					
+					if(i + 1 < _days.size()){
+						_days.get(i+1).add(quickFix);
+						_days.get(i+1).updateDay();
+					}
 
-        long daysInWeek =
-                ( _end.getTimeInMillis() - _start.getTimeInMillis())
-                        / Defines.MS_TO_SECOND / 60 / 60 / 24;
+				} else {
+					Day temp = _days.get(i);
+					int[] dayInfo= temp.getDay();
+					GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
+					cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
+					Punch quickFix = new Punch(cal.getTimeInMillis() - 1000, 
+							Defines.OUT, -1, Defines.REGULAR_TIME, _jobNumber);
+					quickFix.setNeedToUpdate(true);
+					temp.add(quickFix);
+					_days.get(i).updateDay();
+				}
+			}
+			prevNeedFix = needFix[Defines.REGULAR_TIME];
 
-        for(int i = 0; i < dayOfWeek; i++){
-            long[] times =  _days.get(i).getArrayOfTime();
+			//all others
+			for(int j = 1; j < Defines.MAX_CLOCK_OPT; j++){
+				if(needFix[j]){
+					Day temp = _days.get(i);
+					int[] dayInfo= temp.getDay();
+					GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
+					cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
+					Punch quickFix = new Punch(cal.getTimeInMillis() - 1000, 
+							Defines.OUT, -1, j, _jobNumber);
+					quickFix.setNeedToUpdate(true);
+					temp.add(quickFix);
+					_days.get(i).updateDay();
+				}
+			}
+		}
+	}
 
-            if(times[Defines.REGULAR_TIME] < 0){
-                Day temp = _days.get(i);
-                int[] dayInfo= temp.getDay();
-                GregorianCalendar cal = new GregorianCalendar(dayInfo[0], dayInfo[1], dayInfo[2]);
-                cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-                Punch quickFix = new Punch(cal.getTimeInMillis() - 1000,
-                        Defines.OUT, -1, Defines.REGULAR_TIME);
-                quickFix.setNeedToUpdate(true);
-                temp.add(quickFix);
-                temp.updateDay();
-                //_days.get(i).updateDay();
+    /*
+	public long getTimeForDay(int index){
+		return _days.get(index).getTimeWithBreaks();
+	}
 
-                Log.d(TAG, "daysInWeek: " + daysInWeek);
-                Log.d(TAG, "index: " + i);
+	public Note getNoteForDay(int index){
+		GregorianCalendar cal = _start;
+		cal.add(GregorianCalendar.DAY_OF_YEAR, index);
+		int[] tempDayInfo = new int[3];
+		tempDayInfo[0] = cal.get(GregorianCalendar.YEAR);
+		tempDayInfo[1] = cal.get(GregorianCalendar.MONTH);
+		tempDayInfo[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
+		return new Note(tempDayInfo, AppContext.getAppContext());
+	}
+	*/
 
-                if(i + 1 <= daysInWeek){
-                    Log.d(TAG, "Update");
-                    temp = _days.get(i+1);
-                    quickFix = new Punch(cal.getTimeInMillis() + 1000,
-                        Defines.IN, -1, Defines.REGULAR_TIME);
-                    quickFix.setNeedToUpdate(true);
-                    temp.add(quickFix);
-                    temp.updateDay();
+	public int size(){
+		return _days.size();
+	}
 
-                }
-            }
-        }
-    }
+	public Day get(int index){
+		return _days.get(index);
+	}
 
-    public long getTimeForDay(int index){
-        return _days.get(index).getTimeWithBreaks();
-    }
-
-    public Note getNoteForDay(int index){
-        GregorianCalendar cal = _start;
-        cal.add(GregorianCalendar.DAY_OF_YEAR, index);
-        int[] tempDayInfo = new int[3];
-        tempDayInfo[0] = cal.get(GregorianCalendar.YEAR);
-        tempDayInfo[1] = cal.get(GregorianCalendar.MONTH);
-        tempDayInfo[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
-        return new Note(tempDayInfo, AppContext.getAppContext());
-    }
-
-    public int size(){
-        return _days.size();
-    }
-
-    public Day get(int index){
-        return _days.get(index);
-    }
-
-    public void set(int index, Day replaceDay){
-        _days.set(index, replaceDay);
-    }
-
-    public void add(Day newDay){
-        _days.add(newDay);
-    }
+	public void set(int index, Day replaceDay){
+		_days.set(index, replaceDay);
+	}
+	
+	public void add(Day newDay){
+		_days.add(newDay);
+	}
 }

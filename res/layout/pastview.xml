@@ -21,21 +21,20 @@
 			android:id="@+id/pastViewTimeTotal" 
 			android:text="00:00:00"
 			android:gravity="center"
-			android:textSize="40dip"/>
+			android:textSize="30dip"/>
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/pastViewAmountMadeLabel" 
 			android:text="Estimate of Amount Made:"
-			android:gravity="center"
-			android:paddingTop="10dip"/>
+			android:gravity="center"/>
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/pastViewAmountMade" 
 			android:text="$ 0"
 			android:gravity="center"
-			android:textSize="40dip"/>
+			android:textSize="30dip"/>
 		
 	</LinearLayout>
 			

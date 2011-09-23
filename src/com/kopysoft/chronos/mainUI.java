@@ -35,6 +35,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.Email;
@@ -46,6 +48,15 @@ import com.kopysoft.chronos.service.MidnightBroadcast;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.singelton.ViewingPayPeriod;
+import com.kopysoft.chronos.subActivites.misc.HelpActivity;
+import com.kopysoft.chronos.subActivites.selector.AddBreak;
+import com.kopysoft.chronos.subActivites.selector.SelectJob;
+import com.kopysoft.chronos.types.Job;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -58,6 +69,8 @@ public class mainUI extends TabActivity {
 
 	private PreferenceSingleton prefs = null;
 	private static final boolean DEBUG_PRINT = Defines.DEBUG_PRINT;
+
+    private int jobNumber;
 
 	public void onStop(){
 		super.onStop();
@@ -85,6 +98,8 @@ public class mainUI extends TabActivity {
 				prefs.getWeeksInPP(getApplicationContext()),
 				getApplicationContext());
 		super.onResume();
+        jobNumber = PreferenceSingleton.getDefaultJobNumber(getApplicationContext());
+        ListenerObj.getInstance().fireJobChange(jobNumber);
 	}
 
 	@Override
@@ -97,9 +112,12 @@ public class mainUI extends TabActivity {
 		Chronos forUpdate = new Chronos(getApplicationContext());
 		SQLiteDatabase db = forUpdate.getWritableDatabase();
 		db.close();
+        for(Job curJob : StaticFunctions.getJobNumbers(getApplicationContext())){
 		StaticFunctions.fixMidnight(prefs.getStartOfThisPP(getApplicationContext()), 
 				prefs.getWeeksInPP(getApplicationContext()),
+                curJob.getJobNumber(),
 				getApplicationContext());
+        }
 		//Chronos chrono = new Chronos(getApplicationContext());
 		//chrono.dropAll();
 		//GenerateContent();
@@ -127,6 +145,7 @@ public class mainUI extends TabActivity {
 
 		// Create an Intent to launch an Activity for the tab (to be reused)
 		intent = new Intent().setClass(this, com.kopysoft.chronos.ClockInAndOut.class);
+        intent.putExtra("jobNumber", jobNumber);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		//spec = tabHost.newTabSpec("today").setIndicator("Punch",
@@ -134,16 +153,29 @@ public class mainUI extends TabActivity {
 		spec = tabHost.newTabSpec("today").setIndicator("Today").setContent(intent);
 		tabHost.addTab(spec);
 
-		intent = new Intent().setClass(this, com.kopysoft.chronos.WeekView.class);
+		intent = new Intent().setClass(this, EditView.class);
+        intent.putExtra("jobNumber", jobNumber);
 		spec = tabHost.newTabSpec("edit").setIndicator("Edit").setContent(intent);
 		tabHost.addTab(spec);
 
 
-		intent = new Intent().setClass(this, com.kopysoft.chronos.PastView.class);
+		intent = new Intent().setClass(this, PastView.class);
+        intent.putExtra("jobNumber", jobNumber);
 		spec = tabHost.newTabSpec("view").setIndicator("View").setContent(intent);
 		tabHost.addTab(spec);
 
 		tabHost.setCurrentTab(0);
+
+        //Update job number
+        jobNumber = PreferenceSingleton.getDefaultJobNumber(getApplicationContext());
+        if(jobNumber == -1){
+            Intent jobClick = new Intent().setClass(getApplicationContext(), SelectJob.class);
+            startActivity(jobClick);
+        }
+
+        //Set button
+        Button job = (Button) findViewById(R.id.selJob);
+        job.setOnClickListener(jobButton);
 
 		ListenerObj.getInstance().addPropertyChangeListener(new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
@@ -151,7 +183,22 @@ public class mainUI extends TabActivity {
 				setUpAlarm();
 			}
 		});
+
+        ListenerObj.getInstance().addJobChangeListener(new PropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event) {
+				jobNumber = (Integer)event.getNewValue();
+			}
+		});
 	}
+
+    public Button.OnClickListener jobButton = new Button.OnClickListener(){
+
+        public void onClick(View view) {
+            Intent jobClick = new Intent().setClass(getApplicationContext(), SelectJob.class);
+            startActivity(jobClick);
+        }
+    };
+
 
 
 	public void setUpAlarm(){
@@ -170,8 +217,8 @@ public class mainUI extends TabActivity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 
-		MenuItem editMore = null;
-		MenuItem editNote = null;
+		MenuItem editMore;
+		MenuItem editNote;
 		switch(tabHost.getCurrentTab()){
 		case 0: //Punch Tab
 			editNote = menu.findItem(R.id.addNote);
@@ -206,7 +253,7 @@ public class mainUI extends TabActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 
-		int[] startOfViewedPP = null;
+		int[] startOfViewedPP;
 
 		TabHost tabHost = getTabHost();
 		int currentTab = tabHost.getCurrentTab();
@@ -252,10 +299,10 @@ public class mainUI extends TabActivity {
 		case R.id.email:
 			if (currentTab == 2){
 				if (Defines.DEBUG_PRINT) Log.d(TAG, "Sending Email from Tab 2");
-				send_email(startOfViewedPP, endOfThisPP, verbosLevel);
+				send_email(startOfViewedPP, endOfThisPP, jobNumber, verbosLevel);
 			} else {
 				if (Defines.DEBUG_PRINT) Log.d(TAG, "Sending Email from not Tab 2");
-				send_email(startOfThisPP, endOfThisPP, verbosLevel);
+				send_email(startOfThisPP, endOfThisPP, jobNumber, verbosLevel);
 			}		
 
 			break;
@@ -282,15 +329,15 @@ public class mainUI extends TabActivity {
 			break;
 
 		case R.id.emailThis:
-			send_email(startOfViewedPP, endOfViewed, verbosLevel);
+			send_email(startOfViewedPP, endOfViewed, jobNumber, verbosLevel);
 			break;
 
 		case R.id.emailCurrent:
-			send_email(startOfThisPP, endOfThisPP, verbosLevel);
+			send_email(startOfThisPP, endOfThisPP, jobNumber, verbosLevel);
 			break;
 
 		case R.id.addNote:
-			Intent editNote = new Intent(this, com.kopysoft.chronos.note.EditNote.class);
+			Intent editNote = new Intent(this, com.kopysoft.chronos.subActivites.note.EditNote.class);
 			//Add values to intent
 			GregorianCalendar tempCal = new GregorianCalendar();
 			int[] sendDate = new int[3];
@@ -307,12 +354,13 @@ public class mainUI extends TabActivity {
 			break;
 
 		case R.id.addBreak:
-			Intent addBreak = new Intent(this, com.kopysoft.chronos.subActivites.AddBreak.class);
+			Intent addBreak = new Intent(this, AddBreak.class);
+            addBreak.putExtra("jobNumber", jobNumber);
 			startActivity(addBreak);
 			break;
 
 		case R.id.help:
-			Intent helpActivity = new Intent(this, com.kopysoft.chronos.subActivites.HelpActivity.class);
+			Intent helpActivity = new Intent(this, HelpActivity.class);
 			startActivity(helpActivity);
 			break;
 
@@ -322,13 +370,18 @@ public class mainUI extends TabActivity {
 		return true;
 	}
 
-	public void send_email(int[] startOfThisPP, int[] endOfThisPP, Verbosity verbosLevel){
+	public void send_email(int[] startOfThisPP, int[] endOfThisPP, int jobNumber, Verbosity verbosLevel){
 		Email newEmail = new Email(startOfThisPP, endOfThisPP, verbosLevel, getApplicationContext());
-		new sendEmailTask().execute(newEmail);
+		new sendEmailTask(jobNumber).execute(newEmail);
 	}
 
 	private class sendEmailTask extends AsyncTask<Email, Void, Void> {
 		ProgressDialog dialog = null;
+        private int jobNumber;
+
+        sendEmailTask(int jn){
+            jobNumber = jn;
+        }
 		protected void onPreExecute(){
 			dialog = ProgressDialog.show(mainUI.this, "",
 			"Generating. Please wait..."); 
@@ -345,8 +398,8 @@ public class mainUI extends TabActivity {
 		}
 
 		private void sendEmailInit(Email newEmail){
-			String emailBody = new String("Greetings!\n\tHere is my timecard:\n");
-			emailBody += newEmail.generateEmailText();
+			String emailBody = "Greetings!\n\tHere is my timecard:\n";
+			emailBody += newEmail.generateEmailText(jobNumber);
 
 			if(Defines.DEBUG_PRINT) Log.d(TAG, emailBody);
 
