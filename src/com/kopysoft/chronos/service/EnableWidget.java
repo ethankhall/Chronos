@@ -35,7 +35,6 @@ import android.widget.RemoteViews;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.singelton.PreferenceSingleton;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Punch;
 
@@ -66,8 +65,7 @@ public class EnableWidget extends AppWidgetProvider {
             todayArray[0] = cal.get(GregorianCalendar.YEAR);
             todayArray[1] = cal.get(GregorianCalendar.MONTH);
             todayArray[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
-
-            Day today = new Day(todayArray, PreferenceSingleton.getDefaultJobNumber(context), context);
+            Day today = new Day(todayArray, context);
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             if (today.getTimeWithBreaks() < 0) {
@@ -96,7 +94,7 @@ public class EnableWidget extends AppWidgetProvider {
         todayArray[0] = cal.get(GregorianCalendar.YEAR);
         todayArray[1] = cal.get(GregorianCalendar.MONTH);
         todayArray[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
-        Day today = new Day(todayArray, PreferenceSingleton.getDefaultJobNumber(context), context);
+        Day today = new Day(todayArray, context);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         if (today.getTimeWithBreaks() < 0) {
@@ -122,7 +120,7 @@ public class EnableWidget extends AppWidgetProvider {
         todayArray[0] = cal.get(GregorianCalendar.YEAR);
         todayArray[1] = cal.get(GregorianCalendar.MONTH);
         todayArray[2] = cal.get(GregorianCalendar.DAY_OF_MONTH);
-        Day today = new Day(todayArray, PreferenceSingleton.getDefaultJobNumber(context), context);
+        Day today = new Day(todayArray, context);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
@@ -150,13 +148,7 @@ public class EnableWidget extends AppWidgetProvider {
                 i_time -= cal.getTimeInMillis();
             }
 
-            Punch newPunch = new Punch(
-                    cal.getTimeInMillis(),
-                    clockedType,
-                    Defines.NEW_PUNCH,
-                    PreferenceSingleton.getDefaultJobNumber(context),
-                    Defines.REGULAR_TIME
-            );
+            Punch newPunch = new Punch(cal.getTimeInMillis(), clockedType, -1, Defines.REGULAR_TIME);
             newPunch.commitToDb(context);
 
             //Send intent for the notification bar

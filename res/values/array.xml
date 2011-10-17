@@ -52,8 +52,8 @@
 		<item>Day Summary</item>
 	</string-array>
 	<string-array name="eight_or_fourty">
-		<item>8 hours/day</item>
-		<item>40 hours/week</item>
+		<item>By the day</item>
+		<item>By the Pay Period</item>
 	</string-array>
 	<string-array name="lunch_settings">
 		<item>Disabled</item>

@@ -29,7 +29,9 @@ import android.widget.TextView;
 
 public class Row2 extends RelativeLayout{
 
-    TextView rightText, leftText;
+	private Context mContext;
+
+	TextView rightText, leftText;
 
 	public TextView left(){
 		return leftText;
@@ -41,14 +43,15 @@ public class Row2 extends RelativeLayout{
 
 	public Row2(Context context){
 		super(context);
+		mContext = context;
 
 		setPadding(10, 0, 10, 0);
 
-		leftText = new TextView(context);
+		leftText = new TextView(mContext);
 		leftText.setText("right");
 		leftText.setTextSize(18);
 
-		rightText = new TextView(context);
+		rightText = new TextView(mContext);
 		rightText.setText("left");
 		rightText.setTextSize(18);
 

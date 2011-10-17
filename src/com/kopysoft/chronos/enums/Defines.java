@@ -27,8 +27,6 @@ public class Defines {
 	
 	public static final int REPEATING_ALARM = 1;
 	public static final int MIDNIGHT_ALARM = 2;
-
-    public static final int NEW_PUNCH = -1;
 	
 	public static final int IN 	= 0;
 	public static final int OUT = 1;

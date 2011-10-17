@@ -42,7 +42,7 @@
         </PreferenceScreen>
         <PreferenceScreen android:title="PayPeriod Info"
                           android:summary="Set the info for the pay period" android:icon="@drawable/expander_ic_minimized">
-            <com.kopysoft.chronos.subActivites.preferences.DateSelect
+            <com.kopysoft.chronos.subActivites.DateSelect
                     android:key="date" android:title="Start of PayPeriod"
                     android:defaultValue="2011.1.17" />
             <ListPreference android:title="Weeks in PayPeriod"
@@ -60,19 +60,19 @@
                                 android:key="overtime_enable" />
             <EditTextPreference
                     android:key="regular_time" android:title="Hours of normal time"
-                    android:defaultValue="40"  android:dependency="overtime_enable"
+                    android:dependency="overtime_enable"
                     android:inputType="numberDecimal" android:summary="How many hours until overtime?"/>
 
             <EditTextPreference
                     android:key="double_time" android:title="Hours until double time"
-                    android:defaultValue="60" android:dependency="overtime_enable"
+                    android:dependency="overtime_enable"
                     android:inputType="numberDecimal" android:summary="When does double time happen?"/>
 
             <EditTextPreference android:key="overtime_rate"
                                 android:title="Pay Rate Multiplier" android:defaultValue="1.5"
                                 android:inputType="numberDecimal" android:dependency="overtime_enable" />
             <ListPreference android:title="Overtime Pay Options"
-                            android:key="8_or40_hours" android:entryValues="@array/NumOneToTwo"
+                            android:key="8_or_40_hours" android:entryValues="@array/NumOneToTwo"
                             android:entries="@array/eight_or_fourty" android:dependency="overtime_enable" />
         </PreferenceScreen>
     </PreferenceCategory>

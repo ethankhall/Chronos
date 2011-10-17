@@ -39,38 +39,37 @@ public class Email {
 
 	int[] i_start;
 	int[] i_end;
-	Verbosity i_verboseLevel;
+	Verbosity i_verbosLevel;
 	Context i_context;
 	public Email(int[] startDay, int[] endDay, Verbosity verbosity, Context context){
 		i_start = startDay;
 		i_end = endDay;
-		i_verboseLevel = verbosity;
+		i_verbosLevel = verbosity;
 		i_context = context;
 	}
 
 	/**
 	 * Generates a report for a given week
-     * @param JobNumber int of the job number
 	 * @return String with the text to be put into an email
 	 */
-	public String generateEmailText(int JobNumber){
+	public String generateEmailText(){
 
 
 		String returnValue = "";
-		GregorianCalendar cal;
-		String dateString;
-		String timeString;
-		String typeString;
-		String timeTotal;
+		GregorianCalendar cal = null;
+		String dateString = null;
+		String timeString = null;
+		String typeString = null;
+		String timeTotal = "";
 
-		PayPeriod thisPP = new PayPeriod(i_start, i_end, JobNumber, i_context);
-		Day workingDay;
-		Punch tempPunch;
+		PayPeriod thisPP = new PayPeriod(i_start, i_end, i_context);
+		Day workingDay = null;
+		Punch tempPunch = null;
 		Note noteTemp;
 
-		int[] tempTime;
+		int[] tempTime = null;
 
-		switch(i_verboseLevel){
+		switch(i_verbosLevel){
 		case EVERY_PUNCH:
 			for(int i = 0; i < thisPP.size(); i++){
 				workingDay = thisPP.get(i);
@@ -88,8 +87,8 @@ public class Email {
 					returnValue += String.format("%s:\t %s (%s)\n",dateString, timeString, typeString);
 				}
 
-				noteTemp = new Note(tempTime, JobNumber, i_context);
-				if(!noteTemp.getNote(false).equalsIgnoreCase("")){
+				noteTemp = new Note(tempTime, i_context);
+				if(noteTemp.getNote(false).equalsIgnoreCase("") == false){
 					returnValue += String.format("\tNote:\t %s\n", noteTemp.getNote(false));
 				}
 			}
@@ -107,8 +106,8 @@ public class Email {
 						TimeFormat.HOUR_DECIMAL, false);
 				returnValue += String.format("%s:\t %s\n",dateString, timeString);
 
-				noteTemp = new Note(tempTime, JobNumber, i_context);
-				if(!noteTemp.getNote(false).equalsIgnoreCase("")){
+				noteTemp = new Note(tempTime, i_context);
+				if(noteTemp.getNote(false).equalsIgnoreCase("") == false){
 					returnValue += String.format("\tNote:\t %s\n", noteTemp.getNote(false));
 				}
 			}
@@ -156,14 +155,16 @@ public class Email {
 		int overtimeSetting = prefs.getOvertimeSetting(i_context);
 		float overtimeRate = prefs.getOvertimeRate(i_context);
 		boolean overtimeEnable = prefs.getOvertimeEnable(i_context);
+        double overTime = prefs.getRegularTime(i_context);
+
 		for(int i = 0; i < running.size(); i++){
 			temp = running.get(i);
 			if ( temp.getTimeWithBreaks() >= 0 ){
 				tempTime = temp.getTimeWithBreaks();
-				if(overtimeSetting == Defines.OVERTIME_8HOUR && overtimeEnable){
-					if(tempTime > Defines.SECONDS_IN_HOUR * 8){
-						returnValue += Defines.SECONDS_IN_HOUR * 8;
-						returnValue += (tempTime - Defines.SECONDS_IN_HOUR * 8) * overtimeRate;	
+				if(overtimeSetting == Defines.OVERTIME_8HOUR && overtimeEnable == true){
+					if(tempTime > Defines.SECONDS_IN_HOUR * overTime){
+						returnValue += Defines.SECONDS_IN_HOUR * overTime;
+						returnValue += (tempTime - Defines.SECONDS_IN_HOUR * overTime) * overtimeRate;
 
 					} else {
 						returnValue += tempTime;
@@ -175,7 +176,7 @@ public class Email {
 			}
 		}
 
-		if (overtimeSetting == Defines.OVERTIME_40HOUR && overtimeEnable){
+		if (overtimeSetting == Defines.OVERTIME_40HOUR && overtimeEnable == true ){
 			returnValue = 0;
 			for(int i = 0; i < prefs.getWeeksInPP(i_context); i++){
 				long weekTemp = 0;

@@ -13,25 +13,27 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content"
 	android:gravity="center" 
-	android:textSize="30dip"/>
+	android:textSize="40dip"/>
 	
 <TextView  android:id="@+id/money_today_text"
 	android:text="Amount Earned Today:" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content"
-	android:gravity="center" />
+	android:gravity="center" 
+	android:paddingTop="10dip"/>
 	
 <TextView android:text="$ 0" 
 	android:id="@+id/money_today" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content"
 	android:gravity="center" 
-	android:textSize="30dip"/>
+	android:textSize="40dip"/>
 	
 <TextView android:text="List of Punches Today" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content"
-	android:gravity="center" />
+	android:gravity="center" 
+	android:paddingTop="10dip"/>
 	
 <RelativeLayout 
 	android:orientation="horizontal"

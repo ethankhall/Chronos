@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.kopysoft.chronos" android:versionCode="33" android:versionName="1.4">
+          package="com.kopysoft.chronos" android:versionCode="34" android:versionName="1.5"
+          android:installLocation="auto">
+
     <application android:icon="@drawable/icon" android:label="@string/app_name"
                  android:allowBackup="true" android:name="com.kopysoft.chronos.types.AppContext"
                  android:debuggable="false">
@@ -17,43 +19,35 @@
         <activity android:name=".subActivites.Preferences" android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>
 
-        <activity android:name=".EditView" android:screenOrientation="portrait"/>
+        <activity android:name="WeekView" android:screenOrientation="portrait"/>
 
         <activity android:name=".subActivites.EditDay" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait" android:launchMode="singleTop"/>
 
-        <activity android:name=".subActivites.selector.EditTime" android:theme="@android:style/Theme.Dialog"
+        <activity android:name=".subActivites.EditTime" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".subActivites.misc.ULA" android:theme="@android:style/Theme.Dialog"
+        <activity android:name=".subActivites.ULA" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".subActivites.selector.SelectJob" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"
-                  android:label="Select a Job"/>
-
-        <activity android:name=".subActivites.selector.AddJob" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"
-                  android:label="Create a Job"/>
-
-        <activity android:name=".PastView" android:screenOrientation="portrait"/>
+        <activity android:name="PastView" android:screenOrientation="portrait"/>
 
         <activity android:name="EditPayPeriodOthers" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".subActivites.note.EditNote" android:theme="@android:style/Theme.Dialog"
+        <activity android:name=".note.EditNote" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".subActivites.note.ViewNote" android:theme="@android:style/Theme.Dialog"
+        <activity android:name=".note.ViewNote" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".subActivites.selector.AddBreak" android:theme="@android:style/Theme.Dialog"
+        <activity android:name=".subActivites.AddBreak" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
         <activity android:name=".subActivites.ViewDay" android:theme="@android:style/Theme.Dialog"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".subActivites.misc.HelpActivity"/>
+        <activity android:name=".subActivites.HelpActivity"/>
 
         <receiver android:name=".service.BackgroundUpdate" android:enabled="true"/>
 

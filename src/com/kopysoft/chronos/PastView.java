@@ -71,7 +71,6 @@ public class PastView extends ListActivity{
     private TimeFormat StringFormat = TimeFormat.HOUR_MIN_SEC;
     private ViewingPayPeriod holder = null;
     private updateAdapter updateAdapt = null;
-    private int gJobNumber;
 
     @Override
     public void onResume(){
@@ -120,8 +119,6 @@ public class PastView extends ListActivity{
         overtimeEnable = prefs.getOvertimeEnable(getApplicationContext());
         overtimeSetting = prefs.getOvertimeSetting(getApplicationContext());
 
-        gJobNumber = getIntent().getExtras().getInt("jobNumber");
-
         //updatePayRate();
 
         //int[] dateHold = Chronos.getDate(ppStart);
@@ -134,7 +131,7 @@ public class PastView extends ListActivity{
         int[] endOfThisPP = {cal.get(GregorianCalendar.YEAR), cal.get(GregorianCalendar.MONTH),
                 cal.get(GregorianCalendar.DAY_OF_MONTH)};
 
-        PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfThisPP, gJobNumber, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfThisPP, getApplicationContext());
         date = startOfThisPP;
 
         //for Prefereneces
@@ -157,12 +154,6 @@ public class PastView extends ListActivity{
 
         });
 
-        ListenerObj.getInstance().addJobChangeListener(new PropertyChangeListener(){
-			public void propertyChange(PropertyChangeEvent event) {
-				gJobNumber = (Integer)event.getNewValue();
-			}
-		});
-
         adapter = new RowHelperPastView(getApplicationContext(), thisPP, StringFormat);
         adapter.setFormat(StringFormat);
         setListAdapter(adapter);
@@ -180,7 +171,6 @@ public class PastView extends ListActivity{
                 intent.putExtra("year", day[0]);
                 intent.putExtra("month", day[1]);
                 intent.putExtra("day", day[2]);
-                intent.putExtra("jobNumber", gJobNumber);
 
                 startActivity(intent);
 
@@ -272,6 +262,53 @@ public class PastView extends ListActivity{
                         overtime_calc * overtimeRate +
                         doubletime_calc * 2);
             }
+        } else if (overtimeSetting == Defines.OVERTIME_8HOUR && overtimeEnable){
+
+            PreferenceSingleton prefs= new PreferenceSingleton();
+            double overTime = prefs.getRegularTime(getApplicationContext());
+            double doubleTime = prefs.getDoubleTime(getApplicationContext());
+
+            Log.d(TAG, "Normal Val: " + overTime);
+            Log.d(TAG, "Overtime Val: " + doubleTime);
+
+
+            returnValue = 0;
+            for(int i = 0; i < prefs.getWeeksInPP(getApplicationContext()); i++){
+                long doubletime_calc = 0;
+                long overtime_calc = 0;
+                long normal_money = 0;
+                long weekTemp = 0;
+                for(int j = 0; j < 7; j++){
+                    weekTemp = 0;
+                    temp = adapter.getItem(i * 7 + j);
+                    if(temp.getTimeWithBreaks() > 0)
+                        weekTemp = temp.getTimeWithBreaks();
+
+                    if ( weekTemp > Defines.SECONDS_IN_HOUR * doubleTime){
+                        doubletime_calc += (long)(weekTemp - Defines.SECONDS_IN_HOUR * doubleTime);
+                        weekTemp = (long)(Defines.SECONDS_IN_HOUR * doubleTime);
+                        //Log.d(TAG, "D weekTemp: " + weekTemp);
+                    }
+
+                    if ( weekTemp > Defines.SECONDS_IN_HOUR * overTime){
+                        overtime_calc += (long)(weekTemp - Defines.SECONDS_IN_HOUR * overTime);
+                        weekTemp = (long)(Defines.SECONDS_IN_HOUR * overTime);
+                        //Log.d(TAG, "O weekTemp: " + weekTemp);
+                    }
+                    //Log.d(TAG, "weekTemp: " + weekTemp);
+                    //Log.d(TAG, "normal_money: " + normal_money);
+                    normal_money += weekTemp;
+
+                }
+
+                Log.d(TAG, "Normal: " + normal_money);
+                Log.d(TAG, "Overtime: " + overtime_calc);
+                Log.d(TAG, "Double time: " + doubletime_calc);
+
+                returnValue = returnValue + (long)(normal_money +
+                        overtime_calc * overtimeRate +
+                        doubletime_calc * 2);
+            }
         }
         return returnValue;
     }
@@ -346,7 +383,7 @@ public class PastView extends ListActivity{
                 cal.get(GregorianCalendar.DAY_OF_MONTH)
         };
 
-        PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
         for(int i = 0; i < thisPP.size(); i++){
             adapter.updateDay(i, thisPP.get(i));
         }
@@ -378,7 +415,7 @@ public class PastView extends ListActivity{
 
         holder.setWeek(date);
 
-        PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
         for(int i = 0; i < thisPP.size(); i++){
             adapter.updateDay(i, thisPP.get(i));
         }
@@ -398,7 +435,7 @@ public class PastView extends ListActivity{
 
         holder.setWeek(date);
 
-        PayPeriod thisPP = new PayPeriod(date, endOfPP, gJobNumber, getApplicationContext());
+        PayPeriod thisPP = new PayPeriod(date, endOfPP, getApplicationContext());
         for(int i = 0; i < thisPP.size(); i++){
             adapter.updateDay(i, thisPP.get(i));
         }
@@ -451,7 +488,7 @@ public class PastView extends ListActivity{
 
         @Override
         protected Void doInBackground(Context... param) {
-            PayPeriod thisPP = new PayPeriod(date, endOfThisPP, gJobNumber, param[0]);
+            PayPeriod thisPP = new PayPeriod(date, endOfThisPP, param[0]);
 
             for(int i = 0; i < thisPP.size(); i++){
                 publishProgress(i, thisPP.get(i));

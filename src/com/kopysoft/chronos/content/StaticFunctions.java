@@ -33,10 +33,8 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.service.BackgroundUpdate;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
-import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.PayPeriod;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -48,7 +46,7 @@ public class StaticFunctions {
 
 	public static String generateTimeString(int hour, int min, int sec, TimeFormat format){
 
-		String returnString;
+		String returnString = "";
 		switch(format){
 		case HOUR_MIN:
 			returnString = String.format("%d:%02d", hour, min);
@@ -70,7 +68,8 @@ public class StaticFunctions {
 
 	public static String generateDateString(Context context, long time){
 		java.text.DateFormat dateFormat = DateFormat.getTimeFormat(context);
-        return dateFormat.format(new Date(time));
+		String returnString = dateFormat.format(new Date(time));
+		return returnString;
 	}
 
 	public static long correctForClockIn( long i_time){
@@ -136,22 +135,22 @@ public class StaticFunctions {
 	 * 
 	 * @param input_time time in milliseconds
 	 * @param format format that will be used
-	 * @param correctForClockin do i need to correct for clockin
+	 * @param correctForClockin 
 	 * @return String with the time and format specified
 	 */
 	public static String generateTimeString(long input_time, TimeFormat format, 
 			boolean correctForClockin) {
-		long correctTime;
+		long correctTime = 0;
 
-		if(correctForClockin)
+		if(correctForClockin == true)
 			correctTime = correctForClockIn(input_time);
 		else
 			correctTime = input_time;
 
-		String returnString;
-		long hour;
-		long min;
-		long sec;
+		String returnString = "";
+		long hour = 0;
+		long min = 0;
+		long sec = 0;
 		sec = (correctTime) % 60;
 		min = ((correctTime) / 60 ) % 60;
 		hour = (((correctTime) / 60) / 60 ) % 24;
@@ -165,23 +164,23 @@ public class StaticFunctions {
 	 * 
 	 * @param input_time time in milliseconds
 	 * @param format format that will be used
-	 * @param correctForClockin do i need to correct for clockin
+	 * @param correctForClockin 
 	 * @return String with the time and format specified
 	 */
 	public static String generateTimeWeek(long input_time, TimeFormat format, 
 			boolean correctForClockin) {
-		long correctTime;
+		long correctTime = 0;
 		input_time /= Defines.MS_TO_SECOND;
 
-		if(correctForClockin)
+		if(correctForClockin == true)
 			correctTime = (correctForClockIn(input_time) * Defines.MS_TO_SECOND);
 		else
 			correctTime = input_time;
 
-		String returnString;
-		long hour;
-		long min;
-		long sec;
+		String returnString = "";
+		long hour = 0;
+		long min = 0;
+		long sec = 0;
 		sec = (correctTime) % 60;
 		min = ((correctTime) / 60 ) % 60;
 		hour = (((correctTime) / 60) / 60 );
@@ -210,11 +209,11 @@ public class StaticFunctions {
 	}
 
 	public static String generateDollarAmount(long i_time, double payRate){
-		String returnValue;
+		String returnValue = "";
 		//Convert payRate to dollar amount from $/h to $/s
 		double payPerSec = payRate / 60 / 60;
 		double temp = (double)i_time * payPerSec / Defines.MS_TO_SECOND;
-		returnValue = String.format("$ %02.2f",temp);
+		returnValue = String.format("$ %02.3f",temp);
 		return returnValue;
 	}
 
@@ -224,13 +223,7 @@ public class StaticFunctions {
 		}
 	}
 
-    public static ArrayList<Job> getJobNumbers(Context context){
-
-        Chronos chrono = new Chronos(context);
-        return chrono.getJobNumbers();
-    }
-
-	public static void fixMidnight(int[] startOfThisPP, int weeksInPP, int jobNumber, Context context){
+	public static void fixMidnight(int[] startOfThisPP, int weeksInPP, Context context){
 		//check for midnight		
 		startOfThisPP = Chronos.getPP(startOfThisPP, weeksInPP);
 
@@ -242,7 +235,8 @@ public class StaticFunctions {
 				cal.get(GregorianCalendar.DAY_OF_MONTH)
 		};
 
-		PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfPP, jobNumber, context);
-		thisPP.fixMidights();
+		PayPeriod thisPP = new PayPeriod(startOfThisPP, endOfPP, context);
+		thisPP.fixMidnights();
+
 	}
 }

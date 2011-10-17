@@ -23,6 +23,9 @@ package com.kopysoft.chronos.subActivites;
  *  
  */
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -39,28 +42,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
+
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.RowHelper.RowHelperEditDay;
+import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.StaticFunctions;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.TimeFormat;
 import com.kopysoft.chronos.singelton.ListenerObj;
 import com.kopysoft.chronos.singelton.PreferenceSingleton;
-import com.kopysoft.chronos.subActivites.selector.EditTime;
 import com.kopysoft.chronos.types.Day;
 import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 public class EditDay extends ListActivity {
 
 	private static final String TAG = Defines.TAG + " - ED";
+	Chronos chronoSaver = null;
 	RowHelperEditDay adapter = null;
 	Note currentNote;
-	private updateAdapter updateAdapt = null;
-    private int gJobNumber;
+	private updateAdapter updateAdapt = null; 
 
 	int date[] = new int[3];
 
@@ -75,7 +76,6 @@ public class EditDay extends ListActivity {
 
 		updateAdapt = new updateAdapter();
 		updateAdapt.execute(getApplicationContext());
-        gJobNumber = getIntent().getExtras().getInt("jobNumber");
 
 	}
 
@@ -99,12 +99,12 @@ public class EditDay extends ListActivity {
 
 			if(requestCode == 1){
 				//long i_time, int i_type, long i_id, int i_actionReason
-				Punch temp = new Punch(time, getType, Defines.NEW_PUNCH, actionReason, gJobNumber);
+				Punch temp = new Punch(time, getType, -1, actionReason);
 				temp.setNeedToUpdate(true);
 				adapter.add(temp);
 			} else if(requestCode == 2) {
 				int position = data.getExtras().getInt("position");
-				Punch temp;
+				Punch temp = null;
 				try{
 					temp = adapter.getItem(position);
 				}catch(Exception e){
@@ -134,7 +134,7 @@ public class EditDay extends ListActivity {
 		int menuItemIndex = item.getItemId();
 
 		if(menuItemIndex == 0){//edit
-			Intent intent = new Intent(getApplicationContext(), EditTime.class);
+			Intent intent = new Intent(getApplicationContext(), com.kopysoft.chronos.subActivites.EditTime.class);
 			Punch temp = adapter.getItem(info.position);
 			if(Defines.DEBUG_PRINT) Log.d(TAG, "getID = " + temp.getId());
 			intent.putExtra("id", temp.getId());
@@ -147,6 +147,7 @@ public class EditDay extends ListActivity {
 			} else {
 				startActivityForResult(intent, 0);
 			}
+			temp = null;
 
 		} else if( menuItemIndex == 1){	//remove
 			if (Defines.DEBUG_PRINT) Log.d(TAG, "Position: " + info.id);
@@ -206,14 +207,14 @@ public class EditDay extends ListActivity {
 	}
 
 	private void insertAction(){
-		Intent intent = new Intent(getApplicationContext(), EditTime.class);
+		Intent intent = new Intent(getApplicationContext(), com.kopysoft.chronos.subActivites.EditTime.class);
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, date[0]);
 		cal.set(Calendar.MONTH, date[1]);
 		cal.set(Calendar.DAY_OF_MONTH, date[2]);
 		if(Defines.DEBUG_PRINT) Log.d(TAG, "time for insert: " + cal.getTimeInMillis());
 
-		int type;
+		int type = 0;
 
 		if(getTimeInSeconds() < 0)
 		{
@@ -307,14 +308,16 @@ public class EditDay extends ListActivity {
 		@Override
 		protected Object doInBackground(Context... param) {
 			//chronoSaver.getPunchesForDay(date);
-			Day punches = new Day(date, gJobNumber, param[0]);
+			Day punches = new Day(date, param[0]);
 
 			registerForContextMenu(getListView());
 
-			currentNote = new Note(date, gJobNumber, param[0]);
+			currentNote = new Note(date, param[0]);
 			String returnString = currentNote.getNote(false);
 
-            return new Object[]{punches, returnString};
+			Object[] returnArray = {punches, returnString};
+
+			return returnArray;
 		}
 
 	}

@@ -31,10 +31,10 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.CVSGenerate;
 import com.kopysoft.chronos.singelton.ListenerObj;
-import com.kopysoft.chronos.subActivites.misc.ULA;
 
 public class Preferences extends PreferenceActivity {
 	private static final int BACKUP = 0;
@@ -86,7 +86,7 @@ public class Preferences extends PreferenceActivity {
 
 			public boolean onPreferenceClick(Preference preference) {
 				Intent intent = new Intent().setClass(getApplicationContext(), 
-						ULA.class);
+						com.kopysoft.chronos.subActivites.ULA.class);
 				startActivity(intent);
 
 				return true;

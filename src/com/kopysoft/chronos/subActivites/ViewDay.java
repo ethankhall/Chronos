@@ -51,7 +51,6 @@ public class ViewDay extends ListActivity {
 	RowHelperEditDay adapter = null;
 	Note currentNote;
 	private updateAdapter updateAdapt = null;
-    private int gJobNumber;
 
 	int date[] = new int[3];
 
@@ -66,7 +65,6 @@ public class ViewDay extends ListActivity {
 
 		updateAdapt = new updateAdapter();
 		updateAdapt.execute(getApplicationContext());
-        gJobNumber = getIntent().getExtras().getInt("jobNumber");
 
 	}
 
@@ -160,14 +158,16 @@ public class ViewDay extends ListActivity {
 		@Override
 		protected Object doInBackground(Context... param) {
 			//chronoSaver.getPunchesForDay(date);
-			Day punches = new Day(date, gJobNumber, param[0]);
+			Day punches = new Day(date, param[0]);
 
 			registerForContextMenu(getListView());
 
-			currentNote = new Note(date, gJobNumber, param[0]);
+			currentNote = new Note(date, param[0]);
 			String returnString = currentNote.getNote(false);
 
-            return new Object[]{punches, returnString};
+			Object[] returnArray = {punches, returnString};
+
+			return returnArray;
 		}
 
 	}
