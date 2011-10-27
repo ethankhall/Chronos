@@ -1,76 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.kopysoft.chronos" android:versionCode="33" android:versionName="1.4">
-    <application android:icon="@drawable/icon" android:label="@string/app_name"
-                 android:allowBackup="true" android:name="com.kopysoft.chronos.types.AppContext"
+          package="com.kopysoft.chronos"
+          android:versionCode="33"
+          android:versionName="1.4">
+    <application android:icon="@drawable/icon"
+                 android:label="Chronos"
+                 android:allowBackup="true"
                  android:debuggable="false">
-        <activity android:name=".mainUI" android:label="@string/app_name"
-                  android:launchMode="singleTop" android:screenOrientation="portrait">
+        <activity android:name=".mainUI"
+                  android:label="Chronos"
+                  android:launchMode="singleTop"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity android:name="ClockInAndOut" android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.Preferences" android:screenOrientation="portrait"
-                  android:launchMode="singleTop"/>
-
-        <activity android:name=".EditView" android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.EditDay" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait" android:launchMode="singleTop"/>
-
-        <activity android:name=".subActivites.selector.EditTime" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.misc.ULA" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.selector.SelectJob" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"
-                  android:label="Select a Job"/>
-
-        <activity android:name=".subActivites.selector.AddJob" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"
-                  android:label="Create a Job"/>
-
-        <activity android:name=".PastView" android:screenOrientation="portrait"/>
-
-        <activity android:name="EditPayPeriodOthers" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.note.EditNote" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.note.ViewNote" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.selector.AddBreak" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.ViewDay" android:theme="@android:style/Theme.Dialog"
-                  android:screenOrientation="portrait"/>
-
-        <activity android:name=".subActivites.misc.HelpActivity"/>
-
-        <receiver android:name=".service.BackgroundUpdate" android:enabled="true"/>
-
-        <receiver android:name=".service.NotificationBroadcast" android:enabled="true"/>
-
-        <receiver android:name=".service.MidnightBroadcast" android:enabled="true"/>
-
-        <receiver android:name=".service.EnableWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="com.kopysoft.chronos.service.EnableWidget.CLOCK"/>
-                <action android:name="com.kopysoft.chronos.service.EnableWidget.UPDATE"/>
-                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                       android:resource="@xml/enable_widget"/>
-        </receiver>
 
     </application>
 

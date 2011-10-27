@@ -23,17 +23,14 @@ package com.kopysoft.chronos.types;
  *
  */
 
-import java.util.GregorianCalendar;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-
 import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.content.StaticFunctions;
-import com.kopysoft.chronos.enums.Defines;
+
+import java.util.GregorianCalendar;
 
 public class Note {
 
@@ -90,7 +87,7 @@ public class Note {
                 final int colNote = cursor.getColumnIndex("note_string");
                 noteString = cursor.getString(colNote);
 
-                StaticFunctions.printLog(Defines.ALL, "Chronos - Note", "Note: " + noteString);
+                //StaticFunctions.printLog(Defines.ALL, "Chronos - Note", "Note: " + noteString);
             } while (cursor.moveToNext());
         }
 
@@ -136,7 +133,7 @@ public class Note {
             final int colId = cursor.getColumnIndex("_id");
             if (cursor.moveToFirst()) {
 
-                StaticFunctions.printLog(Defines.ALL, "Chronos - Note", "Insert Note");
+                //StaticFunctions.printLog(Defines.ALL, "Chronos - Note", "Insert Note");
                 id = cursor.getLong(colId);
 
                 ContentValues newConent = new ContentValues();

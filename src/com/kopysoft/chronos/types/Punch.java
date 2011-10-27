@@ -23,161 +23,110 @@ package com.kopysoft.chronos.types;
  *
  */
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
-import android.util.Log;
-import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import org.joda.time.DateTime;
 
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
 
+@DatabaseTable(tableName = "punches")
 public class Punch implements Comparable<Punch> {
 
-    private long time;
-    private int type;
-    private long id;
+    @DatabaseField(generatedId = true)
+    private int id;
+    @DatabaseField
     private int actionReason;
+    @DatabaseField
     private int jobNumber;
+    @DatabaseField
+    private int punchTag;
+    @DatabaseField
+    private DateTime time;
 
-    private boolean needToUpdate = false;
-    private boolean needToRemove = false;
+    //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour, int secondOfMinute)
 
-    private final static String insertString =
-            "INSERT INTO " + Chronos.TABLE_NAME_CLOCK +
-                    "(time, actionReason, jobNumber) VALUES (?, ?, ?)";
-    //@SuppressWarnings("unused")
-    private static final String TAG = Defines.TAG + " - Punch";
+    public Punch() {
+    }
 
-    public Punch(){
-        this(0, Defines.IN, -1, Defines.REGULAR_TIME, 0);
+    public Punch(int iActionReason, int iJobNumber, int iPunchTag, DateTime iTime){
+        actionReason = iActionReason;
+        jobNumber = iJobNumber;
+        punchTag = iPunchTag;
+        time = iTime;
     }
 
     /**
-     * Creates a Punch object
-     * @param i_time Time in milliseconds
-     * @param i_type Type of the punch
-     * @param i_id	ID used in the database
-     * @param i_actionReason the reason for this actions
-     * @param i_jobNumber the job number for this punch
+     * Used to set the action reason
      *
+     * @param actReason used to set the action reason
      */
-    public Punch(long i_time, int i_type, long i_id, int i_actionReason, int i_jobNumber){
-        time = i_time;
-        type = i_type;
-        id = i_id;
-        actionReason = i_actionReason;
-        jobNumber = i_jobNumber;
+    public void setActionReason(int actReason){
+        actionReason = actReason;
     }
 
-    public Punch(long i_id, Context gContext){
-        id = i_id;
-        type = Defines.IN;
-        genPunch(gContext);
+    /**
+     * Gets the Action Reason
+     *
+     * @return the action reason for this punch
+     */
+    public int getActionReason(){
+        return actionReason;
     }
 
-    public synchronized void genPunch(Context context){
-        if(Defines.DEBUG_PRINT) Log.d(TAG, "ID: " + id);
-        Chronos chrono = new Chronos(context);
-        SQLiteDatabase db = chrono.getReadableDatabase();
-        Cursor cursor = db.query(Chronos.TABLE_NAME_CLOCK,
-                new String[] { "_id", "time", "actionReason", "jobNumber" },
-                " _id = ? ",
-                new String[] {Long.toString(id) },
-                null, null, "time ASC ");	//Get all time punches between today at midnight and midnight
-
-        final int colTime = cursor.getColumnIndex("time");
-        final int colAR = cursor.getColumnIndex("actionReason");
-        final int colJN = cursor.getColumnIndex("jobNumber");
-
-        if (cursor.moveToFirst()) {
-            time = cursor.getLong(colTime);
-            actionReason = (int)cursor.getLong(colAR);
-            jobNumber = cursor.getInt(colJN);
-        }
-        cursor.close();
-
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-
-        db.close();
+    /**
+     * Set the job number
+     *
+     * @param jobNum used to set the job number
+     */
+    public void setJobNumber(int jobNum){
+        jobNumber = jobNum;
     }
 
-    public void setAction(int i_actionReason){
-        needToUpdate = true;
-        actionReason = i_actionReason;
-        if(Defines.DEBUG_PRINT) Log.d(TAG, "New Action_Reason:" + actionReason + "\tID: " + id);
-    }
-
+    /**
+     * Gets the job number of this punch
+     *
+     * @return int gets this job number
+     */
     public int getJobNumber(){
         return jobNumber;
     }
 
-    public void setJobNumber(int jn){
-        jobNumber = jn;
-        needToUpdate = true;
+    /**
+     * Sets the time of the punch
+     *
+     * @param inputTime Set time for the punch
+     */
+    public void setTime(DateTime inputTime){
+        time = inputTime;
     }
 
-    public int getAction(){
-        return actionReason;
-    }
-
-    public long getTime(){
+    /**
+     * Gets the time of this punch
+     *
+     * @return {@link DateTime} the time of the punch
+     */
+    public DateTime getTime(){
         return time;
     }
 
-    /** Method for getType()
+    /**
+     * Set the tag that this punch has
      *
-     * @return returns either Defines.IN or Defines.OUT
+     * @param inTag The string of the tag for this punch. This is useful for setting job tags
      */
-    public int getType(){
-        return type;
+    public void setTag(int inTag){
+        punchTag = inTag;
     }
 
-    public void setTime(long i_time){
-        needToUpdate = true;
-        if(Defines.DEBUG_PRINT) Log.d(TAG, "setTime: " + time);
-        time = i_time;
+    /**
+     * Returns the tag of this punch
+     *
+     * @return String of the punch tag
+     */
+    public int getTag(){
+        return punchTag;
     }
 
-    public void setType(int i_type){
-        type = i_type;
-    }
-
-    public long getId(){
-        return id;
-    }
-
-    public String generatePunchString(){
-        String returnValue;
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(time);
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int min = cal.get(Calendar.MINUTE);
-        int sec = cal.get(Calendar.SECOND);
-        returnValue = String.format("%d:%02d:%02d", hour, min, sec);
-        return returnValue;
-    }
-
-    public String generateTypeString(Context contex){
-        String[] stringArray = contex.getResources().getStringArray(R.array.TimeTitles);
-        String actReason = stringArray[ actionReason ];
-        String returnValue;
-        if(Defines.DEBUG_PRINT) Log.d(TAG, "Action_Reason:" + actionReason + "\tID: " + id);
-        if(Defines.DEBUG_PRINT) Log.d(TAG, "Reason: " + returnValue);
-        if( type == Defines.IN ){
-            returnValue = "In  - ("  + actReason + ")";
-        } else {
-            returnValue = "Out - ("  + actReason + ")";
-        }
-        return returnValue;
-    }
 
     public static class PunchComparator implements Comparator<Punch> {
         public int compare(Punch object1, Punch object2) {
@@ -186,59 +135,9 @@ public class Punch implements Comparable<Punch> {
     }
 
     public int compareTo(Punch another) {
-        return (int)( time - another.getTime());
+        //return (int)( time - another.getTime());
+        return (time.compareTo(another.getTime()));
     }
 
-    public synchronized long commitToDb(Context context){
-        Chronos chrono = new Chronos(context);
-        SQLiteDatabase db = chrono.getWritableDatabase();
-        long returnValue = commitToDb(db);
-        db.close();
-        return returnValue;
-    }
 
-    public long commitToDb(SQLiteDatabase db){
-        long returnValue = -1;
-        if(id == -1 && !needToRemove){
-            SQLiteStatement insertStmt = db.compileStatement(insertString);
-            long temp = time - (time % 1000);
-
-            insertStmt.bindLong(1, temp);
-            insertStmt.bindLong(2, actionReason);
-            insertStmt.bindLong(3, jobNumber);
-            returnValue = insertStmt.executeInsert();
-            id = returnValue;
-
-        } else if(needToRemove){
-            returnValue =
-                    db.delete(Chronos.TABLE_NAME_CLOCK, "( _id = ? )", new String[] {Long.toString(id)});
-        } else if(needToUpdate){
-            if(Defines.DEBUG_PRINT) Log.d(TAG, "time: " + time);
-            ContentValues newConent = new ContentValues();
-            newConent.put("time", time);
-            newConent.put("actionReason", actionReason);
-            if(Defines.DEBUG_PRINT) Log.d(TAG, "ID: " + id);
-
-            returnValue = db.update(Chronos.TABLE_NAME_CLOCK, newConent, " _id = ? ",
-                    new String[] {Long.toString(id)});
-        }
-        if(Defines.DEBUG_PRINT) Log.d(TAG, "return value: " + returnValue);
-        return returnValue;
-    }
-
-    public void setNeedToUpdate(boolean needToUpdate) {
-        this.needToUpdate = needToUpdate;
-    }
-
-    public boolean isNeedToUpdate() {
-        return needToUpdate;
-    }
-
-    public void setNeedToRemove(boolean value){
-        this.needToRemove = value;
-    }
-
-    public void removeId(){
-        id = -1;
-    }
 }

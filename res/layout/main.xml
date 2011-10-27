@@ -1,34 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
-         android:id="@android:id/tabhost"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent">
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-        <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Default Job"
-                android:textSize="20dip"
-                android:paddingLeft="20dip"
-                android:typeface="monospace"
-                android:drawableLeft="@drawable/ic_menu_forward"
-                android:textColor="#FFFFFFFF"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="5dip"
-                android:layout_marginBottom="5dip"
-                android:id="@+id/selJob"/>
-        <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="fill_parent"
-                android:layout_height="45dip"
-                android:gravity="bottom" />
-        <FrameLayout
-                android:id="@android:id/tabcontent"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:padding="5dip" />
-    </LinearLayout>
-</TabHost>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <com.viewpagerindicator.TitlePageIndicator
+        android:id="@+id/indicator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+</LinearLayout>
