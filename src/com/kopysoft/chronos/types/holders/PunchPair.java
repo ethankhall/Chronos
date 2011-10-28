@@ -20,53 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.view;
+package com.kopysoft.chronos.types.holders;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.kopysoft.chronos.types.Punch;
 
-public class ScrollState implements Parcelable
-{
-	private int[] scrollPos;
+public class PunchPair {
 
-	public static Parcelable.Creator<ScrollState> CREATOR = new Parcelable.Creator<ScrollState>()
-	{
+    Punch gPunch1, gPunch2;
+    public PunchPair(Punch punch1, Punch punch2){
+        gPunch1 = punch1;
+        gPunch2 = punch2;
 
-		@Override
-		public ScrollState createFromParcel( Parcel source )
-		{
-			int size = source.readInt();
-			int[] scrollPos = new int[ size ];
-			source.readIntArray( scrollPos );
-			return new ScrollState( scrollPos );
-		}
+        if(gPunch1.getTask().compareTo(gPunch2.getTask()) != 0)
+            throw new IllegalArgumentException("Argument Tasks do not match");
+    }
 
-		@Override
-		public ScrollState[] newArray( int size )
-		{
-			return new ScrollState[ size ];
-		}
-	};
-	public ScrollState( int[] scrollPos )
-	{
-		this.scrollPos = scrollPos;
-	}
+    public Punch getInPunch(){
+        if(gPunch1.compareTo(gPunch2) > 0)
+            return gPunch1;
+        else
+            return gPunch2;
+    }
 
-	@Override
-	public int describeContents()
-	{
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel( Parcel dest, int flags )
-	{
-		dest.writeInt( scrollPos.length );
-		dest.writeIntArray( scrollPos );
-	}
-
-	public int[] getScrollPos()
-	{
-		return scrollPos;
-	}
+    public Punch getOutPunch(){
+        if(gPunch1.compareTo(gPunch2) < 0)
+            return gPunch2;
+        else
+            return gPunch1;
+    }
 }

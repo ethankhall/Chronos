@@ -1,27 +1,26 @@
-package com.kopysoft.chronos.types;
+/*******************************************************************************
+ * Copyright (c) 2011 Ethan Hall
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ *  to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ ******************************************************************************/
 
-/**
- * 			Copyright (C) 2011 by Ethan Hall
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- * 	in the Software without restriction, including without limitation the rights
- * 	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * 	copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in
- *  all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- *  THE SOFTWARE.
- *
- */
+package com.kopysoft.chronos.types;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -35,11 +34,9 @@ public class Punch implements Comparable<Punch> {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField
-    private int actionReason;
-    @DatabaseField
     private int jobNumber;
-    @DatabaseField
-    private int punchTag;
+    @DatabaseField(canBeNull = false, foreign = true)
+    private Task punchTask;
     @DatabaseField
     private DateTime time;
 
@@ -48,29 +45,10 @@ public class Punch implements Comparable<Punch> {
     public Punch() {
     }
 
-    public Punch(int iActionReason, int iJobNumber, int iPunchTag, DateTime iTime){
-        actionReason = iActionReason;
+    public Punch(int iJobNumber, Task iPunchTask, DateTime iTime){
         jobNumber = iJobNumber;
-        punchTag = iPunchTag;
+        punchTask = iPunchTask;
         time = iTime;
-    }
-
-    /**
-     * Used to set the action reason
-     *
-     * @param actReason used to set the action reason
-     */
-    public void setActionReason(int actReason){
-        actionReason = actReason;
-    }
-
-    /**
-     * Gets the Action Reason
-     *
-     * @return the action reason for this punch
-     */
-    public int getActionReason(){
-        return actionReason;
     }
 
     /**
@@ -112,10 +90,10 @@ public class Punch implements Comparable<Punch> {
     /**
      * Set the tag that this punch has
      *
-     * @param inTag The string of the tag for this punch. This is useful for setting job tags
+     * @param inTask The string of the tag for this punch. This is useful for setting job tags
      */
-    public void setTag(int inTag){
-        punchTag = inTag;
+    public void setTask(Task inTask){
+        punchTask = inTask;
     }
 
     /**
@@ -123,8 +101,8 @@ public class Punch implements Comparable<Punch> {
      *
      * @return String of the punch tag
      */
-    public int getTag(){
-        return punchTag;
+    public Task getTask(){
+        return punchTask;
     }
 
 

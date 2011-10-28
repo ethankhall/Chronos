@@ -20,53 +20,41 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.view;
+package com.kopysoft.chronos.types;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-public class ScrollState implements Parcelable
-{
-	private int[] scrollPos;
+@DatabaseTable(tableName = "tasks")
+public class Task implements Comparable<Task>{
 
-	public static Parcelable.Creator<ScrollState> CREATOR = new Parcelable.Creator<ScrollState>()
-	{
+    @DatabaseField(generatedId = true)
+    private int id;
+    @DatabaseField(canBeNull = false)
+    private int taskOrder;
+    @DatabaseField(canBeNull = false)
+    private int jobNumber;
+    @DatabaseField
+    private String taskName;
 
-		@Override
-		public ScrollState createFromParcel( Parcel source )
-		{
-			int size = source.readInt();
-			int[] scrollPos = new int[ size ];
-			source.readIntArray( scrollPos );
-			return new ScrollState( scrollPos );
-		}
+    public Task(int iJobNumber, int iTaskOrder,  String iTaskName){
+        jobNumber = iJobNumber;
+        taskName = iTaskName;
+        taskOrder = iTaskOrder;
+    }
 
-		@Override
-		public ScrollState[] newArray( int size )
-		{
-			return new ScrollState[ size ];
-		}
-	};
-	public ScrollState( int[] scrollPos )
-	{
-		this.scrollPos = scrollPos;
-	}
+    public void setName(String inName){
+        taskName = inName;
+    }
 
-	@Override
-	public int describeContents()
-	{
-		return 0;
-	}
+    public String getName(){
+        return taskName;
+    }
 
-	@Override
-	public void writeToParcel( Parcel dest, int flags )
-	{
-		dest.writeInt( scrollPos.length );
-		dest.writeIntArray( scrollPos );
-	}
+    public Task(){ }
 
-	public int[] getScrollPos()
-	{
-		return scrollPos;
-	}
+    @Override
+    public int compareTo(Task task) {
+        return taskOrder - task.taskOrder;
+    }
 }
