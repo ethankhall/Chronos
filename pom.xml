@@ -29,6 +29,7 @@
             <id>com.jakewharton</id>
             <url>http://r.jakewharton.com/maven/release</url>
         </repository>
+
         <repository>
             <id>com.jakewharton.android</id>
             <url>http://r.jakewharton.com/maven/snapshot</url>
@@ -78,8 +79,9 @@
             <groupId>com.viewpagerindicator</groupId>
             <artifactId>library</artifactId>
             <version>1.2.1</version>
-             <scope>system</scope>
-             <systemPath>${project.basedir}/lib/library-1.2.1.jar</systemPath>
+            <type>apklib</type>
+            <!--<scope>system</scope>
+             <systemPath>${project.basedir}/lib/library-1.2.1.jar</systemPath>-->
         </dependency>
 
         <dependency>
@@ -100,6 +102,7 @@
 
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
