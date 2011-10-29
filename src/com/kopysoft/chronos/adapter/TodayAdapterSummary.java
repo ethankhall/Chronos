@@ -44,7 +44,7 @@ import java.util.List;
 
 public class TodayAdapterSummary extends BaseAdapter {
 
-    private static final String TAG = Defines.TAG + " - TodayAdapterIndividual";
+    private static final String TAG = Defines.TAG + " - TodayAdapterSummary";
 
     Context gContext;
     List<Punch> gListOfPunches;

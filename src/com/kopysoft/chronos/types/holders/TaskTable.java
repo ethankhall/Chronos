@@ -27,57 +27,59 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 
-public class PunchPair implements Comparable<PunchPair>{
+import java.util.*;
 
-    private static final String TAG = Defines.TAG + " - PunchPair";
+public class TaskTable {
 
-    Punch gPunch1, gPunch2;
-    Task punchTask;
-    public PunchPair(Punch punch1, Punch punch2){
-        gPunch1 = punch1;
-        gPunch2 = punch2;
+    private static final String TAG = Defines.TAG + " - TaskTable";
+    Map gMap;
+    List<Integer> listOfTasks;
 
-
-        if ( gPunch2 != null && gPunch1.getTask().compareTo(gPunch2.getTask()) != 0)
-            throw new IllegalArgumentException("Argument Tasks do not match");
-
-        punchTask = gPunch1.getTask();
+    public TaskTable(){
+        gMap = new HashMap<Integer, List<Punch>>();
+        listOfTasks = new LinkedList<Integer>();
     }
 
-    public Task getTask(){
-        return punchTask;
+    public void insert(Task key, Punch value){
+        //Add key
+        boolean needToAdd = true;
+        for( int i = 0; i < listOfTasks.size(); i++){
+            if(listOfTasks.get(i).compareTo(key.getID()) == 0 ) {
+                needToAdd = false;
+                break;
+            }
+        }
+        if(needToAdd)
+            listOfTasks.add(key.getID());
+
+        LinkedList<Punch> list;
+        if(gMap.containsKey(key.getID())){
+            list = (LinkedList) gMap.get(key.getID());
+        } else {
+            list = new LinkedList<Punch>();
+            gMap.put(key.getID(), list);
+        }
+
+        list.add(value);
     }
 
-    public Punch getPunch1(){
-        return gPunch1;
+    public void createRow(Task key){
+        if(!gMap.containsKey(key.getID())){
+            gMap.put(key, new LinkedList<Punch>());
+        }
     }
 
-    public Punch getPunch2(){
-        return gPunch2;
+    public List<Punch> getPunchesForKey(Integer key){
+        return (List<Punch>) gMap.get(key);
     }
 
-    public Punch getInPunch(){
-        if(gPunch1 == null)
-            return gPunch2;
-        else if(gPunch2 == null)
-            return gPunch1;
-        else if(gPunch1.getTime().compareTo(gPunch2.getTime()) <= 0)
-            return gPunch1;
-        else
-            return gPunch2;
+    public List<Punch> getPunchesForKey(Task key){
+        return getPunchesForKey(key.getID());
     }
 
-    public Punch getOutPunch(){
-        if(gPunch1 == null || gPunch2 == null)
-            return null;
-        else if(gPunch1.getTime().compareTo(gPunch2.getTime()) >= 0)
-            return gPunch1;
-        else
-            return gPunch2;
+    public List<Integer> getTasks(){
+        Log.d(TAG, "Table Punch Size: " + listOfTasks.size());
+        return listOfTasks;
     }
 
-    @Override
-    public int compareTo(PunchPair punchPair) {
-        return getInPunch().compareTo(punchPair.getInPunch());
-    }
 }

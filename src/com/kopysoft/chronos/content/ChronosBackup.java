@@ -224,7 +224,7 @@ public class ChronosBackup extends SQLiteOpenHelper {
                 final int colName = cursor.getColumnIndex("name");
                 jobNumber = cursor.getInt(colNote);
                 jobName =   cursor.getString(colName);
-                returnVal.add(new Job(jobNumber, jobName));
+                returnVal.add(new Job());
 
             } while (cursor.moveToNext());
         }

@@ -32,13 +32,13 @@ public class Task implements Comparable<Task>{
     private int id;
     @DatabaseField(canBeNull = false)
     private int taskOrder;
-    @DatabaseField(canBeNull = false)
-    private int jobNumber;
+    @DatabaseField(canBeNull = false, foreign = true)
+    private Job job;
     @DatabaseField
     private String taskName;
 
-    public Task(int iJobNumber, int iTaskOrder,  String iTaskName){
-        jobNumber = iJobNumber;
+    public Task(Job iJob, int iTaskOrder,  String iTaskName){
+        job = iJob;
         taskName = iTaskName;
         taskOrder = iTaskOrder;
     }
@@ -47,8 +47,20 @@ public class Task implements Comparable<Task>{
         taskName = inName;
     }
 
+    public int getID(){
+        return id;
+    }
+
     public String getName(){
         return taskName;
+    }
+
+    public void setJob(Job iJob){
+        job = iJob;
+    }
+
+    public Job getJob(){
+        return job;
     }
 
     public Task(){ }

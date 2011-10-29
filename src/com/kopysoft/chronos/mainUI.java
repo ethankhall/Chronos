@@ -33,14 +33,18 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.enums.PayPeriodDuration;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.view.ViewPagerAdapter;
 import com.viewpagerindicator.TitlePageIndicator;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class mainUI extends FragmentActivity {
     /** Called when the activity is first created. */
@@ -68,8 +72,8 @@ public class mainUI extends FragmentActivity {
 
             final int numberOfTasks = 3; //Number of tasks
             final int jobNumber = 3; //Number of tasks
-
-            ConnectionSource connectionSource = new AndroidConnectionSource(new Chronos(this));
+            Chronos chrono = new Chronos(this);
+            ConnectionSource connectionSource = new AndroidConnectionSource(chrono);
 
             //Punch
             TableUtils.dropTable(connectionSource, Punch.class, true); //Drop all
@@ -79,36 +83,48 @@ public class mainUI extends FragmentActivity {
             TableUtils.dropTable(connectionSource, Task.class, true); //Drop all
             TableUtils.createTable(connectionSource, Task.class); //Create Table
 
+            //Job
+            TableUtils.dropTable(connectionSource, Job.class, true); //Drop all
+            TableUtils.createTable(connectionSource, Job.class); //Create Table
+
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = BaseDaoImpl.createDao(connectionSource, Punch.class);
             Dao<Task,String> taskDAO = BaseDaoImpl.createDao(connectionSource, Task.class);
+            Dao<Job,String> jobDAO = BaseDaoImpl.createDao(connectionSource, Job.class);
+
+            //Create 1 Job
+            DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
+            Job currentJob = new Job("My First Job", 7,
+                    jobMidnight, PayPeriodDuration.TWO_WEEKS);
+            currentJob.setDoubletimeThreshold(60);
+            currentJob.setOvertimeThreshold(40);
+            currentJob.setOvertimeEnabled(true);
+            jobDAO.create(currentJob);
 
             LinkedList<Task> tasks = new LinkedList<Task>();
 
             //create tasks
             for( int i = 0; i < numberOfTasks; i++){
-                Task newTask = new Task(jobNumber,i , "Task " + (i+1) );
+                Task newTask = new Task(currentJob, i , "Task " + (i+1) );
                 tasks.add(newTask);
                 taskDAO.create(newTask);
             }
 
-
-
-            int iJobNumber = 0;
             DateTime iTime = new DateTime();
+            Random rand = new Random();
 
             for(int i = 0; i < 15; i++){
 
                 DateTime tempTime = iTime.minusHours(i);
-                tempTime = tempTime.minusMinutes((int)(Math.random() * 100) % 60);
+                tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
+                Punch temp = new Punch(currentJob, tasks.get(i % numberOfTasks), tempTime);
 
-                Punch temp = new Punch(iJobNumber, tasks.get(i % numberOfTasks), tempTime);
-
-                Log.d(TAG, "Output: " + punchDao.create(temp));
+                punchDao.create(temp);
             }
 
 
             connectionSource.close();
+            chrono.close();
         } catch(SQLException e){
             Log.d(TAG, e.getMessage());
         } catch (Exception e) {

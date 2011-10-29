@@ -20,14 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.view;
+package com.kopysoft.chronos.enums;
 
-import android.content.Context;
-import android.view.View;
-
-public class ListElement extends View {
-
-    public ListElement(Context context) {
-        super(context);
-    }
+public enum PayPeriodDuration {
+    ONE_WEEK, TWO_WEEKS, THREE_WEEKS, FOUR_WEEKS, FULL_MONTH, FIRST_FIFTEENTH
 }

@@ -31,6 +31,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Punch;
+import com.kopysoft.chronos.types.Task;
+import com.kopysoft.chronos.types.holders.PunchPair;
+import com.kopysoft.chronos.types.holders.TaskTable;
 import com.kopysoft.chronos.view.RowElement;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -41,46 +44,86 @@ import java.util.List;
 
 public class TodayAdapterPair extends BaseAdapter {
 
-    private static final String TAG = Defines.TAG + " - TodayAdapterIndividual";
+    private static final String TAG = Defines.TAG + " - TodayAdapterPair";
 
     Context gContext;
-    List<Punch> gListOfPunches;
-    public TodayAdapterPair(Context context, List<Punch> listOfPunches){
-        gListOfPunches = new LinkedList<Punch>(listOfPunches);
-        gContext = context;
-        Log.d(TAG, "Size: " + gListOfPunches.size());
+    TaskTable gTaskTable = new TaskTable();
+    List<PunchPair> listOfPunchPairs = new LinkedList<PunchPair>();
 
+    public TodayAdapterPair(Context context, List<Punch> listOfPunches){
+        gContext = context;
+
+        //Create a map of tasks
+        for(Punch temp : listOfPunches){
+            Task tempTask = temp.getTask();
+            gTaskTable.insert(tempTask, temp);
+        }
+
+        generatePunchPair();
+    }
+
+    public void generatePunchPair(){
+        listOfPunchPairs.clear();
+        List<Punch> punches;
+        List<Integer> tasks = gTaskTable.getTasks();
+        Log.d(TAG, "Number of Tasks: " + tasks.size());
+        for(Integer curTask : tasks){
+            punches = gTaskTable.getPunchesForKey(curTask);
+            Collections.sort(punches);
+            Log.d(TAG, "Task Number: " + curTask);
+            //for(Punch temp : punches){
+            //    Log.d(TAG, "Punch ID: " + temp.getID());
+            //}
+
+            for(int i = 0; i < punches.size(); i += 2){
+                //Log.d(TAG, "Size: " + punches.size());
+                //Log.d(TAG, "index: " + i);
+                Punch inTime = punches.get(i);
+                if(i < punches.size() - 1) {
+                    Punch outTime = punches.get(i + 1);
+                    listOfPunchPairs.add(new PunchPair(inTime, outTime));
+                } else {
+                    listOfPunchPairs.add(new PunchPair(inTime, null));
+                }
+            }
+        }
         sort();
+        notifyDataSetChanged();
+
+        //For Debug
+        //for(PunchPair pp : listOfPunchPairs){
+        //    Log.d(TAG, "In Time: " + pp.getInPunch().getTime().toString());
+        //    Log.d(TAG, "In Time: " + pp.getPunch1().getTime().toString());
+        //    if(pp.getOutPunch() != null){
+        //       Log.d(TAG, "Out Time: " + pp.getOutPunch().getTime().toString());
+        //        Log.d(TAG, "Out Time: " + pp.getPunch2().getTime().toString());
+        //    }
+        //}
     }
 
     public void addPunch(Punch input){
-        gListOfPunches.add(input);
-        sort();
+        gTaskTable.insert(input.getTask(), input);
+        generatePunchPair();
         notifyDataSetChanged();
-    }
-
-    public void rmPunch(int id){
-        gListOfPunches.remove(id);
-        sort();
     }
 
     /**
      * Sorts the elements in the list
      */
     private void sort(){
-        Collections.sort(gListOfPunches);
+        Collections.sort(listOfPunchPairs);
     }
 
     @Override
     public int getCount() {
-        return (gListOfPunches.size() + 1) / 2;
+        return listOfPunchPairs.size();
     }
 
     @Override
     public Object getItem(int i) {
-        if(i > gListOfPunches.size())
+        if(i > listOfPunchPairs.size())
             return null;
-        return gListOfPunches.get(i);
+        return listOfPunchPairs.get(i);
     }
 
     @Override
@@ -94,7 +137,7 @@ public class TodayAdapterPair extends BaseAdapter {
         if(view == null){
             view = new RowElement(gContext);
         }
-        Punch inTime = gListOfPunches.get(i * 2);
+        PunchPair pp = listOfPunchPairs.get(i);
 
         RowElement curr = (RowElement) view;
         TextView left = curr.left();
@@ -109,18 +152,17 @@ public class TodayAdapterPair extends BaseAdapter {
             fmt = DateTimeFormat.forPattern("HH:mm");
 
         //Set left text
-        left.setText(inTime.getTime().toString(fmt));
+        left.setText(pp.getInPunch().getTime().toString(fmt));
 
         //Set right text
         String rightString = "---     ";
-        if(gListOfPunches.size() > i * 2 + 1){
-            Punch outTime = gListOfPunches.get(i * 2 + 1);
-            rightString = outTime.getTime().toString(fmt);
+        if(pp.getOutPunch() != null){
+            rightString = pp.getOutPunch().getTime().toString(fmt);
         }
         right.setText(rightString);
 
         //Set Center text
-        center.setText(inTime.getTask().getName());
+        center.setText(pp.getTask().getName());
 
 
 

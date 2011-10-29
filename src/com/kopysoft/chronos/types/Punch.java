@@ -33,8 +33,8 @@ public class Punch implements Comparable<Punch> {
 
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField
-    private int jobNumber;
+    @DatabaseField(canBeNull = false, foreign = true)
+    private Job job;
     @DatabaseField(canBeNull = false, foreign = true)
     private Task punchTask;
     @DatabaseField
@@ -45,10 +45,14 @@ public class Punch implements Comparable<Punch> {
     public Punch() {
     }
 
-    public Punch(int iJobNumber, Task iPunchTask, DateTime iTime){
-        jobNumber = iJobNumber;
+    public Punch(Job iJob, Task iPunchTask, DateTime iTime){
+        job = iJob;
         punchTask = iPunchTask;
         time = iTime;
+    }
+
+    public int getID(){
+        return id;
     }
 
     /**
@@ -56,8 +60,8 @@ public class Punch implements Comparable<Punch> {
      *
      * @param jobNum used to set the job number
      */
-    public void setJobNumber(int jobNum){
-        jobNumber = jobNum;
+    public void setJobNumber(Job jobNum){
+        job = jobNum;
     }
 
     /**
@@ -65,8 +69,8 @@ public class Punch implements Comparable<Punch> {
      *
      * @return int gets this job number
      */
-    public int getJobNumber(){
-        return jobNumber;
+    public Job getJobNumber(){
+        return job;
     }
 
     /**

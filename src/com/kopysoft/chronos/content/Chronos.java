@@ -31,6 +31,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.kopysoft.chronos.types.Punch;
+import com.kopysoft.chronos.types.Task;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -114,7 +115,14 @@ public class Chronos extends SQLiteOpenHelper {
 
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = BaseDaoImpl.createDao(connectionSource, Punch.class);
+            Dao<Task,String> taskDAO = BaseDaoImpl.createDao(connectionSource, Task.class);
+
+            //accountDao.refresh(order.getAccount());
             retValue = punchDao.queryForAll();
+            for(Punch work : retValue){
+                taskDAO.refresh(work.getTask());
+                taskDAO.refresh(work.getTask());
+            }
 
 
             connectionSource.close();

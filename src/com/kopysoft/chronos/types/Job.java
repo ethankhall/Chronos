@@ -22,120 +22,109 @@
 
 package com.kopysoft.chronos.types;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
-import com.kopysoft.chronos.content.Chronos;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.kopysoft.chronos.enums.PayPeriodDuration;
+import org.joda.time.DateMidnight;
 
+@DatabaseTable(tableName = "jobs")
 public class Job {
 
-    int gId = -1;
-    String gName;
-    float gPayRate;
-    float gOverTime;
-    float gDoubleTime;
-    boolean needToRemove = false;
-    boolean needToUpdate = false;
+    @DatabaseField(generatedId = true)
+    int id = -1;
+    @DatabaseField(defaultValue = "", canBeNull = false)
+    String jobName;
+    @DatabaseField(defaultValue = "7.25", canBeNull = false)
+    float payRate;
+    @DatabaseField
+    boolean overTimeEnabled = true; //Should overtime be used for this job
+    @DatabaseField(defaultValue = "40")
+    float overTime;    //Start overtime at...
+    @DatabaseField(defaultValue = "60")
+    float doubleTime;  //Start double time at...
+    @DatabaseField
+    DateMidnight startOfPayPeriod;
+    @DatabaseField
+    PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
 
-     private final static String insertString =
-            "INSERT INTO " + Chronos.TABLE_NAME_JOBS +
-                    "(name, payRate, overTime, doubleTime) VALUES (?, ?, ?, ?)";
 
+    /**
+     * Normal constructor for the object Job. By default the overtime is calculated.
+     *  To change the overtime setting use the {@link #setOvertimeEnabled(boolean)}.
+     *  The default overtime value will be set to 40, and the double time value will be
+     *  set to 60. To change this see their respective methods.
+     * @param iJobName Name the user want to call this job.
+     * @param iPayRate Amount the user gets paid.
+     * @param iStartOfPayPeriod Start of the pay period.
+     * @param ppd   Set the duration of the pay period.
+     */
+    public Job(String iJobName, float iPayRate,
+               DateMidnight iStartOfPayPeriod, PayPeriodDuration ppd){
 
-    public Job(int jobNumber, String jobName){
-        gName = jobName;
-        gId = jobNumber;
+        jobName = iJobName;
+        payRate = iPayRate;
+        startOfPayPeriod = iStartOfPayPeriod;
+        payPeriodDuration = ppd;
+        doubleTime = 60;
+        overTime = 40;
+
+    }
+    /**
+     * Constructor required by ormlite
+     */
+    public Job(){ }
+
+    /**
+     * Sets the double time threshold to value. This will allow the data to be
+     *  changed in the database.
+     *
+     * @param value Value to set the overtime threshold to.
+     */
+    public void setDoubletimeThreshold(float value){
+        doubleTime = value;
     }
 
-    public Job(int jobNumber, Chronos chrono){
-        gId = jobNumber;
-        SQLiteDatabase db = chrono.getReadableDatabase();
-
-        Cursor cursor = db.query(Chronos.TABLE_NAME_JOBS,
-                null,
-                "_id = ?",
-                new String[] { Integer.toString(jobNumber)},
-                null,
-                null,
-                "_id ASC ");
-
-        if (cursor.moveToFirst()) {
-            final int colName = cursor.getColumnIndex("name");
-            final int colPayRate = cursor.getColumnIndex("payRate");
-            final int colOverTime = cursor.getColumnIndex("overTime");
-            final int colDoubleTime = cursor.getColumnIndex("doubleTime");
-            gName = cursor.getString(colName);
-            gPayRate = cursor.getLong(colPayRate);
-            gOverTime = cursor.getLong(colOverTime);
-            gDoubleTime = cursor.getLong(colDoubleTime);
-        }
-
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-        db.close();
+    /**
+     * Sets the overtime threshold to value. This will allow the data to be
+     *  changed in the database.
+     *
+     * @param value Value to set the overtime threshold to.
+     */
+    public void setOvertimeThreshold(float value){
+        overTime = value;
     }
 
-    public int getJobNumber(){
-        return gId;
+    /**
+     * Sets the overtime setting to the parameter "setting"
+     *
+     * @param setting TRUE to enable overtime calculations, otherwise false.
+     */
+    public void setOvertimeEnabled(boolean setting){
+        overTimeEnabled = setting;
     }
 
-    public String getJobName(){
-        return gName;
+    /**
+     * Gets the ID of this job, this is linked to the database and should not change.
+     *
+     * @return integer of the ID located in the database
+     */
+    public int getID(){
+        return id;
     }
 
-    public void setInfo(String jobName, float payRate, float overTime, float doubleTime){
-        gName = jobName;
-        gPayRate = payRate;
-        gOverTime = overTime;
-        gDoubleTime = doubleTime;
-        needToUpdate = true;
-    }
 
-    public float getPayRate(){
-        return gPayRate;
-    }
-
-    public float getOverTime(){
-        return gOverTime;
-    }
-
-    public float getDoubleTime(){
-        return gDoubleTime;
-    }
-
-    public void remove(){
-        needToRemove = true;
-    }
-
-    public void commit(Chronos chrono){
-
-        SQLiteDatabase db = chrono.getWritableDatabase();
-        ContentValues conecnt = new ContentValues();
-            conecnt.put("name", gName);
-            conecnt.put("overTime", gOverTime);
-            conecnt.put("doubleTime", gDoubleTime);
-            conecnt.put("payRate", gPayRate);
-
-        if(gId == -1 && !needToRemove){
-            gId = (int)db.insert(Chronos.TABLE_NAME_CLOCK, null, conecnt);
-
-        } else if(needToRemove){
-            db.delete(Chronos.TABLE_NAME_JOBS, "( _id = ? )", new String[] {Long.toString(gId)});
-        } else if(needToUpdate){
-            db.update(Chronos.TABLE_NAME_CLOCK, conecnt, " _id = ? ",
-                    new String[] {Long.toString(gId)});
-        }
-        db.close();
-    }
-
+    /**
+     * Sets the default job in the preferences to this job
+     * @param context Application Context
+     */
     public void setDefault(Context context){
-        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences app_preferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = app_preferences.edit();
-        editor.putInt("DefaultJobNumber", gId);
+        editor.putInt("DefaultJobNumber", id);
         editor.commit();
     }
 

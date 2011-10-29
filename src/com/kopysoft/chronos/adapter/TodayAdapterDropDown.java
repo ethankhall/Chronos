@@ -44,7 +44,7 @@ import java.util.List;
 
 public class TodayAdapterDropDown extends BaseExpandableListAdapter {
 
-    private static final String TAG = Defines.TAG + " - TodayAdapterIndividual";
+    private static final String TAG = Defines.TAG + " - TodayAdapterDropDown";
 
     Context gContext;
     List<Punch> gListOfPunches;
