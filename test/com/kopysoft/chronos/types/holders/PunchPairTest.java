@@ -22,33 +22,84 @@
 
 package com.kopysoft.chronos.types.holders;
 
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateTime;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 public class PunchPairTest {
 
     //Test constructor exception
     @Test(expected = IllegalArgumentException.class)
     public void TestContructorExceptionFail() throws Exception{
-        Task task1 = new Task(0,0, "");
-        Task task2 = new Task(0,1, "");
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
+        Task task2 = new Task(newJob,1, "");
 
-        Punch punch1 = new Punch(0, task1, new DateTime());
-        Punch punch2 = new Punch(0, task2, new DateTime());
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+        Punch punch2 = new Punch(newJob, task2, new DateTime());
 
-        PunchPair test = new PunchPair(punch1, punch2);
+        new PunchPair(punch1, punch2);
     }
 
     //Everything OKAY
     @Test
     public void EverythingNormal() throws Exception{
-        Task task1 = new Task(0,0, "");
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
 
-        Punch punch1 = new Punch(0, task1, new DateTime());
-        Punch punch2 = new Punch(0, task1, new DateTime());
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+        Punch punch2 = new Punch(newJob, task1, new DateTime());
 
-        PunchPair test = new PunchPair(punch1, punch2);
+        new PunchPair(punch1, punch2);
+    }
+
+    @Test
+    public void TestNullSent1() throws Exception{
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+
+        PunchPair pp = new PunchPair(punch1, null);
+        assertNotNull(pp.getInPunch());
+    }
+
+    @Test
+    public void TestNullSent2() throws Exception{
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+
+        PunchPair pp = new PunchPair(punch1, null);
+        assertNull(pp.getOutPunch());
+    }
+
+    @Test
+    public void TestAssignment1() throws Exception{
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+
+        PunchPair pp = new PunchPair(punch1, null);
+        assertEquals(punch1, pp.getPunch1());
+        assertEquals(null, pp.getPunch2());
+    }
+
+    @Test
+    public void TestAssignment2() throws Exception{
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
+
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+        Punch punch2 = new Punch(newJob, task1, new DateTime());
+
+        PunchPair pp = new PunchPair(punch1, punch2);
+        assertEquals(punch1, pp.getPunch1());
+        assertEquals(punch2, pp.getPunch2());
     }
 }
