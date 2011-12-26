@@ -23,9 +23,12 @@
 package com.kopysoft.chronos;
 
 import android.os.Bundle;
+import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
@@ -34,11 +37,10 @@ import com.j256.ormlite.table.TableUtils;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
+import com.kopysoft.chronos.fragments.ClockFragment;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
-import com.kopysoft.chronos.view.ViewPagerAdapter;
-import com.viewpagerindicator.TitlePageIndicator;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
@@ -46,7 +48,8 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class mainUI extends FragmentActivity {
+
+public class mainUI extends FragmentActivity implements ActionBar.OnNavigationListener{
     /** Called when the activity is first created. */
     private static final String TAG = Defines.TAG + " - Main";
 
@@ -57,14 +60,44 @@ public class mainUI extends FragmentActivity {
 
         dropAndTest();
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter( this );
-        ViewPager pager =
-                (ViewPager)findViewById( R.id.viewpager );
+        ArrayAdapter<CharSequence> list =
+                ArrayAdapter.createFromResource(this, R.array.navigation, R.layout.abs__simple_spinner_item);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        getSupportActionBar().setListNavigationCallbacks(list, this);
+
+        /*
+        ClockViewer adapter = new ClockViewer( this );
+
+        android.support.v4.view.ViewPager pager =
+                (android.support.v4.view.ViewPager) findViewById( R.id.viewpager );
+
         TitlePageIndicator indicator =
                 (TitlePageIndicator)findViewById( R.id.indicator );
+
         pager.setAdapter( adapter );
         indicator.setViewPager( pager );
         indicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.None);
+        */
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Note")
+                .setIcon(R.drawable.ic_menu_compose)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, ClockFragment.newInstance())
+                .commit();
+        return true;
     }
 
     private void dropAndTest(){
@@ -131,4 +164,5 @@ public class mainUI extends FragmentActivity {
             Log.d(TAG,e.getMessage());
         }
     }
+
 }

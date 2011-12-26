@@ -32,7 +32,6 @@ public class ScrollState implements Parcelable
 	public static Parcelable.Creator<ScrollState> CREATOR = new Parcelable.Creator<ScrollState>()
 	{
 
-		@Override
 		public ScrollState createFromParcel( Parcel source )
 		{
 			int size = source.readInt();
@@ -41,7 +40,6 @@ public class ScrollState implements Parcelable
 			return new ScrollState( scrollPos );
 		}
 
-		@Override
 		public ScrollState[] newArray( int size )
 		{
 			return new ScrollState[ size ];
@@ -52,13 +50,11 @@ public class ScrollState implements Parcelable
 		this.scrollPos = scrollPos;
 	}
 
-	@Override
 	public int describeContents()
 	{
 		return 0;
 	}
 
-	@Override
 	public void writeToParcel( Parcel dest, int flags )
 	{
 		dest.writeInt( scrollPos.length );

@@ -37,15 +37,15 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.viewpagerindicator.TitleProvider;
 
-public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
+public class ClockViewer extends PagerAdapter implements TitleProvider{
 
-    private static final String TAG = Defines.TAG + " - ViewPagerAdapter";
+    private static final String TAG = Defines.TAG + " - ClockViewer";
 
     private static String[] titles = new String[] { "Demo 1", "Demo 2", "Demo 3", "Demo 4" };
     private final Context context;
     private int[] scrollPosition = new int[titles.length];
 
-    public ViewPagerAdapter( Context context )
+    public ClockViewer(Context context)
     {
         this.context = context;
         for ( int i = 0; i < titles.length; i++ )
@@ -54,19 +54,16 @@ public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
         }
     }
 
-    @Override
     public String getTitle( int position )
     {
         return titles[position];
     }
 
-    @Override
     public int getCount()
     {
         return titles.length;
     }
 
-    @Override
     public Object instantiateItem( View pager, int position )
     {
         Log.d(TAG, "Position: " + position);
@@ -176,24 +173,20 @@ public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
         return layout;
     }
 
-    @Override
     public void destroyItem( View pager, int position, Object view )
     {
         ( (ViewPager) pager ).removeView( (View) view );
     }
 
-    @Override
     public boolean isViewFromObject( View view, Object object )
     {
         return view.equals( object );
     }
 
-    @Override
     public void finishUpdate( View view )
     {
     }
 
-    @Override
     public void restoreState( Parcelable p, ClassLoader c )
     {
         if ( p instanceof ScrollState )
@@ -202,13 +195,11 @@ public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
         }
     }
 
-    @Override
     public Parcelable saveState()
     {
         return new ScrollState( scrollPosition );
     }
 
-    @Override
     public void startUpdate( View view )
     {
     }
