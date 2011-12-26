@@ -24,22 +24,23 @@ package com.kopysoft.chronos.content;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import com.j256.ormlite.android.AndroidConnectionSource;
-import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class Chronos extends SQLiteOpenHelper {
+public class Chronos extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = "Chronos - SQL";
 
@@ -49,65 +50,85 @@ public class Chronos extends SQLiteOpenHelper {
     //2.0.0 = 12
 
     private static final int DATABASE_VERSION = 12;
-    public static final String TABLE_NAME_CLOCK = "clockactions";
-    public static final String TABLE_NAME_JOBS = "jobs";
-    public static final String TABLE_NAME_NOTE = "notes";
-    public static final String TABLE_NAME_OTHER = "misc";
     public static final String DATABASE_NAME = "Chronos";
 
-    //String insertString = "INSERT INTO " + TABLE_NAME_CLOCK + "(time, actionReason) VALUES (?, ?, ?)";
-    String insertNote = "INSERT INTO " + TABLE_NAME_NOTE + "(note_string, time) VALUES (?, ?)";
-    public static final String insertLunch = "INSERT INTO " +
-            TABLE_NAME_OTHER + "(day, lunchTaken) VALUES (?, ?)";
+    Dao<Punch, String>  gPunchDoa = null;
+    Dao<Task, String>   gTaskDoa = null;
+    Dao<Job, String>    gJobDoa = null;
+    Dao<Note, String>    gNoteDoa = null;
 
     public Chronos(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME_CLOCK +
-                " ( _id INTEGER PRIMARY KEY NOT NULL, " +
-                " time LONG NOT NULL, " +
-                " actionReason INTEGER NOT NULL, " +
-                " jobNumber INTEGER DEFAULT 0 )");
-        db.execSQL("CREATE TABLE " + TABLE_NAME_NOTE +
-                " ( _id LONG PRIMARY KEY, " +
-                " note_string TEXT NOT NULL, " +
-                " time LONG NOT NULL, " +
-                " jobNumber INTEGER DEFAULT 0 )");
-        db.execSQL("CREATE TABLE " + TABLE_NAME_OTHER +
-                " ( _id INTEGER PRIMARY KEY NOT NULL, " +
-                " day LONG NOT NULL, " +
-                " lunchTaken INTEGER NOT NULL, " +
-                " jobNumber INTEGER DEFAULT 0 ) ");
-        db.execSQL("CREATE TABLE " + TABLE_NAME_JOBS +
-                " ( _id INTEGER PRIMARY KEY NOT NULL, " +
-                " name String NOT NULL," +
-                " payRate FLOAT NOT NULL, " +
-                " overTime FLOAT NOT NULL, " +
-                " doubleTime FLOAT NOT NULL)");
+    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
+
+        try{
+            //Punch
+            TableUtils.createTable(connectionSource, Punch.class); //Create Table
+
+            //Task
+            TableUtils.createTable(connectionSource, Task.class); //Create Table
+
+            //Job
+            TableUtils.createTable(connectionSource, Job.class); //Create Table
+
+        } catch (SQLException e) {
+            Log.e(TAG, "Could not create new table for Thing", e);
+        }
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(TAG, "Upgrading database, this will drop tables and recreate.");
-        Log.w(TAG, "oldVerion: " + oldVersion + "\tnewVersion: " + newVersion);
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+        try{
+            Log.w(TAG, "Upgrading database, this will drop tables and recreate.");
+            Log.w(TAG, "oldVerion: " + oldVersion + "\tnewVersion: " + newVersion);
 
+            //Punch
+            TableUtils.dropTable(connectionSource, Punch.class, true); //Drop all
 
-        if (oldVersion == 11){
-            String dbCal1 = "ALTER TABLE " + TABLE_NAME_CLOCK + "ADD COLUMN jobNumber INTEGER DEFAULT 0";
-            String dbCal2 = "ALTER TABLE " + TABLE_NAME_NOTE  + "ADD COLUMN jobNumber INTEGER DEFAULT 0";
-            String dbCal3 = "ALTER TABLE " + TABLE_NAME_OTHER + "ADD COLUMN jobNumber INTEGER DEFAULT 0";
-            String dbCal4 ="CREATE TABLE " + TABLE_NAME_JOBS +
-                    " ( _id INTEGER PRIMARY KEY NOT NULL, " +
-                    " name String NOT NULL, " +
-                    " default INTEGER NOT NULL )";
-            db.execSQL(dbCal1);
-            db.execSQL(dbCal2);
-            db.execSQL(dbCal3);
-            db.execSQL(dbCal4);
+            //Task
+            TableUtils.dropTable(connectionSource, Task.class, true); //Drop all
+
+            //Job
+            TableUtils.dropTable(connectionSource, Job.class, true); //Drop all
+
+            //Recreate DB
+            onCreate(db, connectionSource);
+
+        } catch (SQLException e) {
+            Log.e(TAG, "Could not upgrade the table for Thing", e);
         }
+
+    }
+
+    public Dao<Punch, String> getPunchDoa() throws SQLException {
+        if (gPunchDoa == null) {
+            gPunchDoa = getDao(Punch.class);
+        }
+        return gPunchDoa;
+    }
+
+    public Dao<Job, String> getJobDoa() throws SQLException {
+        if (gJobDoa == null) {
+            gJobDoa = getDao(Job.class);
+        }
+        return gJobDoa;
+    }
+
+    public Dao<Task, String> getTaskDoa() throws SQLException {
+        if (gTaskDoa == null) {
+            gTaskDoa = getDao(Task.class);
+        }
+        return gTaskDoa;
+    }
+
+    public Dao<Note, String> getNoteDoa() throws SQLException {
+        if (gNoteDoa == null) {
+            gNoteDoa = getDao(Note.class);
+        }
+        return gNoteDoa;
     }
 
     public List<Punch> getAllPunches(){
@@ -117,8 +138,8 @@ public class Chronos extends SQLiteOpenHelper {
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = BaseDaoImpl.createDao(connectionSource, Punch.class);
-            Dao<Task,String> taskDAO = BaseDaoImpl.createDao(connectionSource, Task.class);
+            Dao<Punch,String> punchDao = getPunchDoa();
+            Dao<Task,String> taskDAO = getTaskDoa();
 
             //accountDao.refresh(order.getAccount());
             retValue = punchDao.queryForAll();
@@ -144,9 +165,9 @@ public class Chronos extends SQLiteOpenHelper {
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = BaseDaoImpl.createDao(connectionSource, Punch.class);
-            Dao<Task,String> taskDAO = BaseDaoImpl.createDao(connectionSource, Task.class);
-            Dao<Job,String> jobDAO = BaseDaoImpl.createDao(connectionSource, Job.class);
+            Dao<Punch,String> punchDao = getPunchDoa();
+            Dao<Task,String> taskDAO = getTaskDoa();
+            Dao<Job,String> jobDAO = getJobDoa();
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Punch.JOB_FIELD_NAME, jobId);
@@ -175,7 +196,7 @@ public class Chronos extends SQLiteOpenHelper {
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Job,String> jobDAO = BaseDaoImpl.createDao(connectionSource, Job.class);
+            Dao<Job,String> jobDAO = getJobDoa();
 
             retValue = jobDAO.queryForAll();
 

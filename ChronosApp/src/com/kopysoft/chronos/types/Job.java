@@ -25,6 +25,7 @@ package com.kopysoft.chronos.types;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
@@ -45,9 +46,9 @@ public class Job {
     float overTime;    //Start overtime at...
     @DatabaseField(defaultValue = "60")
     float doubleTime;  //Start double time at...
-    @DatabaseField
+    @DatabaseField(dataType= DataType.SERIALIZABLE)
     DateMidnight startOfPayPeriod;
-    @DatabaseField
+    @DatabaseField(dataType= DataType.SERIALIZABLE)
     PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
 
 

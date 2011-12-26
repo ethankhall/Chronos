@@ -29,11 +29,7 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import com.j256.ormlite.android.AndroidConnectionSource;
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
@@ -106,24 +102,11 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
             final int numberOfTasks = 3; //Number of tasks
             final int jobNumber = 3; //Number of tasks
             Chronos chrono = new Chronos(this);
-            ConnectionSource connectionSource = new AndroidConnectionSource(chrono);
-
-            //Punch
-            TableUtils.dropTable(connectionSource, Punch.class, true); //Drop all
-            TableUtils.createTable(connectionSource, Punch.class); //Create Table
-
-            //Task
-            TableUtils.dropTable(connectionSource, Task.class, true); //Drop all
-            TableUtils.createTable(connectionSource, Task.class); //Create Table
-
-            //Job
-            TableUtils.dropTable(connectionSource, Job.class, true); //Drop all
-            TableUtils.createTable(connectionSource, Job.class); //Create Table
 
             // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = BaseDaoImpl.createDao(connectionSource, Punch.class);
-            Dao<Task,String> taskDAO = BaseDaoImpl.createDao(connectionSource, Task.class);
-            Dao<Job,String> jobDAO = BaseDaoImpl.createDao(connectionSource, Job.class);
+            Dao<Punch,String> punchDao = chrono.getPunchDoa();
+            Dao<Task,String> taskDAO = chrono.getTaskDoa();
+            Dao<Job,String> jobDAO = chrono.getJobDoa();
 
             //Create 1 Job
             DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
@@ -155,8 +138,6 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
                 punchDao.create(temp);
             }
 
-
-            connectionSource.close();
             chrono.close();
         } catch(SQLException e){
             Log.d(TAG, e.getMessage());

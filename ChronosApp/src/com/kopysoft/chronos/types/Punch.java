@@ -22,6 +22,7 @@
 
 package com.kopysoft.chronos.types;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
@@ -35,12 +36,12 @@ public class Punch implements Comparable<Punch> {
 
     @DatabaseField(generatedId = true)
     private int id;
+    @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE)
+    private DateTime time;
     @DatabaseField(canBeNull = false, foreign = true, columnName = JOB_FIELD_NAME)
     private Job job;
     @DatabaseField(canBeNull = false, foreign = true, columnName = TASK_FIELD_NAME)
     private Task punchTask;
-    @DatabaseField
-    private DateTime time;
 
     //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour, int secondOfMinute)
 
@@ -90,7 +91,7 @@ public class Punch implements Comparable<Punch> {
      * @return {@link DateTime} the time of the punch
      */
     public DateTime getTime(){
-        return time;
+        return  (DateTime)time;
     }
 
     /**
