@@ -74,9 +74,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             //Job
             TableUtils.createTable(connectionSource, Job.class); //Create Table
 
-            //Job
-            TableUtils.createTable(connectionSource, Note.class); //Create Table
-
         } catch (SQLException e) {
             Log.e(TAG, "Could not create new table for Thing", e);
         }
