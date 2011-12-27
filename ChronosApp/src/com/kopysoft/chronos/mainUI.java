@@ -25,7 +25,6 @@ package com.kopysoft.chronos;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.util.Log;
@@ -36,7 +35,6 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.fragments.ClockFragment;
 import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateMidnight;
@@ -91,18 +89,10 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
     }
 
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        FragmentTransaction fmTrans = getSupportFragmentManager().beginTransaction();
-        switch (itemPosition){
-            case 0:
-                fmTrans.replace(android.R.id.content, ClockFragment.newInstance());
-                break;
-            case 1:
-                fmTrans.replace(android.R.id.content, ClockFragment.newInstance());
-                break;
-            default:
-                break;
-        }
-        fmTrans.commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, ClockFragment.newInstance())
+                .commit();
         return true;
     }
 
@@ -110,7 +100,6 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
         try{
 
             final int numberOfTasks = 3; //Number of tasks
-            final int numberOfNotes = 3; //Number of tasks
             final int jobNumber = 3; //Number of tasks
             Chronos chrono = new Chronos(this);
 
@@ -118,7 +107,6 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
             Dao<Punch,String> punchDao = chrono.getPunchDoa();
             Dao<Task,String> taskDAO = chrono.getTaskDoa();
             Dao<Job,String> jobDAO = chrono.getJobDoa();
-            Dao<Note,String> noteDAO = chrono.getNoteDoa();
 
             //Create 1 Job
             DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
@@ -131,26 +119,15 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
 
             LinkedList<Task> tasks = new LinkedList<Task>();
 
-
-            DateTime iTime = new DateTime();
-            Random rand = new Random();
-            //create notes
-            /*
-            for( int i = 0; i < numberOfNotes; i++){
-                DateTime tempTime = iTime.minusHours(i);
-                tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
-                Note newNote = new Note(tempTime, currentJob, "Note number" + String.valueOf(i + 1));
-
-                noteDAO.create(newNote);
-            } */
-
-
             //create tasks
             for( int i = 0; i < numberOfTasks; i++){
                 Task newTask = new Task(currentJob, i , "Task " + (i+1) );
                 tasks.add(newTask);
                 taskDAO.create(newTask);
             }
+
+            DateTime iTime = new DateTime();
+            Random rand = new Random();
 
             for(int i = 0; i < 15; i++){
 
