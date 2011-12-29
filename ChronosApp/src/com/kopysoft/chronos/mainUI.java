@@ -23,18 +23,17 @@
 package com.kopysoft.chronos;
 
 import android.os.Bundle;
-import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import com.j256.ormlite.dao.Dao;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
-import com.kopysoft.chronos.fragments.ClockFragment;
+import com.kopysoft.chronos.activities.MainActivity;
 import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateMidnight;
@@ -45,7 +44,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 
-public class mainUI extends FragmentActivity implements ActionBar.OnNavigationListener{
+public class mainUI extends FragmentActivity {
     /** Called when the activity is first created. */
     private static final String TAG = Defines.TAG + " - Main";
 
@@ -56,13 +55,22 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
 
         dropAndTest();
 
-        ArrayAdapter<CharSequence> list =
-                ArrayAdapter.createFromResource(this, R.array.navigation, R.layout.abs__simple_spinner_item);
+        //ArrayAdapter<CharSequence> list =
+        //        ArrayAdapter.createFromResource(this, R.array.navigation, R.layout.abs__simple_spinner_item);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        getSupportActionBar().setListNavigationCallbacks(list, this);
+         getSupportActionBar();
+        //actionBar.setTitle("Clock");
+        //actionBar.setDisplayHomeAsUpEnabled(true);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, new MainActivity())
+                .commit();
+
+        //enable drop down navigation
+        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        //list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //getSupportActionBar().setListNavigationCallbacks(list, this);
 
         /*
         ClockViewer adapter = new ClockViewer( this );
@@ -81,20 +89,41 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add("Note")
-                .setIcon(R.drawable.ic_menu_compose)
+        menu.add("Add Punch")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add("New Note")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return super.onCreateOptionsMenu(menu);
     }
 
+    /*
+
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, ClockFragment.newInstance())
-                .commit();
+        Log.d(TAG, "Position: " + itemPosition);
+        switch (itemPosition){
+            case 0:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, ClockActivity.newInstance())
+                        .commit();
+                break;
+            case 1:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, NoteActivity.newInstance())
+                        .commit();
+                break;
+            default:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, ClockActivity.newInstance())
+                        .commit();
+                break;
+        }
         return true;
     }
+    */
 
     private void dropAndTest(){
         try{
@@ -104,9 +133,10 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
             Chronos chrono = new Chronos(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = chrono.getPunchDoa();
-            Dao<Task,String> taskDAO = chrono.getTaskDoa();
-            Dao<Job,String> jobDAO = chrono.getJobDoa();
+            Dao<Punch,String> punchDao = chrono.getPunchDao();
+            Dao<Task,String> taskDAO = chrono.getTaskDao();
+            Dao<Job,String> jobDAO = chrono.getJobDao();
+            Dao<Note,String> noteDAO = chrono.getNoteDao();
 
             //Create 1 Job
             DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
@@ -134,15 +164,18 @@ public class mainUI extends FragmentActivity implements ActionBar.OnNavigationLi
                 DateTime tempTime = iTime.minusHours(i);
                 tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
                 Punch temp = new Punch(currentJob, tasks.get(i % numberOfTasks), tempTime);
+                Note newNote = new Note(tempTime, currentJob,
+                        "Note number " + String.valueOf(i + 1) );
 
+                noteDAO.create(newNote);
                 punchDao.create(temp);
             }
 
             chrono.close();
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            Log.e(TAG,e.getMessage());
         }
     }
 
