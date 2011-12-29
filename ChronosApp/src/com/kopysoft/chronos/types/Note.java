@@ -28,7 +28,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 
 @DatabaseTable(tableName = "notes")
-public class Note {
+public class Note implements Comparable<Note> {
 
     @DatabaseField(canBeNull = false, defaultValue = "")
     String noteString;
@@ -39,6 +39,11 @@ public class Note {
 
 
     /**
+     * Constructor needed for ORMLite
+     */
+
+    public Note(){    }
+    /**
      *
      * @param date      Date
      * @param jobNumber Job Number
@@ -46,7 +51,7 @@ public class Note {
      */
     public Note(DateTime date, Job jobNumber,  String note){
         gDateTime = date;
-        noteString = "";
+        noteString = note;
         job = jobNumber;
     }
 
@@ -66,4 +71,8 @@ public class Note {
         return noteString;
     }
 
+    @Override
+    public int compareTo(Note punch) {
+        return this.getTime().compareTo(punch.getTime());
+    }
 }
