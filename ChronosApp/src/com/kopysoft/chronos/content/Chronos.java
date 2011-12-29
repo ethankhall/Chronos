@@ -74,6 +74,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             //Job
             TableUtils.createTable(connectionSource, Job.class); //Create Table
 
+            //Job
+            TableUtils.createTable(connectionSource, Note.class); //Create Table
+
         } catch (SQLException e) {
             Log.e(TAG, "Could not create new table for Thing", e);
         }
@@ -94,6 +97,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             //Job
             TableUtils.dropTable(connectionSource, Job.class, true); //Drop all
 
+            //Job
+            TableUtils.dropTable(connectionSource, Note.class, true); //Drop all
+
             //Recreate DB
             onCreate(db, connectionSource);
 
@@ -103,28 +109,28 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     }
 
-    public Dao<Punch, String> getPunchDoa() throws SQLException {
+    public Dao<Punch, String> getPunchDao() throws SQLException {
         if (gPunchDoa == null) {
             gPunchDoa = getDao(Punch.class);
         }
         return gPunchDoa;
     }
 
-    public Dao<Job, String> getJobDoa() throws SQLException {
+    public Dao<Job, String> getJobDao() throws SQLException {
         if (gJobDoa == null) {
             gJobDoa = getDao(Job.class);
         }
         return gJobDoa;
     }
 
-    public Dao<Task, String> getTaskDoa() throws SQLException {
+    public Dao<Task, String> getTaskDao() throws SQLException {
         if (gTaskDoa == null) {
             gTaskDoa = getDao(Task.class);
         }
         return gTaskDoa;
     }
 
-    public Dao<Note, String> getNoteDoa() throws SQLException {
+    public Dao<Note, String> getNoteDao() throws SQLException {
         if (gNoteDoa == null) {
             gNoteDoa = getDao(Note.class);
         }
@@ -138,8 +144,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = getPunchDoa();
-            Dao<Task,String> taskDAO = getTaskDoa();
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Task,String> taskDAO = getTaskDao();
 
             //accountDao.refresh(order.getAccount());
             retValue = punchDao.queryForAll();
@@ -165,9 +171,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = getPunchDoa();
-            Dao<Task,String> taskDAO = getTaskDoa();
-            Dao<Job,String> jobDAO = getJobDoa();
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Punch.JOB_FIELD_NAME, jobId);
@@ -196,7 +202,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
-            Dao<Job,String> jobDAO = getJobDoa();
+            Dao<Job,String> jobDAO = getJobDao();
 
             retValue = jobDAO.queryForAll();
 
