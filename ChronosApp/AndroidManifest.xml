@@ -6,16 +6,23 @@
     <application android:icon="@drawable/icon"
                  android:label="Chronos"
                  android:allowBackup="true"
-                 android:debuggable="false" >
+                 android:debuggable="false"
+                 android:theme="@style/Theme.Sherlock">
         <activity android:name=".mainUI"
                   android:label="Chronos"
-                  android:launchMode="singleTop"
-                  android:theme="@style/Theme.Sherlock">
+                  android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+
+        <activity android:name=".activities.ClockActivity"
+                  android:label="Clock" />
+
+        <activity android:name=".activities.NoteActivity"
+                  android:label="Notes" />
 
     </application>
 
