@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.adapter;
+package com.kopysoft.chronos.adapter.clock;
 
 import android.content.Context;
 import android.text.format.DateFormat;
