@@ -29,10 +29,10 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
-import com.kopysoft.chronos.adapter.TodayAdapterDropDown;
-import com.kopysoft.chronos.adapter.TodayAdapterIndividual;
-import com.kopysoft.chronos.adapter.TodayAdapterPair;
-import com.kopysoft.chronos.adapter.TodayAdapterSummary;
+import com.kopysoft.chronos.adapter.clock.TodayAdapterIndividual;
+import com.kopysoft.chronos.adapter.clock.TodayAdapterDropDown;
+import com.kopysoft.chronos.adapter.clock.TodayAdapterSummary;
+import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.viewpagerindicator.TitleProvider;
@@ -87,7 +87,7 @@ public class ClockViewer extends PagerAdapter implements TitleProvider{
 
             adapter = new TodayAdapterPair(context, chrono.getAllPunches());
             retView.setAdapter( adapter );
-        retView.setSelection( scrollPosition[ position ] );
+            retView.setSelection( scrollPosition[ position ] );
 
             chrono.close();
 
@@ -106,7 +106,7 @@ public class ClockViewer extends PagerAdapter implements TitleProvider{
 
             adapter = new TodayAdapterIndividual(context, chrono.getAllPunches());
             retView.setAdapter( adapter );
-        retView.setSelection( scrollPosition[ position ] );
+            retView.setSelection( scrollPosition[ position ] );
 
             chrono.close();
 
@@ -126,7 +126,7 @@ public class ClockViewer extends PagerAdapter implements TitleProvider{
 
             adapter = new TodayAdapterSummary(context, chrono.getAllPunches());
             retView.setAdapter( adapter );
-        retView.setSelection( scrollPosition[ position ] );
+            retView.setSelection( scrollPosition[ position ] );
 
             chrono.close();
         }   else if(position == 3) {
@@ -150,7 +150,7 @@ public class ClockViewer extends PagerAdapter implements TitleProvider{
             chrono.close();
         }
 
-        ((ViewPager)pager ).addView( layout, 0 );
+        ((ViewPager) pager).addView( layout, 0 );
 
         /*
         ListView v = new ListView( context );
@@ -175,7 +175,7 @@ public class ClockViewer extends PagerAdapter implements TitleProvider{
 
     public void destroyItem( View pager, int position, Object view )
     {
-        ( (ViewPager) pager ).removeView( (View) view );
+        ((ViewPager)pager).removeView( (View) view );
     }
 
     public boolean isViewFromObject( View view, Object object )
