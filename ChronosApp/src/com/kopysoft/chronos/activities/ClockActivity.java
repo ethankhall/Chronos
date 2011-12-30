@@ -20,54 +20,54 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments;
+package com.kopysoft.chronos.activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.Menu;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItem;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.mainUI;
 import com.kopysoft.chronos.view.ClockViewer;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class ClockFragment extends Fragment {
+public class ClockActivity extends FragmentActivity {
 
-    public static ClockFragment newInstance() {
-        return newInstance(0);
-    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.clock);
 
-    public static ClockFragment newInstance(int index) {
-        // Supply index input as an argument.
-        Bundle args = new Bundle();
-        args.putInt("index", index);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ClockFragment f = new ClockFragment();
-        f.setArguments(args);
-
-        return f;
-    }
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View layout =  inflater.inflate(R.layout.clock, container, false);
-
-        ClockViewer adapter = new ClockViewer( getActivity() );
+        ClockViewer adapter = new ClockViewer( this );
 
         android.support.v4.view.ViewPager pager =
-                (android.support.v4.view.ViewPager) layout.findViewById( R.id.viewpager );
+                (android.support.v4.view.ViewPager) findViewById( R.id.viewpager );
 
         TitlePageIndicator indicator =
-                (TitlePageIndicator)layout.findViewById( R.id.indicator );
+                (TitlePageIndicator)findViewById( R.id.indicator );
 
         pager.setAdapter( adapter );
         indicator.setViewPager( pager );
         indicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.None);
 
-        return layout;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; go home
+                Intent intent = new Intent(this, mainUI.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
 }
