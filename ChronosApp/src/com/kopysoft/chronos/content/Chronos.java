@@ -141,8 +141,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         List<Punch> retValue = null;
         try{
-            ConnectionSource connectionSource = new AndroidConnectionSource(this);
-
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = getPunchDao();
             Dao<Task,String> taskDAO = getTaskDao();
@@ -154,8 +152,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 taskDAO.refresh(work.getTask());
             }
 
-
-            connectionSource.close();
         } catch(SQLException e){
             Log.d(TAG, e.getMessage());
         } catch (Exception e) {
@@ -168,7 +164,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         List<Punch> retValue = null;
         try{
-            ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = getPunchDao();
@@ -185,8 +180,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 jobDAO.refresh(work.getJobNumber());
             }
 
-
-            connectionSource.close();
         } catch(SQLException e){
             Log.d(TAG, e.getMessage());
         } catch (Exception e) {
