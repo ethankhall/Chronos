@@ -31,16 +31,14 @@ import java.util.Comparator;
 
 @DatabaseTable(tableName = "punches")
 public class Punch implements Comparable<Punch> {
-    public final static String JOB_FIELD_NAME = "job_id";
-    public final static String TASK_FIELD_NAME = "task_id";
 
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE)
     private DateTime time;
-    @DatabaseField(canBeNull = false, foreign = true, columnName = JOB_FIELD_NAME)
+    @DatabaseField(canBeNull = false, foreign = true, columnName = Job.JOB_FIELD_NAME)
     private Job job;
-    @DatabaseField(canBeNull = false, foreign = true, columnName = TASK_FIELD_NAME)
+    @DatabaseField(canBeNull = false, foreign = true, columnName = Task.TASK_FIELD_NAME)
     private Task punchTask;
 
     //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour, int secondOfMinute)

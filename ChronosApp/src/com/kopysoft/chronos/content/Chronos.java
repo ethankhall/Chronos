@@ -32,13 +32,18 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class Chronos extends OrmLiteSqliteOpenHelper {
 
@@ -76,6 +81,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             //Job
             TableUtils.createTable(connectionSource, Note.class); //Create Table
+
+            //Create elements for testing
+            dropAndTest();
 
         } catch (SQLException e) {
             Log.e(TAG, "Could not create new table for Thing", e);
@@ -171,7 +179,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Job,String> jobDAO = getJobDao();
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
-            queryBuilder.where().eq(Punch.JOB_FIELD_NAME, jobId);
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId);
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
             retValue = punchDao.query(preparedQuery);
@@ -206,5 +214,58 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Log.d(TAG,e.getMessage());
         }
         return retValue;
+    }
+
+    private void dropAndTest(){
+        try{
+
+            final int numberOfTasks = 3; //Number of tasks
+            final int jobNumber = 3; //Number of tasks
+
+            // instantiate the DAO to handle Account with String id
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+            Dao<Note,String> noteDAO = getNoteDao();
+
+            //Create 1 Job
+            DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
+            Job currentJob = new Job("My First Job", 7,
+                    jobMidnight, PayPeriodDuration.TWO_WEEKS);
+            currentJob.setDoubletimeThreshold(60);
+            currentJob.setOvertimeThreshold(40);
+            currentJob.setOvertimeEnabled(true);
+            jobDAO.create(currentJob);
+
+            LinkedList<Task> tasks = new LinkedList<Task>();
+
+            //create tasks
+            for( int i = 0; i < numberOfTasks; i++){
+                Task newTask = new Task(currentJob, i , "Task " + (i+1) );
+                tasks.add(newTask);
+                taskDAO.create(newTask);
+            }
+
+            DateTime iTime = new DateTime();
+            Random rand = new Random();
+
+            for(int i = 0; i < 15; i++){
+
+                DateTime tempTime = iTime.minusHours(i);
+                tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
+                Punch temp = new Punch(currentJob, tasks.get(i % numberOfTasks), tempTime);
+                Note newNote = new Note(tempTime, currentJob,
+                        "Note number " + String.valueOf(i + 1) );
+                newNote.setTask(tasks.get(i % numberOfTasks));
+
+                noteDAO.create(newNote);
+                punchDao.create(temp);
+            }
+
+        } catch(SQLException e){
+            Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG,e.getMessage());
+        }
     }
 }

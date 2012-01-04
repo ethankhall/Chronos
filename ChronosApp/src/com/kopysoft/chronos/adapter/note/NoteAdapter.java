@@ -31,7 +31,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Note;
-import com.kopysoft.chronos.view.RowElement;
+import com.kopysoft.chronos.view.TwoLineElement;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -56,13 +56,13 @@ public class NoteAdapter extends BaseAdapter {
         sort();
     }
 
-    public void addPunch(Note input){
+    public void addNote(Note input){
         gListOfNotes.add(input);
         sort();
         notifyDataSetChanged();
     }
 
-    public void rmPunch(int id){
+    public void removeNote(int id){
         gListOfNotes.remove(id);
         sort();
     }
@@ -95,13 +95,15 @@ public class NoteAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
 
         if(view == null){
-            view = new RowElement(gContext);
+            view = new TwoLineElement(gContext);
         }
         Note note = gListOfNotes.get(i);
 
-        RowElement curr = (RowElement) view;
+        TwoLineElement curr = (TwoLineElement) view;
+
         TextView left = curr.left();
         TextView right = curr.right();
+        TextView bottom = curr.secondRow();
 
         DateTimeFormatter fmt;
         if (!DateFormat.is24HourFormat(gContext))
@@ -111,7 +113,9 @@ public class NoteAdapter extends BaseAdapter {
 
         left.setText(note.getTime().toString(fmt));
 
-        right.setText(note.getNote());
+        right.setText(note.getTask().getName());
+
+        bottom.setText(note.getNote());
 
         return curr;  //To change body of implemented methods use File | Settings | File Templates.
     }

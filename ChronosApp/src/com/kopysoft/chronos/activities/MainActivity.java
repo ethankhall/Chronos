@@ -57,7 +57,7 @@ public class MainActivity extends Fragment{
                              Bundle savedInstanceState) {
 
         Log.d(TAG, "Fragment Started");
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragments
         View layout =  inflater.inflate(R.layout.icon_layout, container, false);
         layout.findViewById(R.id.clock_icon).setOnClickListener(clock);
         layout.findViewById(R.id.note_icon).setOnClickListener(note);

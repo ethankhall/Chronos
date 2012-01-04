@@ -34,6 +34,8 @@ import org.joda.time.DateMidnight;
 @DatabaseTable(tableName = "jobs")
 public class Job {
 
+    public final static String JOB_FIELD_NAME = "job_id";
+
     @DatabaseField(generatedId = true)
     int id = -1;
     @DatabaseField(defaultValue = "", canBeNull = false)

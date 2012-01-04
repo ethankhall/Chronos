@@ -26,13 +26,19 @@ package com.kopysoft.chronos.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.util.Log;
+import android.view.MenuInflater;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.fragments.ClockViewer;
 import com.kopysoft.chronos.mainUI;
-import com.kopysoft.chronos.view.ClockViewer;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class ClockActivity extends FragmentActivity {
+    
+    private static String TAG = Defines.TAG + " - ClockActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,14 @@ public class ClockActivity extends FragmentActivity {
         indicator.setViewPager( pager );
         indicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.None);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "Menu created");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+        return true;
     }
 
     @Override

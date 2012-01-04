@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.view;
+package com.kopysoft.chronos.fragments;
 
 import android.content.Context;
 import android.os.Parcelable;
@@ -35,6 +35,8 @@ import com.kopysoft.chronos.adapter.clock.TodayAdapterSummary;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.view.RowElement;
+import com.kopysoft.chronos.view.ScrollState;
 import com.viewpagerindicator.TitleProvider;
 
 public class ClockViewer extends PagerAdapter implements TitleProvider{
@@ -189,7 +191,7 @@ public class ClockViewer extends PagerAdapter implements TitleProvider{
 
     public void restoreState( Parcelable p, ClassLoader c )
     {
-        if ( p instanceof ScrollState )
+        if ( p instanceof ScrollState)
         {
             scrollPosition = ( (ScrollState) p ).getScrollPos();
         }

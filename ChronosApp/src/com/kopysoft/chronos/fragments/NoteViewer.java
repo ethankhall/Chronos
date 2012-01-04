@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.view;
+package com.kopysoft.chronos.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -37,6 +37,7 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Note;
+import com.kopysoft.chronos.types.Task;
 
 import java.util.List;
 
@@ -54,8 +55,16 @@ public class NoteViewer extends Fragment {
         try{
             Chronos chrono = new Chronos(getActivity());
             Dao<Note, String> noteDoa =  chrono.getNoteDao();
+            Dao<Job, String> jobDoa =  chrono.getJobDao();
+            Dao<Task, String> taskDoa =  chrono.getTaskDao();
 
             List<Note> listOfNotes = noteDoa.queryForAll();
+
+            //Pull the links
+            for(Note work : listOfNotes){
+                taskDoa.refresh(work.getTask());
+                jobDoa.refresh(work.getJob());
+            }
             
             Log.d(TAG, "Size of Lists: " + listOfNotes.size());
 

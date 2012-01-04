@@ -25,23 +25,8 @@ package com.kopysoft.chronos;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.util.Log;
-import com.j256.ormlite.dao.Dao;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.activities.MainActivity;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.Note;
-import com.kopysoft.chronos.types.Punch;
-import com.kopysoft.chronos.types.Task;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Random;
+import com.kopysoft.chronos.enums.Defines;
 
 
 public class mainUI extends FragmentActivity {
@@ -52,8 +37,6 @@ public class mainUI extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        dropAndTest();
 
         //ArrayAdapter<CharSequence> list =
         //        ArrayAdapter.createFromResource(this, R.array.navigation, R.layout.abs__simple_spinner_item);
@@ -89,10 +72,12 @@ public class mainUI extends FragmentActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+        /*
         menu.add("Add Punch")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.add("New Note")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                */
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -124,59 +109,4 @@ public class mainUI extends FragmentActivity {
         return true;
     }
     */
-
-    private void dropAndTest(){
-        try{
-
-            final int numberOfTasks = 3; //Number of tasks
-            final int jobNumber = 3; //Number of tasks
-            Chronos chrono = new Chronos(this);
-
-            // instantiate the DAO to handle Account with String id
-            Dao<Punch,String> punchDao = chrono.getPunchDao();
-            Dao<Task,String> taskDAO = chrono.getTaskDao();
-            Dao<Job,String> jobDAO = chrono.getJobDao();
-            Dao<Note,String> noteDAO = chrono.getNoteDao();
-
-            //Create 1 Job
-            DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
-            Job currentJob = new Job("My First Job", 7,
-                    jobMidnight, PayPeriodDuration.TWO_WEEKS);
-            currentJob.setDoubletimeThreshold(60);
-            currentJob.setOvertimeThreshold(40);
-            currentJob.setOvertimeEnabled(true);
-            jobDAO.create(currentJob);
-
-            LinkedList<Task> tasks = new LinkedList<Task>();
-
-            //create tasks
-            for( int i = 0; i < numberOfTasks; i++){
-                Task newTask = new Task(currentJob, i , "Task " + (i+1) );
-                tasks.add(newTask);
-                taskDAO.create(newTask);
-            }
-
-            DateTime iTime = new DateTime();
-            Random rand = new Random();
-
-            for(int i = 0; i < 15; i++){
-
-                DateTime tempTime = iTime.minusHours(i);
-                tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
-                Punch temp = new Punch(currentJob, tasks.get(i % numberOfTasks), tempTime);
-                Note newNote = new Note(tempTime, currentJob,
-                        "Note number " + String.valueOf(i + 1) );
-
-                noteDAO.create(newNote);
-                punchDao.create(temp);
-            }
-
-            chrono.close();
-        } catch(SQLException e){
-            Log.e(TAG, e.getMessage());
-        } catch (Exception e) {
-            Log.e(TAG,e.getMessage());
-        }
-    }
-
 }

@@ -20,55 +20,47 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.types;
+package com.kopysoft.chronos.view;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import com.kopysoft.chronos.R;
 
-@DatabaseTable(tableName = "tasks")
-public class Task implements Comparable<Task>{
+public class TwoLineElement extends LinearLayout {
 
-    public final static String TASK_FIELD_NAME = "task_id";
+	TextView rightText =  null;
+    TextView leftText = null;
+    TextView secondRow = null;
 
-    @DatabaseField(generatedId = true)
-    private int id;
-    @DatabaseField(canBeNull = false)
-    private int taskOrder;
-    @DatabaseField(canBeNull = false, foreign = true)
-    private Job job;
-    @DatabaseField
-    private String taskName;
+    View thisView = null;
 
-    public Task(Job iJob, int iTaskOrder,  String iTaskName){
-        job = iJob;
-        taskName = iTaskName;
-        taskOrder = iTaskOrder;
+	public TextView left(){
+        if(leftText == null)
+            leftText = (TextView)thisView.findViewById(R.id.leftTextElement);
+		return leftText;
+	}
+
+	public TextView right(){
+        if(rightText == null)
+            rightText = (TextView)thisView.findViewById(R.id.rightTextElement);
+		return rightText;
+	}
+
+    public TextView secondRow(){
+        if(secondRow == null)
+            secondRow = (TextView)thisView.findViewById(R.id.bottomRow);
+		return secondRow;
     }
 
-    public void setName(String inName){
-        taskName = inName;
-    }
+	public TwoLineElement(Context context){
+        super(context);
 
-    public int getID(){
-        return id;
-    }
+        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-    public String getName(){
-        return taskName;
-    }
+        thisView=layoutInflater.inflate(R.layout.row_element_two_line,this);
 
-    public void setJob(Job iJob){
-        job = iJob;
-    }
-
-    public Job getJob(){
-        return job;
-    }
-
-    public Task(){ }
-
-    @Override
-    public int compareTo(Task task) {
-        return taskOrder - task.taskOrder;
-    }
+	}
 }

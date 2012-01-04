@@ -34,8 +34,10 @@ public class Note implements Comparable<Note> {
     String noteString;
     @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE)
     private DateTime gDateTime;
-    @DatabaseField(canBeNull = false, foreign = true, columnName = Punch.JOB_FIELD_NAME)
+    @DatabaseField(canBeNull = false, foreign = true, columnName = Job.JOB_FIELD_NAME)
     private Job job;
+    @DatabaseField(canBeNull = true, foreign = true, columnName = Task.TASK_FIELD_NAME)
+    private Task assignedTask;
 
 
     /**
@@ -54,6 +56,14 @@ public class Note implements Comparable<Note> {
         noteString = note;
         job = jobNumber;
     }
+    
+    public void setJob(Job newJob){
+        job = newJob;
+    }
+    
+    public Job getJob(){
+        return job;
+    }
 
     public void setTime(DateTime date){
         gDateTime = date;
@@ -69,6 +79,14 @@ public class Note implements Comparable<Note> {
 
     public String getNote(){
         return noteString;
+    }
+    
+    public void setTask(Task incomingTask){
+        assignedTask = incomingTask;
+    }
+    
+    public Task getTask(){
+        return assignedTask;
     }
 
     @Override
