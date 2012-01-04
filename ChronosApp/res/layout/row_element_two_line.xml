@@ -24,23 +24,37 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:layout_margin="10dip"
-              android:padding="10dip">
-    <ImageView
-        android:layout_width="100dip"
-        android:layout_height="wrap_content"
-        android:id="@+id/clock_icon"
-        android:src="@drawable/clock"
-        android:padding="5dip"
-        />
+              android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dip">
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-    <ImageView
-            android:layout_width="100dip"
+        <TextView
+                android:id="@+id/rightTextElement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="Right Text"
+                />
+        <TextView
+                android:id="@+id/leftTextElement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Left Text"
+                />
+
+    </RelativeLayout>
+    <TextView
             android:layout_height="wrap_content"
-            android:id="@+id/note_icon"
-            android:src="@drawable/knotes"
-            />
+            android:layout_width="fill_parent"
+            android:gravity="center"
+            android:id="@+id/bottomRow"
+            android:text="Centered Text"/>
+
 
 </LinearLayout>
