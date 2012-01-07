@@ -39,6 +39,7 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -196,6 +197,92 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
+    public List<Punch> getAllPunchesForThisPayPeriodByJob(Job jobId){
+
+        List<Punch> retValue = null;
+        try{
+
+            // instantiate the DAO to handle Account with String id
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+
+            //Get the start and end of pay period
+            DateTime startOfPP = jobId.getStartOfPayPeriod().toDateTime();
+            PayPeriodDuration PPduration = jobId.getDuration();
+            DateTime endOfPP = new DateTime(); //Today
+
+            Interval interval =  new Interval(startOfPP, endOfPP);
+            int days = (int)interval.toDuration().getStandardDays();
+            switch (PPduration){
+                case ONE_WEEK:
+                    days = days / 7;
+                    startOfPP = startOfPP.plusWeeks(days);
+                    endOfPP = startOfPP.plusWeeks(1);
+                    break;
+                case TWO_WEEKS:
+                    days = days / (7 * 2);
+                    startOfPP = startOfPP.plusWeeks(days * 2);
+                    endOfPP = startOfPP.plusWeeks(2);
+                    break;
+                case THREE_WEEKS:
+                    days = days / ( 7 * 3);
+                    startOfPP = startOfPP.plusWeeks(days * 3);
+                    endOfPP = startOfPP.plusWeeks(3);
+                    break;
+                case FOUR_WEEKS:
+                    days = days / ( 7 * 4);
+                    startOfPP= startOfPP.plusWeeks(days * 4);
+                    endOfPP = startOfPP.plusWeeks(4);
+                    break;
+                case FULL_MONTH:
+                    if(jobId.getStartOfPayPeriod().getDayOfMonth() < endOfPP.getDayOfMonth()){
+                        startOfPP = new DateTime();
+                        startOfPP = startOfPP.minusMonths(1);
+                        startOfPP = startOfPP.withDayOfMonth(jobId.getStartOfPayPeriod().getDayOfMonth());
+                    } else {
+                        startOfPP = new DateTime();
+                        startOfPP = startOfPP.withDayOfMonth(jobId.getStartOfPayPeriod().getDayOfMonth());
+                    }
+
+                    break;
+                case FIRST_FIFTEENTH:
+                    if(endOfPP.getDayOfMonth() >= 15){
+                        startOfPP = new DateMidnight().toDateTime();
+                        startOfPP.withDayOfMonth(15);
+                        endOfPP = new DateMidnight().toDateTime();
+                        endOfPP.withDayOfMonth(1);
+                        endOfPP.plusMonths(1);
+                        endOfPP.minusDays(1);
+                    } else {
+                        startOfPP = new DateMidnight().toDateTime();
+                        startOfPP.withDayOfMonth(1);
+                        endOfPP = new DateMidnight().toDateTime();
+                        endOfPP.withDayOfMonth(14);
+                    }
+                    break;
+                default:
+                    return null;
+            }
+
+            QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID());
+            PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
+
+            retValue = punchDao.query(preparedQuery);
+            for(Punch work : retValue){
+                taskDAO.refresh(work.getTask());
+                jobDAO.refresh(work.getJobNumber());
+            }
+
+        } catch(SQLException e){
+            Log.d(TAG, e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
      public List<Job> getJobs(){
 
         List<Job> retValue = null;
@@ -249,17 +336,20 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             DateTime iTime = new DateTime();
             Random rand = new Random();
 
-            for(int i = 0; i < 15; i++){
+            for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 15; j++){
 
-                DateTime tempTime = iTime.minusHours(i);
-                tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
-                Punch temp = new Punch(currentJob, tasks.get(i % numberOfTasks), tempTime);
-                Note newNote = new Note(tempTime, currentJob,
-                        "Note number " + String.valueOf(i + 1) );
-                newNote.setTask(tasks.get(i % numberOfTasks));
+                    DateTime tempTime = iTime.minusHours(j);
+                    tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
+                    Punch temp = new Punch(currentJob, tasks.get(j % numberOfTasks), tempTime);
+                    Note newNote = new Note(tempTime, currentJob,
+                            "Note number " + String.valueOf(j + 1) );
+                    newNote.setTask(tasks.get(j % numberOfTasks));
 
-                noteDAO.create(newNote);
-                punchDao.create(temp);
+                    noteDAO.create(newNote);
+                    punchDao.create(temp);
+                }
+                iTime = iTime.plusDays(1);
             }
 
         } catch(SQLException e){
