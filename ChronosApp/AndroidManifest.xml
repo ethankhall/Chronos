@@ -8,6 +8,7 @@
                  android:allowBackup="true"
                  android:debuggable="false"
                  android:theme="@style/Theme.Sherlock">
+
         <activity android:name=".mainUI"
                   android:label="Chronos"
                   android:launchMode="singleTop">
@@ -19,7 +20,8 @@
 
 
         <activity android:name=".activities.ClockActivity"
-                  android:label="Clock" />
+                  android:label="Clock"
+                  android:uiOptions="splitActionBarWhenNarrow" />
 
         <activity android:name=".activities.NoteActivity"
                   android:label="Notes" />
@@ -27,7 +29,7 @@
     </application>
 
     <uses-sdk android:minSdkVersion="4"
-              android:targetSdkVersion="13" />
+              android:targetSdkVersion="14" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
