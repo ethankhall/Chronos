@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+@Deprecated
 public class ChronosBackup extends SQLiteOpenHelper {
 
     private static final String TAG = "Chronos - SQL";
