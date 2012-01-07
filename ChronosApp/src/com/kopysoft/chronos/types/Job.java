@@ -118,6 +118,22 @@ public class Job {
         return id;
     }
 
+    /**
+     * Gets the start of the Pay Period (initial one)
+     * @return DateMidnight of the start of the pay period
+     */
+    public DateMidnight getStartOfPayPeriod(){
+        return startOfPayPeriod;
+    }
+
+    /**
+     * Gets the duration of the Pay Period
+     * @return PayPeriodDuration of the duration of the pay period
+     */
+    public PayPeriodDuration getDuration(){
+        return payPeriodDuration;
+    }
+
 
     /**
      * Sets the default job in the preferences to this job
