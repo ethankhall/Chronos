@@ -25,39 +25,33 @@ package com.kopysoft.chronos.adapter.clock;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.BaseAdapter;
+import com.kopysoft.chronos.content.Chronos;
 
-public class PayPeriodAdapter extends BaseExpandableListAdapter {
-    public PayPeriodAdapter(Context context){
+public class PayPeriodAdapterSummary extends BaseAdapter {
+
+    private Context gContext;
+    
+    public PayPeriodAdapterSummary(Context context){
+        gContext = context;
+        Chronos chrono = new Chronos(gContext);
+        chrono.getAllPunches();
 
     }
+
+
     @Override
-    public int getGroupCount() {
+    public int getCount() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public int getChildrenCount(int groupPosition) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
+    public Object getItem(int i) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
+    public long getItemId(int i) {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -67,17 +61,7 @@ public class PayPeriodAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean b, View view, ViewGroup viewGroup) {
+    public View getView(int i, View view, ViewGroup viewGroup) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
