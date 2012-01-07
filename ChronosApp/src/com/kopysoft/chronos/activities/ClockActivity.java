@@ -32,7 +32,7 @@ import android.util.Log;
 import android.view.MenuInflater;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockViewer;
+import com.kopysoft.chronos.fragments.FragmentClockViewer;
 import com.kopysoft.chronos.mainUI;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -47,7 +47,8 @@ public class ClockActivity extends FragmentActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ClockViewer adapter = new ClockViewer( this );
+        //ClockViewer adapter = new ClockViewer( this );
+        FragmentClockViewer adapter = new FragmentClockViewer(getSupportFragmentManager());
 
         android.support.v4.view.ViewPager pager =
                 (android.support.v4.view.ViewPager) findViewById( R.id.viewpager );
