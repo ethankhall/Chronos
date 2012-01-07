@@ -39,6 +39,7 @@ import com.kopysoft.chronos.view.RowElement;
 import com.kopysoft.chronos.view.ScrollState;
 import com.viewpagerindicator.TitleProvider;
 
+@Deprecated
 public class ClockViewer extends PagerAdapter implements TitleProvider{
 
     private static final String TAG = Defines.TAG + " - ClockViewer";
