@@ -22,10 +22,10 @@
 
 package com.kopysoft.chronos.types.holders;
 
-import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
+import org.joda.time.Interval;
 
 public class PunchPair implements Comparable<PunchPair>{
 
@@ -74,6 +74,14 @@ public class PunchPair implements Comparable<PunchPair>{
             return gPunch1;
         else
             return gPunch2;
+    }
+    
+    public Interval getInterval(){
+        if(getInPunch() == null || getOutPunch() == null){
+            return null;
+        } else {
+            return new Interval(getInPunch().getTime(), getOutPunch().getTime());
+        }
     }
 
     @Override
