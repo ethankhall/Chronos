@@ -32,7 +32,7 @@ import org.joda.time.Interval;
  * @author Ethan Hall
  */
 public class PayPeriodHolder {
-    
+
     Job gJob;
     DateMidnight gStartOfPP = null;
     DateMidnight gEndOfPP = null;
@@ -44,6 +44,35 @@ public class PayPeriodHolder {
      */
     public PayPeriodHolder(Job inputJob){
         gJob = inputJob;
+    }
+
+    /**
+     * Gets the day's in this pay period
+     * @return int of the day's in the the pay period
+     */
+    public int getDays(){
+        DateTime thisDateTime;
+        switch (gJob.getDuration()){
+            case ONE_WEEK:
+                return 7;
+            case TWO_WEEKS:
+                return 7 * 2;
+            case THREE_WEEKS:
+                return 7 * 3;
+            case FOUR_WEEKS:
+                return 7 * 4;
+            case FULL_MONTH:
+                thisDateTime = new DateTime();
+                return thisDateTime.dayOfMonth().getMaximumValue();
+            case FIRST_FIFTEENTH:
+
+                thisDateTime = new DateTime();
+                if(thisDateTime.getDayOfMonth() <= 15)
+                    return 15;
+                else
+                    return thisDateTime.dayOfMonth().getMaximumValue() - 15;
+        }
+        return 0;
     }
 
     /**
