@@ -37,9 +37,9 @@ import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
+import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -118,6 +118,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     }
 
+    @SuppressWarnings("unchecked")
     public Dao<Punch, String> getPunchDao() throws SQLException {
         if (gPunchDoa == null) {
             gPunchDoa = getDao(Punch.class);
@@ -125,6 +126,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return gPunchDoa;
     }
 
+    @SuppressWarnings("unchecked")
     public Dao<Job, String> getJobDao() throws SQLException {
         if (gJobDoa == null) {
             gJobDoa = getDao(Job.class);
@@ -132,6 +134,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return gJobDoa;
     }
 
+    @SuppressWarnings("unchecked")
     public Dao<Task, String> getTaskDao() throws SQLException {
         if (gTaskDoa == null) {
             gTaskDoa = getDao(Task.class);
@@ -139,6 +142,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return gTaskDoa;
     }
 
+    @SuppressWarnings("unchecked")
     public Dao<Note, String> getNoteDao() throws SQLException {
         if (gNoteDoa == null) {
             gNoteDoa = getDao(Note.class);
@@ -208,65 +212,14 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Job,String> jobDAO = getJobDao();
 
             //Get the start and end of pay period
-            DateTime startOfPP = jobId.getStartOfPayPeriod().toDateTime();
-            PayPeriodDuration PPduration = jobId.getDuration();
-            DateTime endOfPP = new DateTime(); //Today
-
-            Interval interval =  new Interval(startOfPP, endOfPP);
-            int days = (int)interval.toDuration().getStandardDays();
-            switch (PPduration){
-                case ONE_WEEK:
-                    days = days / 7;
-                    startOfPP = startOfPP.plusWeeks(days);
-                    endOfPP = startOfPP.plusWeeks(1);
-                    break;
-                case TWO_WEEKS:
-                    days = days / (7 * 2);
-                    startOfPP = startOfPP.plusWeeks(days * 2);
-                    endOfPP = startOfPP.plusWeeks(2);
-                    break;
-                case THREE_WEEKS:
-                    days = days / ( 7 * 3);
-                    startOfPP = startOfPP.plusWeeks(days * 3);
-                    endOfPP = startOfPP.plusWeeks(3);
-                    break;
-                case FOUR_WEEKS:
-                    days = days / ( 7 * 4);
-                    startOfPP= startOfPP.plusWeeks(days * 4);
-                    endOfPP = startOfPP.plusWeeks(4);
-                    break;
-                case FULL_MONTH:
-                    if(jobId.getStartOfPayPeriod().getDayOfMonth() < endOfPP.getDayOfMonth()){
-                        startOfPP = new DateTime();
-                        startOfPP = startOfPP.minusMonths(1);
-                        startOfPP = startOfPP.withDayOfMonth(jobId.getStartOfPayPeriod().getDayOfMonth());
-                    } else {
-                        startOfPP = new DateTime();
-                        startOfPP = startOfPP.withDayOfMonth(jobId.getStartOfPayPeriod().getDayOfMonth());
-                    }
-
-                    break;
-                case FIRST_FIFTEENTH:
-                    if(endOfPP.getDayOfMonth() >= 15){
-                        startOfPP = new DateMidnight().toDateTime();
-                        startOfPP.withDayOfMonth(15);
-                        endOfPP = new DateMidnight().toDateTime();
-                        endOfPP.withDayOfMonth(1);
-                        endOfPP.plusMonths(1);
-                        endOfPP.minusDays(1);
-                    } else {
-                        startOfPP = new DateMidnight().toDateTime();
-                        startOfPP.withDayOfMonth(1);
-                        endOfPP = new DateMidnight().toDateTime();
-                        endOfPP.withDayOfMonth(14);
-                    }
-                    break;
-                default:
-                    return null;
-            }
+            PayPeriodHolder pph = new PayPeriodHolder(jobId);
+            DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
+            DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
-            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID());
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID())
+                    .between(Punch.TIME_OF_PUNCH, startOfPP, endOfPP);
+
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
             retValue = punchDao.query(preparedQuery);
