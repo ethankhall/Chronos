@@ -29,6 +29,7 @@ import org.joda.time.Interval;
 
 public class PunchPair implements Comparable<PunchPair>{
 
+    @SuppressWarnings("unused")
     private static final String TAG = Defines.TAG + " - PunchPair";
 
     Punch gPunch1, gPunch2;
@@ -44,18 +45,30 @@ public class PunchPair implements Comparable<PunchPair>{
         punchTask = gPunch1.getTask();
     }
 
+    /**
+     * Gets the Task that the two Punches have
+     *
+     * @return Task of the two Punches
+     */
     public Task getTask(){
         return punchTask;
     }
 
+    @SuppressWarnings("unused")
     public Punch getPunch1(){
         return gPunch1;
     }
 
+    @SuppressWarnings("unused")
     public Punch getPunch2(){
         return gPunch2;
     }
 
+    /**
+     * Gets the IN punch
+     *
+     * @return an IN punch or null if none exists
+     */
     public Punch getInPunch(){
         if(gPunch1 == null)
             return gPunch2;
@@ -67,6 +80,11 @@ public class PunchPair implements Comparable<PunchPair>{
             return gPunch2;
     }
 
+    /**
+     * Gets the OUT punch
+     *
+     * @return an OUT punch or null if none exists
+     */
     public Punch getOutPunch(){
         if(gPunch1 == null || gPunch2 == null)
             return null;
@@ -75,7 +93,12 @@ public class PunchPair implements Comparable<PunchPair>{
         else
             return gPunch2;
     }
-    
+
+    /**
+     * Returns an interval based on the two Punches held in the class.
+     *
+     * @return Interval with the two punches. If one of the punches doesn't exists, the return value will be null
+     */
     public Interval getInterval(){
         if(getInPunch() == null || getOutPunch() == null){
             return null;
