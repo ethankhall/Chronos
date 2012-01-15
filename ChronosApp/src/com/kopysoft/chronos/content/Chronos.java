@@ -38,6 +38,7 @@ import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
+import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
@@ -201,8 +202,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
-    public List<Punch> getAllPunchesForThisPayPeriodByJob(Job jobId){
+    public PunchTable getAllPunchesForThisPayPeriodByJob(Job jobId){
 
+        PunchTable punches = new PunchTable();
         List<Punch> retValue = null;
         try{
 
@@ -226,6 +228,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
                 jobDAO.refresh(work.getJobNumber());
+                punches.insert(work);
             }
 
         } catch(SQLException e){
@@ -233,7 +236,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         } catch (Exception e) {
             Log.d(TAG,e.getMessage());
         }
-        return retValue;
+        return punches;
     }
 
      public List<Job> getJobs(){

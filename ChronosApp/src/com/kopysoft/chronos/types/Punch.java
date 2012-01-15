@@ -31,10 +31,12 @@ import java.util.Comparator;
 
 @DatabaseTable(tableName = "punches")
 public class Punch implements Comparable<Punch> {
+    
+    public static final String TIME_OF_PUNCH = "punch_time";
 
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE)
+    @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE, columnName = TIME_OF_PUNCH)
     private DateTime time;
     @DatabaseField(canBeNull = false, foreign = true, columnName = Job.JOB_FIELD_NAME)
     private Job job;

@@ -25,43 +25,92 @@ package com.kopysoft.chronos.adapter.clock;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import com.kopysoft.chronos.content.Chronos;
+import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.holders.PayPeriodHolder;
+import com.kopysoft.chronos.types.holders.PunchTable;
+import org.joda.time.DateMidnight;
 
-public class PayPeriodAdapterSummary extends BaseAdapter {
+public class PayPeriodAdapterSummary extends BaseExpandableListAdapter {
+
+    private static final String TAG = Defines.TAG + " - PayPeriodAdapterSummary";
 
     private Context gContext;
+    PayPeriodHolder gPayPeriod;
+    private PunchTable gPunchesByDay;
+
     
-    public PayPeriodAdapterSummary(Context context){
+    public PayPeriodAdapterSummary(Context context, Job inJob){
         gContext = context;
         Chronos chrono = new Chronos(gContext);
-        chrono.getAllPunches();
+
+        gPunchesByDay = chrono.getAllPunchesForThisPayPeriodByJob(inJob);
+
+        gPayPeriod = new PayPeriodHolder(inJob);
 
     }
 
-
     @Override
-    public int getCount() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    public int getGroupCount() {
+        return gPayPeriod.getDays();
     }
 
     @Override
-    public Object getItem(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public int getChildrenCount(int i) {
+        DateMidnight start = gPayPeriod.getStartOfPayPeriod();
+        start = start.plus(i);
+
+        return gPunchesByDay.getPunchesByDay(start).size();
     }
 
     @Override
-    public long getItemId(int i) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    public Object getGroup(int i) {
+        DateMidnight start = gPayPeriod.getStartOfPayPeriod();
+        start = start.plus(i);
+
+        return gPunchesByDay.getPunchesByDay(start);
+    }
+
+    @Override
+    public Object getChild(int i, int i1) {
+        DateMidnight start = gPayPeriod.getStartOfPayPeriod();
+        start = start.plus(i);
+
+        return gPunchesByDay.getPunchesByDay(start).get(i1);
+    }
+
+    @Override
+    public long getGroupId(int i) {
+        return gPunchesByDay.getDays().get(i).getMillis();
+    }
+
+    @Override
+    public long getChildId(int i, int i1) {
+        DateMidnight start = gPayPeriod.getStartOfPayPeriod();
+        start = start.plus(i);
+
+        return gPunchesByDay.getPunchesByDay(start).get(i1).getID();
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false; 
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean isChildSelectable(int i, int i1) {
+        return false;
     }
 }
