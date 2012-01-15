@@ -54,6 +54,24 @@ public class PunchDay {
     }
 
     /**
+     * Gets a punch from the day
+     * @param i index of the punch
+     * @return Punch from the index
+     */
+    public Punch getPunch(int i){
+        return gPunchList.get(i);
+    }
+
+    /**
+     * Gets the number of punches in this day
+     *
+     * @return the number of punches this day
+     */
+    public int getSize(){
+        return gPunchList.size();
+    }
+
+    /**
      * Adds a punch to today.
      *
      * @param addPunch Punch that contains the info.
