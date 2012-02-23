@@ -26,6 +26,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.util.Comparator;
 
@@ -36,8 +37,10 @@ public class Punch implements Comparable<Punch> {
 
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE, columnName = TIME_OF_PUNCH)
-    private DateTime time;
+    @DatabaseField(canBeNull = false, columnName = TIME_OF_PUNCH)
+    private long time;
+    @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE)
+    DateTimeZone timeZone;
     @DatabaseField(canBeNull = false, foreign = true, columnName = Job.JOB_FIELD_NAME)
     private Job job;
     @DatabaseField(canBeNull = false, foreign = true, columnName = Task.TASK_FIELD_NAME)
@@ -51,7 +54,8 @@ public class Punch implements Comparable<Punch> {
     public Punch(Job iJob, Task iPunchTask, DateTime iTime){
         job = iJob;
         punchTask = iPunchTask;
-        time = iTime;
+        time = iTime.getMillis();
+        timeZone = iTime.getZone();
     }
 
     public int getID(){
@@ -82,7 +86,7 @@ public class Punch implements Comparable<Punch> {
      * @param inputTime Set time for the punch
      */
     public void setTime(DateTime inputTime){
-        time = inputTime;
+        time = inputTime.getMillis();
     }
 
     /**
@@ -91,7 +95,7 @@ public class Punch implements Comparable<Punch> {
      * @return {@link DateTime} the time of the punch
      */
     public DateTime getTime(){
-        return  (DateTime)time;
+        return  new DateTime(time, timeZone);
     }
 
     /**
@@ -121,7 +125,7 @@ public class Punch implements Comparable<Punch> {
 
     public int compareTo(Punch another) {
         //return (int)( time - another.getTime());
-        return (time.compareTo(another.getTime()));
+        return ((new DateTime(time)).compareTo(another.getTime()));
     }
 
 

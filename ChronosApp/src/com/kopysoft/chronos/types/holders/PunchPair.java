@@ -97,11 +97,12 @@ public class PunchPair implements Comparable<PunchPair>{
     /**
      * Returns an interval based on the two Punches held in the class.
      *
-     * @return Interval with the two punches. If one of the punches doesn't exists, the return value will be null
+     * @return Interval with the two punches. If one of the punches
+     *  doesn't exists the return value will be a new Interval with the value of 0
      */
     public Interval getInterval(){
         if(getInPunch() == null || getOutPunch() == null){
-            return null;
+            return new Interval(0, 1);
         } else {
             return new Interval(getInPunch().getTime(), getOutPunch().getTime());
         }

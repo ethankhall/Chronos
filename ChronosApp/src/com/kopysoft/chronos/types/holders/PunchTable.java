@@ -24,47 +24,47 @@ package com.kopysoft.chronos.types.holders;
 
 import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import org.joda.time.DateMidnight;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PunchTable {
 
     private static final String TAG = Defines.TAG + " - TaskTable";
     Map gMap;
     List<DateMidnight> listOfDays;
+    PayPeriodHolder gPayPeriod;
 
-    public PunchTable(){
-        gMap = new HashMap<DateMidnight, List<Punch>>();
+    public PunchTable(DateMidnight start, DateMidnight end, Job inJob){
+        int days = (int)(end.getMillis() - start.getMillis())/1000/60/60/24;
         listOfDays = new LinkedList<DateMidnight>();
+        gMap = new HashMap<DateMidnight, List<Punch>>();
+        gPayPeriod = new PayPeriodHolder(inJob);
+        
+        Log.d(TAG, "Punch Table Size: " + days);
+
+        for(int i = 0; i < days; i++){
+
+            DateMidnight key = start.plusDays(i);
+            LinkedList<Punch> list = new LinkedList<Punch>();
+            gMap.put(key, list);
+            listOfDays.add(key);
+        }
+    }
+
+    public PayPeriodHolder getPayPeriodInfo(){
+        return gPayPeriod;
     }
 
     public void insert( Punch value){
         //Add key
         DateMidnight key = value.getTime().toDateMidnight();
-        boolean needToAdd = true;
-        for( int i = 0; i < listOfDays.size(); i++){
-            if(listOfDays.get(i).compareTo(key) == 0 ) {
-                needToAdd = false;
-                break;
-            }
-        }
-        if(needToAdd)
-            listOfDays.add(key);
 
-        LinkedList<Punch> list;
-        if(gMap.containsKey(key)){
-            list = (LinkedList) gMap.get(key);
-        } else {
-            list = new LinkedList<Punch>();
-            gMap.put(key, list);
-        }
-
+        LinkedList<Punch> list = (LinkedList) gMap.get(key);
         list.add(value);
+        Collections.sort(list);
     }
     
     public List<Punch> getPunchesByDay(DateMidnight date){
@@ -72,8 +72,37 @@ public class PunchTable {
     }
 
     public List<DateMidnight> getDays(){
-        Log.d(TAG, "Table Date Size: " + listOfDays.size());
+        //Log.d(TAG, "Table Date Size: " + listOfDays.size());
         return listOfDays;
+    }
+    
+    public List<PunchPair> getPunchPair(DateMidnight date){
+        List<PunchPair> returnList = new LinkedList<PunchPair>();
+
+        TaskTable taskTable = new TaskTable();
+        
+        List<Punch> punchList = getPunchesByDay(date);
+        if(punchList != null)
+            for(Punch temp : punchList){
+                taskTable.insert(temp.getTask(), temp);
+            }
+        
+        for(Integer task : taskTable.getTasks()){
+            punchList = taskTable.getPunchesForKey(task);
+            for(int i = 0; i < punchList.size(); i = i + 2){
+                Punch punch1 = punchList.get(i);
+                Punch punch2 = null;
+                if(i + 1< punchList.size() ){
+                    punch2 = punchList.get(i+1);
+                }
+                PunchPair pp = new PunchPair(punch1, punch2);
+                returnList.add(pp);
+            }
+        }
+        
+        Collections.sort(returnList);
+        
+        return returnList;
     }
 
 }

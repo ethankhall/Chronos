@@ -23,44 +23,10 @@
 package com.kopysoft.chronos.fragments;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.PayPeriodSummaryFragment;
-import com.kopysoft.chronos.fragments.ClockFragments.TodayPairFragment;
-import com.viewpagerindicator.TitleProvider;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class FragmentClockViewer extends FragmentPagerAdapter implements TitleProvider {
-
-    private List<FragmentTitle> fragments;
-    private final String TAG = Defines.TAG + " - Clock Viewer Fragment";
-
-    public FragmentClockViewer(FragmentManager fm) {
-        super(fm);
-
-        fragments = new LinkedList<FragmentTitle>();
-        fragments.add(TodayPairFragment.newInstance());
-        fragments.add(PayPeriodSummaryFragment.newInstance());
-        //fragments.add(TodayIndividualFragment.newInstance());
-        //fragments.add(TodaySummaryFragment.newInstance());
-        //fragments.add(TodayDropDownFragment.newInstance());
-    }
-
-    @Override
-    public Fragment getItem(int i) {
-        return fragments.get(i);
-    }
-
-    @Override
-    public int getCount() {
-        return fragments.size();
-    }
-
-    @Override
-    public String getTitle(int i) {
-        return fragments.get(i).getTitle();
+public abstract class FragmentTitle extends Fragment {
+    public String getTitle(){
+        return "";
     }
 }
+

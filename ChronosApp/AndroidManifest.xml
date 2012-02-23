@@ -6,12 +6,13 @@
     <application android:icon="@drawable/icon"
                  android:label="Chronos"
                  android:allowBackup="true"
-                 android:debuggable="false"
+                 android:debuggable="true"
                  android:theme="@style/Theme.Sherlock">
 
-        <activity android:name=".mainUI"
+        <activity android:name=".activities.ClockActivity"
                   android:label="Chronos"
-                  android:launchMode="singleTop">
+                  android:launchMode="singleTop"
+                  android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -19,12 +20,15 @@
         </activity>
 
 
-        <activity android:name=".activities.ClockActivity"
+        <!--<activity android:name=".activities.ClockActivity"
                   android:label="Clock"
-                  android:uiOptions="splitActionBarWhenNarrow" />
+                  android:uiOptions="splitActionBarWhenNarrow" />  -->
 
         <activity android:name=".activities.NoteActivity"
                   android:label="Notes" />
+
+        <activity android:name=".fragments.ClockFragments.Editors.PairEditorFragment"
+                  android:label="Edit Punches" />
 
     </application>
 

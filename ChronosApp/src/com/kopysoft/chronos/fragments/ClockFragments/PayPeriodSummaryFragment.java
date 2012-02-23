@@ -22,19 +22,24 @@
 
 package com.kopysoft.chronos.fragments.ClockFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import com.kopysoft.chronos.adapter.clock.TodayAdapterSummary;
+import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
+import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.fragments.ClockFragments.Editors.PairEditorFragment;
+import com.kopysoft.chronos.fragments.FragmentTitle;
 import com.kopysoft.chronos.view.RowElement;
 
-public class PayPeriodSummaryFragment extends Fragment {
+public class PayPeriodSummaryFragment extends FragmentTitle {
+
+    PayPeriodAdapterSummary adapter;
 
     public static PayPeriodSummaryFragment newInstance() {
         PayPeriodSummaryFragment f = new PayPeriodSummaryFragment();
@@ -49,6 +54,7 @@ public class PayPeriodSummaryFragment extends Fragment {
     
     private int position = 0;
     private final String argumentString = "position";
+    private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,10 @@ public class PayPeriodSummaryFragment extends Fragment {
         savedInstanceState.putInt(argumentString, position);
         super.onSaveInstanceState(savedInstanceState);
     }
-
+    
+    public String getTitle(){
+        return "Pay Period View";
+    }
 
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
@@ -70,27 +79,41 @@ public class PayPeriodSummaryFragment extends Fragment {
         layout.setOrientation(LinearLayout.VERTICAL);
 
         Chronos chrono = new Chronos(getActivity());
-        ListView retView = new ListView( getActivity() );
-        BaseAdapter adapter;
+        ExpandableListView retView = new ExpandableListView( getActivity() );
+        //registerForContextMenu(retView);
+        retView.setOnChildClickListener(childClickListener);
 
 
         RowElement header = new RowElement( getActivity() );
-        header.left().setText("Time");
-        header.center().setText("");
-        header.right().setText("Type");
+        header.left().setText("");
+        header.center().setText("Date");
+        header.right().setText("Time");
         //retView.addHeaderView(header);
         layout.addView(header, 0);
         layout.addView(retView, 1);
 
-        adapter = new TodayAdapterSummary(getActivity(), chrono.getAllPunches());
+        adapter = new PayPeriodAdapterSummary(getActivity(), chrono.getJobs().get(0));
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
         chrono.close();
 
         return layout;
-
     }
+
+    public ExpandableListView.OnChildClickListener childClickListener =
+            new ExpandableListView.OnChildClickListener() {
+        @Override
+        public boolean onChildClick(ExpandableListView parent,
+                                    View v, int groupPosition, int childPosition, long id) {
+            Log.d(TAG, "ID: " + id);
+            Log.d(TAG, "In Time: " + adapter.getChild(groupPosition, childPosition).getInPunch().getTime().getMillis());
+            Log.d(TAG, "Out Time: " + adapter.getChild(groupPosition, childPosition).getOutPunch().getTime().getMillis());
+            Intent intent = new Intent(getActivity(), PairEditorFragment.class);
+            startActivity(intent);
+            return true;
+        }
+    };
 
 
 }

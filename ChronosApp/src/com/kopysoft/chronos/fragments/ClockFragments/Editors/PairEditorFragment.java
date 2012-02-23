@@ -20,80 +20,37 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.activities;
-
+package com.kopysoft.chronos.fragments.ClockFragments.Editors;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.util.Log;
 import android.view.MenuInflater;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
+import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.FragmentClockViewer;
-import com.kopysoft.chronos.mainUI;
-import com.viewpagerindicator.TitlePageIndicator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
+public class PairEditorFragment extends FragmentActivity{
 
-public class ClockActivity extends FragmentActivity {
-    
-    private static String TAG = Defines.TAG + " - ClockActivity";
+    private static String TAG = Defines.TAG + " - PairEditorFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.clock);
+        setContentView(R.layout.punch_pair_editor);
 
-        getSupportActionBar();//.setDisplayHomeAsUpEnabled(true);
-
-        //ClockViewer adapter = new ClockViewer( this );
-        FragmentClockViewer adapter = new FragmentClockViewer(getSupportFragmentManager());
-
-        android.support.v4.view.ViewPager pager =
-                (android.support.v4.view.ViewPager) findViewById( R.id.viewpager );
-
-        TitlePageIndicator indicator =
-                (TitlePageIndicator)findViewById( R.id.indicator );
-
-        pager.setAdapter( adapter );
-        indicator.setViewPager( pager );
-        indicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.None);
-
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-            if (sd.canWrite()) {
-                String currentDBPath = "/data/com.kopysoft.chronos/databases/" + Chronos.DATABASE_NAME;
-                String backupDBPath = Chronos.DATABASE_NAME + ".db";
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                }
-            }
-        }catch (Exception e) {
-            Log.e(TAG, "ERROR: Can not move file");
-        }
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "Menu created");
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar, menu);
+        inflater.inflate(R.menu.action_bar_pair_editor, menu);
         return true;
     }
 
@@ -103,7 +60,7 @@ public class ClockActivity extends FragmentActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; go home
-                Intent intent = new Intent(this, mainUI.class);
+                Intent intent = new Intent(this, ClockActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
@@ -112,5 +69,4 @@ public class ClockActivity extends FragmentActivity {
 
         }
     }
-
 }

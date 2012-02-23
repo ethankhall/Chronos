@@ -23,7 +23,6 @@
 package com.kopysoft.chronos.fragments.ClockFragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +31,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
+import com.kopysoft.chronos.fragments.FragmentTitle;
 import com.kopysoft.chronos.view.RowElement;
 
-public class TodaySummaryFragment extends Fragment {
+public class TodaySummaryFragment extends FragmentTitle {
+
+    public String getTitle(){
+        return "Today - Summary";
+    }
 
     public static TodaySummaryFragment newInstance() {
         TodaySummaryFragment f = new TodaySummaryFragment();

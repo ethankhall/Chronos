@@ -22,12 +22,14 @@
 
 package com.kopysoft.chronos.types.holders;
 
-import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class TaskTable {
 
@@ -78,7 +80,7 @@ public class TaskTable {
     }
 
     public List<Integer> getTasks(){
-        Log.d(TAG, "Table Punch Size: " + listOfTasks.size());
+        //Log.d(TAG, "Table Punch Size: " + listOfTasks.size());
         return listOfTasks;
     }
 

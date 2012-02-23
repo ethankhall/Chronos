@@ -204,7 +204,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     public PunchTable getAllPunchesForThisPayPeriodByJob(Job jobId){
 
-        PunchTable punches = new PunchTable();
+        PunchTable punches = null;
         List<Punch> retValue = null;
         try{
 
@@ -218,13 +218,20 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
             DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
 
+            punches = new PunchTable(startOfPP.toDateMidnight(), endOfPP.toDateMidnight(), jobId);
+            
+            Log.d(TAG, "Start of Pay Period: " + startOfPP.getMillis());
+            Log.d(TAG, "End of Pay Period: " + endOfPP.getMillis());
+
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
-            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID())
-                    .between(Punch.TIME_OF_PUNCH, startOfPP, endOfPP);
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
+                    .gt(Punch.TIME_OF_PUNCH, startOfPP.getMillis()).and()
+                    .le(Punch.TIME_OF_PUNCH, endOfPP.getMillis());
 
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
             retValue = punchDao.query(preparedQuery);
+            Log.d(TAG, "Punches for this pay period: " + retValue.size());
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
                 jobDAO.refresh(work.getJobNumber());
@@ -259,7 +266,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
-    private void dropAndTest(){
+    public void dropAndTest(){
         try{
 
             final int numberOfTasks = 3; //Number of tasks
