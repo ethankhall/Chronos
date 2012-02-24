@@ -26,24 +26,25 @@ package com.kopysoft.chronos.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.MenuInflater;
+import android.widget.ArrayAdapter;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.FragmentClockViewer;
 import com.kopysoft.chronos.mainUI;
-import com.viewpagerindicator.TitlePageIndicator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-public class ClockActivity extends FragmentActivity {
+public class ClockActivity extends SherlockActivity implements ActionBar.OnNavigationListener{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
 
@@ -52,20 +53,22 @@ public class ClockActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clock);
 
-        getSupportActionBar();//.setDisplayHomeAsUpEnabled(true);
-
         //ClockViewer adapter = new ClockViewer( this );
-        FragmentClockViewer adapter = new FragmentClockViewer(getSupportFragmentManager());
+        //FragmentClockViewer adapter = new FragmentClockViewer(getSupportFragmentManager());
 
-        android.support.v4.view.ViewPager pager =
-                (android.support.v4.view.ViewPager) findViewById( R.id.viewpager );
+        //getFragmentManager().beginTransaction().add(R.id.holder, (Fragment)PayPeriodSummaryFragment.newInstance()).commit();
 
-        TitlePageIndicator indicator =
-                (TitlePageIndicator)findViewById( R.id.indicator );
+        ViewPager viewpager = (ViewPager)findViewById(R.id.viewpager);
 
-        pager.setAdapter( adapter );
-        indicator.setViewPager( pager );
-        indicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.None);
+        //pager.setAdapter( adapter );
+
+        //NOTE: It is very important that you use 'sherlock_spinner_item' here
+        //      and NOT 'simple_spinner_item' or you will see text color problems
+        ArrayAdapter<CharSequence> list = ArrayAdapter.createFromResource(this, R.array.locations, R.layout.sherlock_spinner_item);
+        list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getSupportActionBar().setListNavigationCallbacks(list, this);
 
         try {
             File sd = Environment.getExternalStorageDirectory();
@@ -89,7 +92,6 @@ public class ClockActivity extends FragmentActivity {
 
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "Menu created");
         MenuInflater inflater = getMenuInflater();
@@ -97,7 +99,6 @@ public class ClockActivity extends FragmentActivity {
         return true;
     }
 
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(TAG, "Selected item: " + item.toString());
         switch (item.getItemId()) {
@@ -113,4 +114,9 @@ public class ClockActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(int i, long l) {
+        Log.d(TAG, "Selected: " + i);
+        return true;
+    }
 }

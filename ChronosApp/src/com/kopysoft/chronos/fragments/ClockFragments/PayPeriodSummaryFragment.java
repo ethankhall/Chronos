@@ -24,6 +24,7 @@ package com.kopysoft.chronos.fragments.ClockFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +35,9 @@ import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.fragments.ClockFragments.Editors.PairEditorFragment;
-import com.kopysoft.chronos.fragments.FragmentTitle;
 import com.kopysoft.chronos.view.RowElement;
 
-public class PayPeriodSummaryFragment extends FragmentTitle {
+public class PayPeriodSummaryFragment extends Fragment {
 
     PayPeriodAdapterSummary adapter;
 

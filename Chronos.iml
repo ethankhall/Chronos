@@ -27,7 +27,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: xpp3:xpp3:1.1.4c" level="project" />
     <orderEntry type="library" name="Maven: com.google.android:android-test:1.6_r2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.1" level="project" />
-    <orderEntry type="library" name="Maven: android:compatibility-v4:r3-SNAPSHOT" level="project" />
   </component>
 </module>
 

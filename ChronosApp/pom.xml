@@ -36,6 +36,10 @@
             <url>http://r.jakewharton.com/maven/release</url>
         </repository>
 
+        <repository>
+            <id>jakewharton</id>
+            <url>http://r.jakewharton.com/maven/snapshot</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,13 +87,13 @@
             <artifactId>android-test</artifactId>
             <version>1.6_r2</version>
         </dependency>
-        -->
 
         <dependency>
             <groupId>android.support</groupId>
             <artifactId>compatibility-v4</artifactId>
             <version>r6</version>
         </dependency>
+        -->
 
         <!-- Dependencies -->
 
@@ -105,10 +109,16 @@
         <dependency>
             <groupId>com.actionbarsherlock</groupId>
             <artifactId>library</artifactId>
-            <version>3.5.0</version>
+            <version>4.0.0-SNAPSHOT</version>
             <type>apklib</type>
         </dependency>
 
+        <dependency>
+            <groupId>com.actionbarsherlock</groupId>
+            <artifactId>plugin-support-lib</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
 
         <!-- TEST scope -->
 
