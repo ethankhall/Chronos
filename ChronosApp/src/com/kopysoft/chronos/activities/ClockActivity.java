@@ -23,52 +23,65 @@
 package com.kopysoft.chronos.activities;
 
 
-import android.content.Intent;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.MenuInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.mainUI;
+import com.kopysoft.chronos.fragments.ClockFragments.PayPeriodSummaryView;
+import com.kopysoft.chronos.fragments.ClockFragments.TodayPairView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClockActivity extends SherlockActivity implements ActionBar.OnNavigationListener{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
+    List<View> views;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clock);
 
-        //ClockViewer adapter = new ClockViewer( this );
-        //FragmentClockViewer adapter = new FragmentClockViewer(getSupportFragmentManager());
-
-        //getFragmentManager().beginTransaction().add(R.id.holder, (Fragment)PayPeriodSummaryFragment.newInstance()).commit();
-
-        ViewPager viewpager = (ViewPager)findViewById(R.id.viewpager);
-
-        //pager.setAdapter( adapter );
+        views = new LinkedList<View>();
+        views.add(new TodayPairView(this));
+        views.add(new PayPeriodSummaryView(this));
 
         //NOTE: It is very important that you use 'sherlock_spinner_item' here
         //      and NOT 'simple_spinner_item' or you will see text color problems
-        ArrayAdapter<CharSequence> list = ArrayAdapter.createFromResource(this, R.array.locations, R.layout.sherlock_spinner_item);
+        ArrayAdapter<CharSequence> list =
+                ArrayAdapter.createFromResource(this, R.array.locations, R.layout.sherlock_spinner_item_light);
         list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getSupportActionBar().setListNavigationCallbacks(list, this);
+
+
+        //This is a workaround for http://b.android.com/15340 from http://stackoverflow.com/a/5852198/132047
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
+            bg.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+            getSupportActionBar().setBackgroundDrawable(bg);
+
+            BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
+            bgSplit.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+            getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
+        }
 
         try {
             File sd = Environment.getExternalStorageDirectory();
@@ -93,30 +106,21 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "Menu created");
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar, menu);
-        return true;
-    }
+        menu.add("Add")
+                .setIcon(R.drawable.ic_menu_add)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "Selected item: " + item.toString());
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // app icon in action bar clicked; go home
-                Intent intent = new Intent(this, mainUI.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            default:
-                return false;
+        menu.add("Search")
+                .setIcon(R.drawable.ic_menu_compose)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onNavigationItemSelected(int i, long l) {
         Log.d(TAG, "Selected: " + i);
+        setContentView(views.get(i));
         return true;
     }
 }

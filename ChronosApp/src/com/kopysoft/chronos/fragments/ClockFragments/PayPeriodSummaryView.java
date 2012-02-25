@@ -22,85 +22,53 @@
 
 package com.kopysoft.chronos.fragments.ClockFragments;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.Editors.PairEditorFragment;
 import com.kopysoft.chronos.view.RowElement;
 
-public class PayPeriodSummaryView extends Fragment {
+public class PayPeriodSummaryView extends LinearLayout {
 
     PayPeriodAdapterSummary adapter;
 
-    public static PayPeriodSummaryView newInstance() {
-        PayPeriodSummaryView f = new PayPeriodSummaryView();
-
-        // Supply num input as an argument.
-        Bundle args = new Bundle();
-        args.putInt("position", 0);
-        f.setArguments(args);
-
-        return f;
-    }
-    
     private int position = 0;
     private final String argumentString = "position";
     private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
+    private Context gContext;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        position = getArguments() != null ? getArguments().getInt(argumentString) : 0;
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(argumentString, position);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-    
-    public String getTitle(){
-        return "Pay Period View";
-    }
+    public PayPeriodSummaryView(Context context){
+        super(context);
+        gContext = context;
 
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        setOrientation(LinearLayout.VERTICAL);
 
-        //Log.d(TAG, "Position: " + position);
-        LinearLayout layout = new LinearLayout( getActivity() );
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        Chronos chrono = new Chronos(getActivity());
-        ExpandableListView retView = new ExpandableListView( getActivity() );
+        Chronos chrono = new Chronos(context);
+        ExpandableListView retView = new ExpandableListView( context );
         //registerForContextMenu(retView);
-        retView.setOnChildClickListener(childClickListener);
+        //retView.setOnChildClickListener(childClickListener);
 
 
-        RowElement header = new RowElement( getActivity() );
+        RowElement header = new RowElement( context );
         header.left().setText("");
         header.center().setText("Date");
-        header.right().setText("Time");
-        //retView.addHeaderView(header);
-        layout.addView(header, 0);
-        layout.addView(retView, 1);
+        header.right().setText("Time   ");
 
-        adapter = new PayPeriodAdapterSummary(getActivity(), chrono.getJobs().get(0));
+
+        addView(header);
+        addView(retView);
+
+        adapter = new PayPeriodAdapterSummary(context, chrono.getJobs().get(0));
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
         chrono.close();
-
-        return layout;
     }
 
+    /*
     public ExpandableListView.OnChildClickListener childClickListener =
             new ExpandableListView.OnChildClickListener() {
         @Override
@@ -109,11 +77,12 @@ public class PayPeriodSummaryView extends Fragment {
             Log.d(TAG, "ID: " + id);
             Log.d(TAG, "In Time: " + adapter.getChild(groupPosition, childPosition).getInPunch().getTime().getMillis());
             Log.d(TAG, "Out Time: " + adapter.getChild(groupPosition, childPosition).getOutPunch().getTime().getMillis());
-            Intent intent = new Intent(getActivity(), PairEditorFragment.class);
-            startActivity(intent);
+            Intent intent = new Intent(gContext, PairEditorFragment.class);
+            gContext.startActivity(intent);
             return true;
         }
     };
+    */
 
 
 }

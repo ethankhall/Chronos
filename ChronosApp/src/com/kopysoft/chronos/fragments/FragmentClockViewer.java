@@ -35,13 +35,13 @@ import java.util.List;
 
 public class FragmentClockViewer extends FragmentPagerAdapter implements TitleProvider {
 
-    private List<FragmentTitle> fragments;
+    private List<Fragment> fragments;
     private final String TAG = Defines.TAG + " - Clock Viewer Fragment";
 
     public FragmentClockViewer(FragmentManager fm) {
         super(fm);
 
-        fragments = new LinkedList<FragmentTitle>();
+        fragments = new LinkedList<Fragment>();
         fragments.add(TodayPairFragment.newInstance());
         fragments.add(PayPeriodSummaryFragment.newInstance());
         //fragments.add(TodayIndividualFragment.newInstance());
@@ -61,6 +61,6 @@ public class FragmentClockViewer extends FragmentPagerAdapter implements TitlePr
 
     @Override
     public String getTitle(int i) {
-        return fragments.get(i).getTitle();
+        return " ";
     }
 }

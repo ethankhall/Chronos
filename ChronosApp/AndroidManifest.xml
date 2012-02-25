@@ -7,7 +7,7 @@
                  android:label="Chronos"
                  android:allowBackup="true"
                  android:debuggable="true"
-                 android:theme="@style/Theme.Sherlock">
+                 android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
 
         <activity android:name=".activities.ClockActivity"
                   android:label="Chronos"
@@ -33,7 +33,7 @@
     </application>
 
     <uses-sdk android:minSdkVersion="7"
-              android:targetSdkVersion="14" />
+              android:targetSdkVersion="11" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
