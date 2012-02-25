@@ -26,7 +26,7 @@ package com.kopysoft.chronos.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.mainUI;
 
