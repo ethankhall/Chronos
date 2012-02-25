@@ -69,41 +69,13 @@
 
 
         <dependency>
-            <groupId>android</groupId>
-            <artifactId>android</artifactId>
-            <version>4.0_r1</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--
-        <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
-            <version>1.6_r2</version>
+            <version>4.0.1.2</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android-test</artifactId>
-            <version>1.6_r2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>android.support</groupId>
-            <artifactId>compatibility-v4</artifactId>
-            <version>r6</version>
-        </dependency>
-        -->
 
         <!-- Dependencies -->
-
-
-        <dependency>
-            <groupId>com.viewpagerindicator</groupId>
-            <artifactId>library</artifactId>
-            <version>2.2.0</version>
-            <type>apklib</type>
-        </dependency>
 
 
         <dependency>
@@ -135,11 +107,7 @@
             <version>4.8.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.viewpagerindicator</groupId>
-            <artifactId>library</artifactId>
-            <version>2.2.0</version>
-        </dependency>
+	
     </dependencies>
 
     <build>
