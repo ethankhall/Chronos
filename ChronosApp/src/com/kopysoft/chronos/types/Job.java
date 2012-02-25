@@ -29,7 +29,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 @DatabaseTable(tableName = "jobs")
 public class Job {
@@ -49,9 +49,10 @@ public class Job {
     @DatabaseField(defaultValue = "60")
     float doubleTime;  //Start double time at...
     @DatabaseField(dataType= DataType.SERIALIZABLE)
-    DateMidnight startOfPayPeriod;
+    DateTime startOfPayPeriod;
     @DatabaseField(dataType= DataType.SERIALIZABLE)
     PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
+
 
 
     /**
@@ -65,7 +66,7 @@ public class Job {
      * @param ppd   Set the duration of the pay period.
      */
     public Job(String iJobName, float iPayRate,
-               DateMidnight iStartOfPayPeriod, PayPeriodDuration ppd){
+               DateTime iStartOfPayPeriod, PayPeriodDuration ppd){
 
         jobName = iJobName;
         payRate = iPayRate;
@@ -122,7 +123,7 @@ public class Job {
      * Gets the start of the Pay Period (initial one)
      * @return DateMidnight of the start of the pay period
      */
-    public DateMidnight getStartOfPayPeriod(){
+    public DateTime getStartOfPayPeriod(){
         return startOfPayPeriod;
     }
 

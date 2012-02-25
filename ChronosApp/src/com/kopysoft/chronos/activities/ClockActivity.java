@@ -35,6 +35,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
@@ -105,22 +106,31 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
 
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add("Add")
-                .setIcon(R.drawable.ic_menu_add)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        menu.add("Search")
-                .setIcon(R.drawable.ic_menu_compose)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
     @Override
     public boolean onNavigationItemSelected(int i, long l) {
         Log.d(TAG, "Selected: " + i);
         setContentView(views.get(i));
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        SubMenu subMenu1 = menu.addSubMenu("Options");
+        subMenu1.add("Preferences")
+                .setIcon(R.drawable.ic_menu_preferences);
+        subMenu1.add("Items");
+
+        MenuItem subMenu1Item = subMenu1.getItem();
+        subMenu1Item.setIcon(R.drawable.ic_menu_moreoverflow_holo_dark);
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        /*
+        menu.add("Add")
+                .setIcon(R.drawable.ic_menu_add)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        */
+
+        return super.onCreateOptionsMenu(menu);
     }
 }

@@ -202,6 +202,48 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
+    public List<Punch> getPunchesByJobAndDate(Job jobId, DateTime date){
+        List<Punch> punches = new LinkedList<Punch>();
+
+
+        // instantiate the DAO to handle Account with String id
+        try {
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+            
+            DateTime startOfPP = jobId.getStartOfPayPeriod();
+            int days = (int)(date.getMillis() - startOfPP.getMillis())/1000/60/60/24;
+            DateTime startOfDay = startOfPP.plusDays(days);
+            DateTime endOfDay = startOfDay.plusDays(1);
+
+            Log.d(TAG, "Days in: " + days);
+            Log.d(TAG, "Start of Day: " + startOfDay.getMillis());
+            Log.d(TAG, "End of Day: " + endOfDay.getMillis());
+
+            QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
+                    .gt(Punch.TIME_OF_PUNCH, startOfDay.getMillis()).and()
+                    .le(Punch.TIME_OF_PUNCH, endOfDay.getMillis());
+
+            PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
+
+            punches = punchDao.query(preparedQuery);
+            Log.d(TAG, "Punches for this day: " + punches.size());
+            for(Punch work : punches){
+                taskDAO.refresh(work.getTask());
+                jobDAO.refresh(work.getJobNumber());
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+        }
+
+        return punches;
+    }
+
     public PunchTable getAllPunchesForThisPayPeriodByJob(Job jobId){
 
         PunchTable punches = null;
@@ -281,7 +323,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             //Create 1 Job
             DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
             Job currentJob = new Job("My First Job", 7,
-                    jobMidnight, PayPeriodDuration.TWO_WEEKS);
+                    jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);
             currentJob.setOvertimeThreshold(40);
             currentJob.setOvertimeEnabled(true);

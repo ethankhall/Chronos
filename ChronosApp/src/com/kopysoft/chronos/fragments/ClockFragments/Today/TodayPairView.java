@@ -23,14 +23,17 @@
 package com.kopysoft.chronos.fragments.ClockFragments.Today;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.view.RowElement;
+import org.joda.time.DateTime;
 
-public class TodayPairView extends LinearLayout {
+public class TodayPairView extends LinearLayout implements AdapterView.OnItemLongClickListener{
 
     public String getTitle(){
         return "Today - Pair";
@@ -58,7 +61,8 @@ public class TodayPairView extends LinearLayout {
         addView(header);
         addView(retView);
 
-        adapter = new TodayAdapterPair( context, chrono.getAllPunches());
+        adapter = new TodayAdapterPair( context,
+                chrono.getPunchesByJobAndDate(chrono.getJobs().get(0), new DateTime() ) );
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
@@ -67,4 +71,8 @@ public class TodayPairView extends LinearLayout {
     }
 
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

@@ -104,7 +104,7 @@ public class PayPeriodHolder {
      */
     public void generate(){
         //Get the start and end of pay period
-        DateTime startOfPP = gJob.getStartOfPayPeriod().toDateTime();
+        DateTime startOfPP = gJob.getStartOfPayPeriod();
         PayPeriodDuration PPduration = gJob.getDuration();
         DateTime endOfPP = new DateTime(); //Today
 
