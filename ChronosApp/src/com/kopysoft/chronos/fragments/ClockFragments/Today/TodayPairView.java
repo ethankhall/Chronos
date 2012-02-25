@@ -20,79 +20,49 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments;
+package com.kopysoft.chronos.fragments.ClockFragments.Today;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.fragments.FragmentTitle;
 import com.kopysoft.chronos.view.RowElement;
 
-public class TodayPairFragment extends FragmentTitle {
+public class TodayPairView extends LinearLayout {
 
     public String getTitle(){
         return "Today - Pair";
-    }
-
-    public static TodayPairFragment newInstance() {
-        TodayPairFragment f = new TodayPairFragment();
-
-        // Supply num input as an argument.
-        Bundle args = new Bundle();
-        args.putInt("position", 0);
-        f.setArguments(args);
-
-        return f;
     }
     
     private int position = 0;
     private final String argumentString = "position";
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        position = getArguments() != null ? getArguments().getInt(argumentString) : 0;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(argumentString, position);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public TodayPairView (Context context){
+        super(context);
 
         //Log.d(TAG, "Position: " + position);
-        LinearLayout layout = new LinearLayout( getActivity() );
-        layout.setOrientation(LinearLayout.VERTICAL);
+        setOrientation(LinearLayout.VERTICAL);
 
-        Chronos chrono = new Chronos(getActivity());
-        ListView retView = new ListView( getActivity() );
+        Chronos chrono = new Chronos(context);
+        ListView retView = new ListView( context );
         BaseAdapter adapter;
 
         //header to the row
-        RowElement header = new RowElement( getActivity() );
+        RowElement header = new RowElement( context );
         header.left().setText("In time");
         header.center().setText("Task");
         header.right().setText("Out time");
         //retView.addHeaderView(header);
-        layout.addView(header, 0);
-        layout.addView(retView, 1);
+        addView(header);
+        addView(retView);
 
-        adapter = new TodayAdapterPair( getActivity(), chrono.getAllPunches());
+        adapter = new TodayAdapterPair( context, chrono.getAllPunches());
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
         chrono.close();
-
-        return layout;
 
     }
 

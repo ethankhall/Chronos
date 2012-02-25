@@ -20,28 +20,28 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments;
+package com.kopysoft.chronos.fragments.ClockFragments.Today;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import com.kopysoft.chronos.adapter.clock.TodayAdapterDropDown;
+import android.widget.ListView;
+import com.kopysoft.chronos.adapter.clock.TodayAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.fragments.FragmentTitle;
 import com.kopysoft.chronos.view.RowElement;
 
-public class TodayDropDownFragment extends FragmentTitle {
+public class TodaySummaryFragment extends FragmentTitle {
 
     public String getTitle(){
-        return "Today - Drop Down";
+        return "Today - Summary";
     }
 
-    public static TodayDropDownFragment newInstance() {
-        TodayDropDownFragment f = new TodayDropDownFragment();
+    public static TodaySummaryFragment newInstance() {
+        TodaySummaryFragment f = new TodaySummaryFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
@@ -74,19 +74,19 @@ public class TodayDropDownFragment extends FragmentTitle {
         layout.setOrientation(LinearLayout.VERTICAL);
 
         Chronos chrono = new Chronos(getActivity());
-        ExpandableListView retView = new ExpandableListView( getActivity() );
-        BaseExpandableListAdapter adapter;
+        ListView retView = new ListView( getActivity() );
+        BaseAdapter adapter;
 
 
         RowElement header = new RowElement( getActivity() );
-        header.left().setText("");
-        header.center().setText("Time");
-        header.right().setText("Task");
+        header.left().setText("Time");
+        header.center().setText("");
+        header.right().setText("Type");
         //retView.addHeaderView(header);
         layout.addView(header, 0);
         layout.addView(retView, 1);
 
-        adapter = new TodayAdapterDropDown(getActivity(), chrono.getAllPunches());
+        adapter = new TodayAdapterSummary(getActivity(), chrono.getAllPunches());
         retView.setAdapter( adapter );
         retView.setSelection( position );
 

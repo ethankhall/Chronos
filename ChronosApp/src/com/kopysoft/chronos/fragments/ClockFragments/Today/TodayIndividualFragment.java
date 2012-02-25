@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments;
+package com.kopysoft.chronos.fragments.ClockFragments.Today;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,19 +29,19 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import com.kopysoft.chronos.adapter.clock.TodayAdapterSummary;
+import com.kopysoft.chronos.adapter.clock.TodayAdapterIndividual;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.fragments.FragmentTitle;
 import com.kopysoft.chronos.view.RowElement;
 
-public class TodaySummaryFragment extends FragmentTitle {
+public class TodayIndividualFragment extends FragmentTitle {
 
     public String getTitle(){
-        return "Today - Summary";
+        return "Today - Punches";
     }
 
-    public static TodaySummaryFragment newInstance() {
-        TodaySummaryFragment f = new TodaySummaryFragment();
+    public static TodayIndividualFragment newInstance() {
+        TodayIndividualFragment f = new TodayIndividualFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
@@ -55,8 +55,8 @@ public class TodaySummaryFragment extends FragmentTitle {
     private final String argumentString = "position";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         position = getArguments() != null ? getArguments().getInt(argumentString) : 0;
     }
 
@@ -73,20 +73,19 @@ public class TodaySummaryFragment extends FragmentTitle {
         LinearLayout layout = new LinearLayout( getActivity() );
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        Chronos chrono = new Chronos(getActivity());
+        Chronos chrono = new Chronos( getActivity() );
         ListView retView = new ListView( getActivity() );
         BaseAdapter adapter;
 
-
         RowElement header = new RowElement( getActivity() );
-        header.left().setText("Time");
+        header.left().setText("In time");
         header.center().setText("");
         header.right().setText("Type");
         //retView.addHeaderView(header);
         layout.addView(header, 0);
         layout.addView(retView, 1);
 
-        adapter = new TodayAdapterSummary(getActivity(), chrono.getAllPunches());
+        adapter = new TodayAdapterIndividual( getActivity(), chrono.getAllPunches());
         retView.setAdapter( adapter );
         retView.setSelection( position );
 

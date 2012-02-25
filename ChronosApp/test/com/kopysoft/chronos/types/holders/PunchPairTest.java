@@ -27,6 +27,7 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateTime;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class PunchPairTest {
 
@@ -54,8 +55,6 @@ public class PunchPairTest {
 
         new PunchPair(punch1, punch2);
     }
-
-    /*
 
     @Test
     public void TestNullSent1() throws Exception{
@@ -99,6 +98,7 @@ public class PunchPairTest {
         PunchPair pp = new PunchPair(punch1, punch2);
         assertEquals(punch1, pp.getPunch1());
         assertEquals(punch2, pp.getPunch2());
+
     }
-    */
+
 }

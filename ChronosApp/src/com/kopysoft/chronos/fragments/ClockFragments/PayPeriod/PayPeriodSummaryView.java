@@ -20,51 +20,69 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments;
+package com.kopysoft.chronos.fragments.ClockFragments.PayPeriod;
 
 import android.content.Context;
-import android.widget.BaseAdapter;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
+import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
+import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.view.RowElement;
 
-public class TodayPairView extends LinearLayout {
+public class PayPeriodSummaryView extends LinearLayout {
 
-    public String getTitle(){
-        return "Today - Pair";
-    }
-    
+    PayPeriodAdapterSummary adapter;
+
     private int position = 0;
     private final String argumentString = "position";
+    private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
+    private Context gContext;
 
-    public TodayPairView (Context context){
+
+    public PayPeriodSummaryView(Context context){
         super(context);
+        gContext = context;
 
-        //Log.d(TAG, "Position: " + position);
         setOrientation(LinearLayout.VERTICAL);
 
         Chronos chrono = new Chronos(context);
-        ListView retView = new ListView( context );
-        BaseAdapter adapter;
+        ExpandableListView retView = new ExpandableListView( context );
+        //registerForContextMenu(retView);
+        //retView.setOnChildClickListener(childClickListener);
 
-        //header to the row
+
         RowElement header = new RowElement( context );
-        header.left().setText("In time");
-        header.center().setText("Task");
-        header.right().setText("Out time");
-        //retView.addHeaderView(header);
+        header.left().setText("");
+        header.center().setText("Date");
+        header.right().setText("Time   ");
+
+
         addView(header);
         addView(retView);
 
-        adapter = new TodayAdapterPair( context, chrono.getAllPunches());
+        adapter = new PayPeriodAdapterSummary(context, chrono.getJobs().get(0));
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
         chrono.close();
-
     }
+
+    /*
+    public ExpandableListView.OnChildClickListener childClickListener =
+            new ExpandableListView.OnChildClickListener() {
+        @Override
+        public boolean onChildClick(ExpandableListView parent,
+                                    View v, int groupPosition, int childPosition, long id) {
+            Log.d(TAG, "ID: " + id);
+            Log.d(TAG, "In Time: " + adapter.getChild(groupPosition, childPosition).getInPunch().getTime().getMillis());
+            Log.d(TAG, "Out Time: " + adapter.getChild(groupPosition, childPosition).getOutPunch().getTime().getMillis());
+            Intent intent = new Intent(gContext, PairEditorFragment.class);
+            gContext.startActivity(intent);
+            return true;
+        }
+    };
+    */
 
 
 }

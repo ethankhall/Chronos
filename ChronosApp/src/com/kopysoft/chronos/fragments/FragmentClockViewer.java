@@ -26,8 +26,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.PayPeriodSummaryFragment;
-import com.kopysoft.chronos.fragments.ClockFragments.TodayPairFragment;
+import com.kopysoft.chronos.fragments.ClockFragments.PayPeriod.PayPeriodSummaryFragment;
+import com.kopysoft.chronos.fragments.ClockFragments.Today.TodayPairFragment;
 import com.viewpagerindicator.TitleProvider;
 
 import java.util.LinkedList;

@@ -23,6 +23,8 @@
 package com.kopysoft.chronos.types;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Period;
 import org.junit.Test;
 
 import static junit.framework.Assert.fail;
@@ -40,7 +42,24 @@ public class PunchTest {
         if(punch1.compareTo(punch2) <= 0){
             fail("Compare is Wrong");
         }
+    }
 
+    @Test
+    public void TestTimeZone() throws Exception {
+        DateTimeZone zone1 = DateTimeZone.forID("America/New_York");
+        DateTimeZone zone2 = DateTimeZone.forID("America/Chicago");
+        DateTime currentTi = new DateTime(zone1);
+        long time = currentTi.getMillis();
 
+        DateTime testAgainst = new DateTime(time, zone2);
+        //System.out.println("Local Time: " + currentTi.getHourOfDay());
+        //System.out.println("Test Against: " + testAgainst.getHourOfDay());
+
+        Period per = new Period(currentTi, testAgainst);
+
+        if(per.getHours() != 0){
+            fail("Time Zone Test Failed");
+        }
+        
     }
 }

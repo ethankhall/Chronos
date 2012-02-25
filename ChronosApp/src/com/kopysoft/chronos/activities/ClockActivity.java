@@ -38,8 +38,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.PayPeriodSummaryView;
-import com.kopysoft.chronos.fragments.ClockFragments.TodayPairView;
+import com.kopysoft.chronos.fragments.ClockFragments.PayPeriod.PayPeriodSummaryView;
+import com.kopysoft.chronos.fragments.ClockFragments.Today.TodayPairView;
 
 import java.io.File;
 import java.io.FileInputStream;
