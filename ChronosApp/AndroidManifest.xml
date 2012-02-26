@@ -12,24 +12,22 @@
         <activity android:name=".activities.ClockActivity"
                   android:label="Chronos"
                   android:launchMode="singleTop"
-                  android:uiOptions="splitActionBarWhenNarrow">
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-
-        <!--<activity android:name=".activities.ClockActivity"
-                  android:label="Clock"
-                  android:uiOptions="splitActionBarWhenNarrow" />  -->
-
         <activity android:name=".activities.Editors.PairEditorActivity"
-                  android:label="Edit Punches" />
+                  android:label="Edit Punches"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
 
         <activity android:name=".activities.Viewers.DateViewerActivity"
-                  android:label="Date Viewer" />
-
+                  android:label="Date Viewer"
+                  android:uiOptions="splitActionBarWhenNarrow"/>
 
     </application>
 
@@ -37,8 +35,5 @@
               android:targetSdkVersion="11" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <meta-data android:name="com.google.android.backup.api_key"
-               android:value="AEdPqrEAAAAIoW9gpADZ52LDSV-5GNPwgUT7_ZSYG7SkkU4QSw"/>
 
 </manifest> 

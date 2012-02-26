@@ -29,14 +29,11 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import org.joda.time.DateTime;
 
@@ -62,13 +59,6 @@ public class DatePairView extends LinearLayout {
         View header = View.inflate(getContext(), R.layout.header, null);
 
         //header to the row
-        /*
-        RowElement header = new RowElement( parent );
-        header.left().setText("In time");
-        header.center().setText("Task");
-        header.right().setText("Out time");
-        //retView.addHeaderView(header);
-        */
         addView(header);
         addView(retView);
 
@@ -99,35 +89,4 @@ public class DatePairView extends LinearLayout {
             parent.startActivity(newIntent);
         }
     };
-
-    private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add("Edit")
-                    .setIcon(R.drawable.ic_menu_edit)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-            menu.add("Remove")
-                    .setIcon(R.drawable.ic_menu_delete)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            Log.d(TAG, "Got " + item);
-            mode.finish();
-            return true;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-        }
-    }
 }

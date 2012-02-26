@@ -27,7 +27,6 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -37,12 +36,9 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
-import java.util.List;
-
 public class DateViewerActivity extends SherlockActivity{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
-    List<View> views;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,5 +80,18 @@ public class DateViewerActivity extends SherlockActivity{
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; go home
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }

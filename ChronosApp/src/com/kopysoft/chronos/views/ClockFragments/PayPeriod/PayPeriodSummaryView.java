@@ -90,21 +90,4 @@ public class PayPeriodSummaryView extends LinearLayout {
         }
     };
 
-    /*
-    public ExpandableListView.OnChildClickListener childClickListener =
-            new ExpandableListView.OnChildClickListener() {
-        @Override
-        public boolean onChildClick(ExpandableListView parent,
-                                    View v, int groupPosition, int childPosition, long id) {
-            Log.d(TAG, "ID: " + id);
-            Log.d(TAG, "In Time: " + adapter.getChild(groupPosition, childPosition).getInPunch().getTime().getMillis());
-            Log.d(TAG, "Out Time: " + adapter.getChild(groupPosition, childPosition).getOutPunch().getTime().getMillis());
-            Intent intent = new Intent(gContext, PairEditorActivity.class);
-            gContext.startActivity(intent);
-            return true;
-        }
-    };
-    */
-
-
 }

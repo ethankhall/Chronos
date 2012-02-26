@@ -22,15 +22,18 @@
 
 package com.kopysoft.chronos.activities.Editors;
 
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
@@ -44,22 +47,44 @@ import java.util.List;
 public class PairEditorActivity extends SherlockActivity{
 
     private static String TAG = Defines.TAG + " - PairEditorActivity";
-    private boolean twentyFourHourTime = false;
+
+    private int punch1;
+    private int punch2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.punch_pair_editor);
+        
+        if(savedInstanceState != null){
+            punch1 = savedInstanceState.getInt("punch1");
+            punch2 = savedInstanceState.getInt("punch2");
+        } else {
+            punch1 = getIntent().getExtras().getInt("punch1");
+            punch2 = getIntent().getExtras().getInt("punch2");
+        }
 
-        int punch1 = getIntent().getExtras().getInt("punch1");
-        int punch2 = getIntent().getExtras().getInt("punch2");
-
-        Log.d(TAG, "Punch 1: " + getIntent().getExtras().getInt("punch1"));
-        Log.d(TAG, "Punch 2: " + getIntent().getExtras().getInt("punch2"));
+        Log.d(TAG, "Punch 1: " + punch1);
+        Log.d(TAG, "Punch 2: " + punch2);
+        updateUi();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //This is a workaround for http://b.android.com/15340 from http://stackoverflow.com/a/5852198/132047
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
+            bg.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+            getSupportActionBar().setBackgroundDrawable(bg);
+
+            BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
+            bgSplit.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+            getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
+        }
+
+    }
+
+    private void updateUi(){
         //start task
         Spinner taskSpinner = (Spinner)findViewById(R.id.taskSpinner);
 
@@ -79,11 +104,10 @@ public class PairEditorActivity extends SherlockActivity{
                 android.R.layout.simple_spinner_dropdown_item);
 
         taskSpinner.setAdapter(adapter);
-        taskSpinner.setOnItemSelectedListener(taskListener);
         //end task
 
         //set for 24 or 12 hour time
-        twentyFourHourTime = DateFormat.is24HourFormat(this);
+        boolean twentyFourHourTime = DateFormat.is24HourFormat(this);
         TimePicker inTime = (TimePicker)findViewById(R.id.TimePicker1);
         inTime.setIs24HourView(twentyFourHourTime);
         TimePicker outTime = (TimePicker)findViewById(R.id.TimePicker2);
@@ -98,7 +122,7 @@ public class PairEditorActivity extends SherlockActivity{
 
         inTime.setCurrentHour(p1.getTime().getHourOfDay());
         inTime.setCurrentMinute(p1.getTime().getMinuteOfHour());
-        
+
         if(p2 != null){
             Log.d(TAG, "P2 Current Hour: " + p2.getTime().getHourOfDay());
             Log.d(TAG, "P2 Current Minute: " + p2.getTime().getMinuteOfHour());
@@ -113,18 +137,23 @@ public class PairEditorActivity extends SherlockActivity{
         chron.close();
     }
 
-    AdapterView.OnItemSelectedListener taskListener = new AdapterView.OnItemSelectedListener(){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            Log.d(TAG, "Position: " + position);
-        }
+        menu.add("Save")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        menu.add("Cancel")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-            return;
-        }
-    };
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState){
+        outState.putInt("punch1", punch1);
+        outState.putInt("punch2", punch2);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
