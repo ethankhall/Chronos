@@ -27,7 +27,7 @@
         <activity android:name=".activities.NoteActivity"
                   android:label="Notes" />
 
-        <activity android:name=".fragments.ClockFragments.Editors.PairEditorFragment"
+        <activity android:name=".activities.Editors.PairEditorActivity"
                   android:label="Edit Punches" />
 
     </application>

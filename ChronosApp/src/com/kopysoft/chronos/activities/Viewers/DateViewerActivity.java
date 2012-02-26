@@ -20,37 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.activities;
+package com.kopysoft.chronos.activities.Viewers;
 
 
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.fragments.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
-import java.util.LinkedList;
 import java.util.List;
 
-public class ClockActivity extends SherlockActivity implements ActionBar.OnNavigationListener{
+public class DateViewerActivity extends SherlockActivity{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
     List<View> views;
@@ -58,21 +47,9 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.header);
 
-        views = new LinkedList<View>();
-        views.add(new DatePairView(this, new DateTime()));
-        views.add(new PayPeriodSummaryView(this));
-
-        //NOTE: It is very important that you use 'sherlock_spinner_item' here
-        //      and NOT 'simple_spinner_item' or you will see text color problems
-        ArrayAdapter<CharSequence> list =
-                ArrayAdapter.createFromResource(this, R.array.locations, R.layout.sherlock_spinner_item_light);
-        list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getSupportActionBar().setListNavigationCallbacks(list, this);
-
+        int time = getIntent().getExtras().getInt("dateTime");
+        setContentView(new DatePairView(this, new DateTime(time)) );
 
         //This is a workaround for http://b.android.com/15340 from http://stackoverflow.com/a/5852198/132047
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -85,33 +62,6 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
             getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
         }
 
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-            if (sd.canWrite()) {
-                String currentDBPath = "/data/com.kopysoft.chronos/databases/" + Chronos.DATABASE_NAME;
-                String backupDBPath = Chronos.DATABASE_NAME + ".db";
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                }
-            }
-        }catch (Exception e) {
-            Log.e(TAG, "ERROR: Can not move file");
-        }
-
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(int i, long l) {
-        Log.d(TAG, "Selected: " + i);
-        setContentView(views.get(i));
-        return true;
     }
 
     @Override

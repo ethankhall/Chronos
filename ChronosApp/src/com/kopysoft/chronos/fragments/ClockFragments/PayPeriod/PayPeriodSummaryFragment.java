@@ -34,7 +34,7 @@ import android.widget.LinearLayout;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterSummary;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.Editors.PairEditorFragment;
+import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.view.RowElement;
 
 public class PayPeriodSummaryFragment extends Fragment {
@@ -109,7 +109,7 @@ public class PayPeriodSummaryFragment extends Fragment {
             Log.d(TAG, "ID: " + id);
             Log.d(TAG, "In Time: " + adapter.getChild(groupPosition, childPosition).getInPunch().getTime().getMillis());
             Log.d(TAG, "Out Time: " + adapter.getChild(groupPosition, childPosition).getOutPunch().getTime().getMillis());
-            Intent intent = new Intent(getActivity(), PairEditorFragment.class);
+            Intent intent = new Intent(getActivity(), PairEditorActivity.class);
             startActivity(intent);
             return true;
         }

@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments.Editors;
+package com.kopysoft.chronos.activities.Editors;
 
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -41,9 +41,9 @@ import com.kopysoft.chronos.types.Task;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PairEditorFragment extends SherlockActivity{
+public class PairEditorActivity extends SherlockActivity{
 
-    private static String TAG = Defines.TAG + " - PairEditorFragment";
+    private static String TAG = Defines.TAG + " - PairEditorActivity";
     private boolean twentyFourHourTime = false;
 
     @Override

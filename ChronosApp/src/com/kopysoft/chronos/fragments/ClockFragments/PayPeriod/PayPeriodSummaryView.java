@@ -23,16 +23,17 @@
 package com.kopysoft.chronos.fragments.ClockFragments.PayPeriod;
 
 import android.content.Context;
-import android.widget.ExpandableListView;
+import android.view.View;
 import android.widget.LinearLayout;
-import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterSummary;
+import android.widget.ListView;
+import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.view.RowElement;
 
 public class PayPeriodSummaryView extends LinearLayout {
 
-    PayPeriodAdapterSummary adapter;
+    PayPeriodAdapterList adapter;
 
     private int position = 0;
     private final String argumentString = "position";
@@ -47,21 +48,17 @@ public class PayPeriodSummaryView extends LinearLayout {
         setOrientation(LinearLayout.VERTICAL);
 
         Chronos chrono = new Chronos(context);
-        ExpandableListView retView = new ExpandableListView( context );
+        ListView retView = new ListView( context );
         //registerForContextMenu(retView);
         //retView.setOnChildClickListener(childClickListener);
 
-
-        RowElement header = new RowElement( context );
-        header.left().setText("");
-        header.center().setText("Date");
-        header.right().setText("Time   ");
-
+        View header = View.inflate(getContext(), R.layout.header, null);
+        header.
 
         addView(header);
         addView(retView);
 
-        adapter = new PayPeriodAdapterSummary(context, chrono.getJobs().get(0));
+        adapter = new PayPeriodAdapterList(context, chrono.getJobs().get(0));
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
@@ -77,7 +74,7 @@ public class PayPeriodSummaryView extends LinearLayout {
             Log.d(TAG, "ID: " + id);
             Log.d(TAG, "In Time: " + adapter.getChild(groupPosition, childPosition).getInPunch().getTime().getMillis());
             Log.d(TAG, "Out Time: " + adapter.getChild(groupPosition, childPosition).getOutPunch().getTime().getMillis());
-            Intent intent = new Intent(gContext, PairEditorFragment.class);
+            Intent intent = new Intent(gContext, PairEditorActivity.class);
             gContext.startActivity(intent);
             return true;
         }
