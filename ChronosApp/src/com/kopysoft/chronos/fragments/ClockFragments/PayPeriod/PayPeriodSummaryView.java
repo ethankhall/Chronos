@@ -26,6 +26,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
@@ -53,7 +54,13 @@ public class PayPeriodSummaryView extends LinearLayout {
         //retView.setOnChildClickListener(childClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
-        header.
+        TextView leftHeader = (TextView)header.findViewById(R.id.headerLeft);
+        TextView centerHeader = (TextView)header.findViewById(R.id.headerCenter);
+        TextView rightHeader = (TextView)header.findViewById(R.id.headerRight);
+
+        leftHeader.setText("Date");
+        centerHeader.setText("");
+        rightHeader.setText("Hours Recorded");
 
         addView(header);
         addView(retView);
