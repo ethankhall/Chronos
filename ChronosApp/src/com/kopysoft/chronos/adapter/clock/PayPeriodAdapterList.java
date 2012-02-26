@@ -42,7 +42,7 @@ import java.util.List;
 
 public class PayPeriodAdapterList extends BaseAdapter {
 
-    private static final String TAG = Defines.TAG + " - PayPeriodAdapterSummary";
+    private static final String TAG = Defines.TAG + " - PayPeriodAdapterList";
 
     private Context gContext;
     //PayPeriodHolder gPayPeriod;
@@ -71,9 +71,15 @@ public class PayPeriodAdapterList extends BaseAdapter {
         return gPunchesByDay.getPunchPair(gPunchesByDay.getDays().get(i));
     }
 
+    public DateTime getDate(int i){
+        if(i > gPunchesByDay.getDays().size())
+            return null;
+        return gPunchesByDay.getDays().get(i).toDateTime();
+    }
+
     @Override
     public long getItemId(int i) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     @Override

@@ -20,14 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments.PayPeriod;
+package com.kopysoft.chronos.views.ClockFragments.PayPeriod;
 
-import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.Viewers.DateViewerActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
@@ -39,17 +43,18 @@ public class PayPeriodSummaryView extends LinearLayout {
     private int position = 0;
     private final String argumentString = "position";
     private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
-    private Context gContext;
+    private SherlockActivity parent;
 
 
-    public PayPeriodSummaryView(Context context){
-        super(context);
-        gContext = context;
+    public PayPeriodSummaryView(SherlockActivity prnt){
+        super(prnt.getApplicationContext());
+        parent = prnt;
 
         setOrientation(LinearLayout.VERTICAL);
 
-        Chronos chrono = new Chronos(context);
-        ListView retView = new ListView( context );
+        Chronos chrono = new Chronos(parent);
+        ListView retView = new ListView( parent );
+        retView.setOnItemClickListener(listener);
         //registerForContextMenu(retView);
         //retView.setOnChildClickListener(childClickListener);
 
@@ -65,12 +70,25 @@ public class PayPeriodSummaryView extends LinearLayout {
         addView(header);
         addView(retView);
 
-        adapter = new PayPeriodAdapterList(context, chrono.getJobs().get(0));
+        adapter = new PayPeriodAdapterList(parent, chrono.getJobs().get(0));
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
         chrono.close();
     }
+
+    AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            Log.d(TAG, "Clicked: " + position);
+            Intent newIntent =
+                    new Intent().setClass(parent,
+                            DateViewerActivity.class);
+
+            newIntent.putExtra("dateTime", adapter.getDate(position).getMillis());
+            parent.startActivity(newIntent);
+        }
+    };
 
     /*
     public ExpandableListView.OnChildClickListener childClickListener =

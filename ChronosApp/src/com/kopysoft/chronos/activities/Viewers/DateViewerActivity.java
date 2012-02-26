@@ -34,7 +34,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.Today.DatePairView;
+import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -48,8 +48,10 @@ public class DateViewerActivity extends SherlockActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int time = getIntent().getExtras().getInt("dateTime");
+        long time = getIntent().getExtras().getLong("dateTime");
         setContentView(new DatePairView(this, new DateTime(time)) );
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //This is a workaround for http://b.android.com/15340 from http://stackoverflow.com/a/5852198/132047
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {

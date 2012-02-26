@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.fragments.ClockFragments.Today;
+package com.kopysoft.chronos.views.ClockFragments.Today;
 
 import android.content.Intent;
 import android.util.Log;

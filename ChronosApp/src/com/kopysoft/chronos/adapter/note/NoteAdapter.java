@@ -42,7 +42,7 @@ import java.util.List;
 public class NoteAdapter extends BaseAdapter {
 
 
-    private static final String TAG = Defines.TAG + " - TodayAdapterIndividual";
+    private static final String TAG = Defines.TAG + " - NoteAdapter";
 
     Context gContext;
     List<Note> gListOfNotes;

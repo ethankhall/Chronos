@@ -39,8 +39,8 @@ import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.fragments.ClockFragments.PayPeriod.PayPeriodSummaryView;
-import com.kopysoft.chronos.fragments.ClockFragments.Today.DatePairView;
+import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
+import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
 import java.io.File;

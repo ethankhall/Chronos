@@ -24,11 +24,12 @@
                   android:label="Clock"
                   android:uiOptions="splitActionBarWhenNarrow" />  -->
 
-        <activity android:name=".activities.NoteActivity"
-                  android:label="Notes" />
-
         <activity android:name=".activities.Editors.PairEditorActivity"
                   android:label="Edit Punches" />
+
+        <activity android:name=".activities.Viewers.DateViewerActivity"
+                  android:label="Date Viewer" />
+
 
     </application>
 

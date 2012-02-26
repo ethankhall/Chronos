@@ -25,7 +25,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <fragment android:name="com.kopysoft.chronos.fragments.NoteViewer"
+    <fragment android:name="com.kopysoft.chronos.views.NoteViewer"
               android:id="@+id/viewer"
               android:layout_weight="2"
               android:layout_width="match_parent"
