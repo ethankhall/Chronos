@@ -120,7 +120,7 @@ public class TodayAdapterPair extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public PunchPair getItem(int i) {
         if(i > listOfPunchPairs.size())
             return null;
         return listOfPunchPairs.get(i);

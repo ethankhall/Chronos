@@ -40,7 +40,7 @@ import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.fragments.ClockFragments.PayPeriod.PayPeriodSummaryView;
-import com.kopysoft.chronos.fragments.ClockFragments.Today.TodayPairView;
+import com.kopysoft.chronos.fragments.ClockFragments.Today.DatePairView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,10 +57,10 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.clock);
+        setContentView(R.layout.header);
 
         views = new LinkedList<View>();
-        views.add(new TodayPairView(this));
+        views.add(new DatePairView(this));
         views.add(new PayPeriodSummaryView(this));
 
         //NOTE: It is very important that you use 'sherlock_spinner_item' here
@@ -116,20 +116,19 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        SubMenu subMenu1 = menu.addSubMenu("Options");
+        menu.add("Add")
+                .setIcon(R.drawable.ic_menu_add)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+        //collapsed menu
+        SubMenu subMenu1 = menu.addSubMenu("Options")
+                .setIcon(R.drawable.ic_menu_moreoverflow_holo_dark);
         subMenu1.add("Preferences")
                 .setIcon(R.drawable.ic_menu_preferences);
         subMenu1.add("Items");
 
         MenuItem subMenu1Item = subMenu1.getItem();
-        subMenu1Item.setIcon(R.drawable.ic_menu_moreoverflow_holo_dark);
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        /*
-        menu.add("Add")
-                .setIcon(R.drawable.ic_menu_add)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        */
 
         return super.onCreateOptionsMenu(menu);
     }

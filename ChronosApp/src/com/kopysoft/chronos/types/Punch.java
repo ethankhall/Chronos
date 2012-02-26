@@ -34,8 +34,9 @@ import java.util.Comparator;
 public class Punch implements Comparable<Punch> {
     
     public static final String TIME_OF_PUNCH = "punch_time";
+    public static final String PUNCH_ID_FIELD = "punch_id";
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true, columnName = PUNCH_ID_FIELD)
     private int id;
     @DatabaseField(canBeNull = false, columnName = TIME_OF_PUNCH)
     private long time;

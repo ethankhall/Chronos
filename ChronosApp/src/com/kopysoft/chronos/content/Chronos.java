@@ -151,6 +151,34 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return gNoteDoa;
     }
 
+    public Punch getPunchById(int id){
+
+        Punch retValue = null;
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Job,String> jobDAO = getJobDao();
+
+            //prep string
+            QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
+            queryBuilder.where().eq(Punch.PUNCH_ID_FIELD, id);
+            PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
+
+            retValue = punchDao.queryForFirst(preparedQuery);
+            if(retValue != null){
+                taskDAO.refresh(retValue.getTask());
+                jobDAO.refresh(retValue.getJobNumber());
+            }
+
+        } catch(SQLException e){
+            Log.d(TAG, e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
     public List<Punch> getAllPunches(){
 
         List<Punch> retValue = null;
@@ -165,6 +193,24 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 taskDAO.refresh(work.getTask());
                 taskDAO.refresh(work.getTask());
             }
+
+        } catch(SQLException e){
+            Log.d(TAG, e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
+    public List<Task> getAllTasks(){
+
+        List<Task> retValue = null;
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Task,String> taskDAO = getTaskDao();
+
+            //accountDao.refresh(order.getAccount());
+            retValue = taskDAO.queryForAll();
 
         } catch(SQLException e){
             Log.d(TAG, e.getMessage());

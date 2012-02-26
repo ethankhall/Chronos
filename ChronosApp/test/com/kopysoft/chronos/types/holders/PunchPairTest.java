@@ -77,6 +77,17 @@ public class PunchPairTest {
     }
 
     @Test
+    public void TestPunchPairOrder() throws Exception{
+        Job newJob = new Job();
+        Task task1 = new Task(newJob,0, "");
+        Punch punch1 = new Punch(newJob, task1, new DateTime());
+
+        PunchPair pp = new PunchPair(punch1, null);
+        assertNull(pp.getOutPunch());
+        assertNotNull(pp.getInPunch());
+    }
+
+    @Test
     public void TestAssignment1() throws Exception{
         Job newJob = new Job();
         Task task1 = new Task(newJob,0, "");
