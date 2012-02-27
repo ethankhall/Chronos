@@ -29,8 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -39,41 +37,31 @@ import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
-import org.joda.time.DateTime;
+import org.joda.time.DateMidnight;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
-import java.util.LinkedList;
-import java.util.List;
 
-public class ClockActivity extends SherlockActivity implements ActionBar.OnNavigationListener{
+public class ClockActivity extends SherlockActivity implements ActionBar.TabListener{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
-    List<View> views;
+    private PunchTable gPunchTable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.header);
+        
+        Chronos chronos = new Chronos(this);
+        gPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+        chronos.close();
 
-        views = new LinkedList<View>();
-        views.add(new DatePairView(this, new DateTime()));
-        views.add(new PayPeriodSummaryView(this));
-
-        //NOTE: It is very important that you use 'sherlock_spinner_item' here
-        //      and NOT 'simple_spinner_item' or you will see text color problems
-        ArrayAdapter<CharSequence> list =
-                ArrayAdapter.createFromResource(this, R.array.locations, R.layout.sherlock_spinner_item_light);
-        list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getSupportActionBar().setListNavigationCallbacks(list, this);
-
-
+        //getSupportActionBar().setListNavigationCallbacks(list, this)
         //This is a workaround for http://b.android.com/15340 from http://stackoverflow.com/a/5852198/132047
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
@@ -83,6 +71,19 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
             BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
             bgSplit.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
             getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
+        }
+
+        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        {
+            ActionBar.Tab tab = getSupportActionBar().newTab();
+            tab.setText("Today");
+            tab.setTabListener(this);
+            getSupportActionBar().addTab(tab);
+
+            tab = getSupportActionBar().newTab();
+            tab.setText("Pay Period");
+            tab.setTabListener(this);
+            getSupportActionBar().addTab(tab);
         }
 
         try {
@@ -108,13 +109,6 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
     }
 
     @Override
-    public boolean onNavigationItemSelected(int i, long l) {
-        Log.d(TAG, "Selected: " + i);
-        setContentView(views.get(i));
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         menu.add("Add")
@@ -132,5 +126,28 @@ public class ClockActivity extends SherlockActivity implements ActionBar.OnNavig
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab) {
+        
+        if(tab.getPosition() == 0){
+
+            setContentView(new DatePairView(this, gPunchTable.getPunchesByDay(new DateMidnight())));
+        } else if(tab.getPosition() == 1){
+            setContentView(new PayPeriodSummaryView(this, gPunchTable) );
+        }
+        Log.d(TAG, "onTabSelected: " + tab);
+        Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab) {
+        Log.d(TAG, "onTabUnselected: " + tab);
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab) {
+        Log.d(TAG, "onTabReselected: " + tab);
     }
 }

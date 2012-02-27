@@ -54,10 +54,18 @@ public class PayPeriodAdapterList extends BaseAdapter {
         Chronos chrono = new Chronos(gContext);
 
         gPunchesByDay = chrono.getAllPunchesForThisPayPeriodByJob(inJob);
+        chrono.close();
         //gPayPeriod = new PayPeriodHolder(inJob);
         Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
     }
 
+    public PayPeriodAdapterList(Context context, PunchTable punchTable){
+        gContext = context;
+
+        gPunchesByDay = punchTable;
+        //gPayPeriod = new PayPeriodHolder(inJob);
+        Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
+    }
 
     @Override
     public int getCount() {

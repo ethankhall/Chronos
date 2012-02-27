@@ -34,8 +34,11 @@ import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 public class DatePairView extends LinearLayout {
 
@@ -64,6 +67,33 @@ public class DatePairView extends LinearLayout {
 
         adapter = new TodayAdapterPair( parent,
                 chrono.getPunchesByJobAndDate(chrono.getJobs().get(0), date ) );
+        retView.setAdapter( adapter );
+        retView.setSelection( 0 );
+
+        chrono.close();
+
+    }
+
+    public DatePairView(SherlockActivity prnt, List<Punch> punches){
+        super(prnt.getApplicationContext());
+
+        parent = prnt;
+
+        //Log.d(TAG, "Position: " + position);
+        setOrientation(LinearLayout.VERTICAL);
+
+        Chronos chrono = new Chronos(parent);
+        ListView retView = new ListView( parent );
+
+        retView.setOnItemClickListener(listener);
+
+        View header = View.inflate(getContext(), R.layout.header, null);
+
+        //header to the row
+        addView(header);
+        addView(retView);
+
+        adapter = new TodayAdapterPair( parent, punches );
         retView.setAdapter( adapter );
         retView.setSelection( 0 );
 

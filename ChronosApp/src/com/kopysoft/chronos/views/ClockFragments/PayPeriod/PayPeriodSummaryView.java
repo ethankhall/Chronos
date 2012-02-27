@@ -35,6 +35,7 @@ import com.kopysoft.chronos.activities.Viewers.DateViewerActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.holders.PunchTable;
 
 public class PayPeriodSummaryView extends LinearLayout {
 
@@ -46,7 +47,7 @@ public class PayPeriodSummaryView extends LinearLayout {
     private SherlockActivity parent;
 
 
-    public PayPeriodSummaryView(SherlockActivity prnt){
+    public PayPeriodSummaryView(SherlockActivity prnt, PunchTable table){
         super(prnt.getApplicationContext());
         parent = prnt;
 
@@ -70,7 +71,7 @@ public class PayPeriodSummaryView extends LinearLayout {
         addView(header);
         addView(retView);
 
-        adapter = new PayPeriodAdapterList(parent, chrono.getJobs().get(0));
+        adapter = new PayPeriodAdapterList(parent, table);
         retView.setAdapter( adapter );
         retView.setSelection( position );
 
