@@ -45,7 +45,6 @@ public class PayPeriodAdapterList extends BaseAdapter {
     private static final String TAG = Defines.TAG + " - PayPeriodAdapterList";
 
     private Context gContext;
-    //PayPeriodHolder gPayPeriod;
     private PunchTable gPunchesByDay;
 
 
@@ -65,6 +64,10 @@ public class PayPeriodAdapterList extends BaseAdapter {
         gPunchesByDay = punchTable;
         //gPayPeriod = new PayPeriodHolder(inJob);
         Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
+    }
+
+    public void update(PunchTable table){
+        gPunchesByDay = table;
     }
 
     @Override

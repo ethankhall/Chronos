@@ -23,6 +23,7 @@
 package com.kopysoft.chronos.activities.Viewers;
 
 
+import android.content.Intent;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -32,6 +33,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
@@ -39,13 +41,14 @@ import org.joda.time.DateTime;
 public class DateViewerActivity extends SherlockActivity{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
+    private long date;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        long time = getIntent().getExtras().getLong("dateTime");
-        setContentView(new DatePairView(this, new DateTime(time)) );
+        date = getIntent().getExtras().getLong("dateTime");
+        setContentView(new DatePairView(this, new DateTime(date)) );
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -92,6 +95,14 @@ public class DateViewerActivity extends SherlockActivity{
             default:
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ClockActivity.FROM_CLOCK_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                setContentView(new DatePairView(this, new DateTime(date)) );
+            }
         }
     }
 }

@@ -23,6 +23,7 @@
 package com.kopysoft.chronos.activities;
 
 
+import android.content.Intent;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -50,7 +51,8 @@ import java.nio.channels.FileChannel;
 public class ClockActivity extends SherlockActivity implements ActionBar.TabListener{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
-    private PunchTable gPunchTable;
+    private PunchTable localPunchTable;
+    public static int FROM_CLOCK_ACTIVITY = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         setContentView(R.layout.header);
         
         Chronos chronos = new Chronos(this);
-        gPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+        localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
         chronos.close();
 
         //getSupportActionBar().setListNavigationCallbacks(list, this)
@@ -105,7 +107,6 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         }catch (Exception e) {
             Log.e(TAG, "ERROR: Can not move file");
         }
-
     }
 
     @Override
@@ -133,9 +134,9 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         
         if(tab.getPosition() == 0){
 
-            setContentView(new DatePairView(this, gPunchTable.getPunchesByDay(new DateMidnight())));
+            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateMidnight())));
         } else if(tab.getPosition() == 1){
-            setContentView(new PayPeriodSummaryView(this, gPunchTable) );
+            setContentView(new PayPeriodSummaryView(this, localPunchTable) );
         }
         Log.d(TAG, "onTabSelected: " + tab);
         Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
@@ -149,5 +150,26 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     @Override
     public void onTabReselected(ActionBar.Tab tab) {
         Log.d(TAG, "onTabReselected: " + tab);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "Request Code: " + requestCode);
+        Log.d(TAG, "Result Code: " + resultCode);
+        Log.d(TAG, "Selected Navigation Index: " + getSupportActionBar().getSelectedNavigationIndex());
+
+        if (requestCode == FROM_CLOCK_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                Chronos chronos = new Chronos(this);
+                localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+                chronos.close();
+            }
+        }
+
+        if(getSupportActionBar().getSelectedNavigationIndex() == 0){
+            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateMidnight())));
+        } else if(getSupportActionBar().getSelectedNavigationIndex() == 1){
+            setContentView(new PayPeriodSummaryView(this, localPunchTable) );
+        }
     }
 }

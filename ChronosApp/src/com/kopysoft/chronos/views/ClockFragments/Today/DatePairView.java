@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
@@ -116,7 +117,7 @@ public class DatePairView extends LinearLayout {
             }
             newIntent.putExtra("punch1", id1);
             newIntent.putExtra("punch2", id2);
-            parent.startActivity(newIntent);
+            parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
         }
     };
 }

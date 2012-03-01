@@ -40,22 +40,27 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
+import org.joda.time.DateTime;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class PairEditorActivity extends SherlockActivity{
+    //TODO: add the ability to move punches by date
 
     private static String TAG = Defines.TAG + " - PairEditorActivity";
 
-    private int punch1;
-    private int punch2;
+    Punch p1;
+    Punch p2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.punch_pair_editor);
+
+        int punch1;
+        int punch2;
         
         if(savedInstanceState != null){
             punch1 = savedInstanceState.getInt("punch1");
@@ -67,7 +72,7 @@ public class PairEditorActivity extends SherlockActivity{
 
         Log.d(TAG, "Punch 1: " + punch1);
         Log.d(TAG, "Punch 2: " + punch2);
-        updateUi();
+        updateUi(punch1, punch2);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -84,7 +89,7 @@ public class PairEditorActivity extends SherlockActivity{
 
     }
 
-    private void updateUi(){
+    private void updateUi(int punch1, int punch2){
         //start task
         Spinner taskSpinner = (Spinner)findViewById(R.id.taskSpinner);
 
@@ -114,8 +119,8 @@ public class PairEditorActivity extends SherlockActivity{
         outTime.setIs24HourView(twentyFourHourTime);
 
         //set the times
-        Punch p1 = chron.getPunchById(punch1);
-        Punch p2 = chron.getPunchById(punch2);
+        p1 = chron.getPunchById(punch1);
+        p2 = chron.getPunchById(punch2);
 
         Log.d(TAG, "P1 Current Hour: " + p1.getTime().getHourOfDay());
         Log.d(TAG, "P1 Current Minute: " + p1.getTime().getMinuteOfHour());
@@ -139,27 +144,75 @@ public class PairEditorActivity extends SherlockActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        /*
 
         menu.add("Save")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         menu.add("Cancel")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                */
+        getSupportMenuInflater().inflate(R.menu.save_cancel_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void updateDatabase(){
+        int hour, min;
+        TimePicker inTime = (TimePicker)findViewById(R.id.TimePicker1);
+        hour = inTime.getCurrentHour();
+        min= inTime.getCurrentMinute();
+        
+        DateTime date1 = new DateTime(
+                p1.getTime().getYear(),
+                p1.getTime().getMonthOfYear(),
+                p1.getTime().getDayOfMonth(),
+                hour,
+                min);
+        p1.setTime(date1);
+        
+        Chronos chrono = new Chronos(this);
+        chrono.updatePunch(p1);
+        //int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour
+
+        
+        if(p2 != null){
+            TimePicker outTime = (TimePicker)findViewById(R.id.TimePicker2);
+            hour = outTime.getCurrentHour();
+            min= outTime.getCurrentMinute();
+
+            DateTime date2 = new DateTime(
+                    p1.getTime().getYear(),
+                    p2.getTime().getMonthOfYear(),
+                    p2.getTime().getDayOfMonth(),
+                    hour,
+                    min);
+            p2.setTime(date2);
+            chrono.updatePunch(p2);
+        }
+        chrono.close();
+    }
+
     @Override
     protected void onSaveInstanceState (Bundle outState){
-        outState.putInt("punch1", punch1);
-        outState.putInt("punch2", punch2);
+        outState.putInt("punch1", p1.getID());
+        outState.putInt("punch2", p2.getID());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        
+        Log.d(TAG, "Selected item: " + item);
+        Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
+            case R.id.menuSave:
+                updateDatabase();
+                setResult(RESULT_OK);
+                finish();
+                return true;
             case android.R.id.home:
-                // app icon in action bar clicked; go home
+            case R.id.menuCancel:
+                setResult(RESULT_CANCELED);
                 finish();
                 return true;
             default:

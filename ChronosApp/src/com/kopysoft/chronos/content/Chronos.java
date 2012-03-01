@@ -179,6 +179,21 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
+    public void updatePunch(Punch punch){
+
+        List<Punch> retValue = null;
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Punch,String> punchDao = getPunchDao();
+            punchDao.update(punch);
+
+        } catch(SQLException e){
+            Log.d(TAG, e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
     public List<Punch> getAllPunches(){
 
         List<Punch> retValue = null;

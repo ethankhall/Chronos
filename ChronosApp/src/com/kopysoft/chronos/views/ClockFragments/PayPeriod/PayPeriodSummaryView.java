@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Viewers.DateViewerActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
@@ -87,7 +88,7 @@ public class PayPeriodSummaryView extends LinearLayout {
                             DateViewerActivity.class);
 
             newIntent.putExtra("dateTime", adapter.getDate(position).getMillis());
-            parent.startActivity(newIntent);
+            parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
         }
     };
 
