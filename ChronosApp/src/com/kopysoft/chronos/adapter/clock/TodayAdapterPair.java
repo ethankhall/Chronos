@@ -54,10 +54,11 @@ public class TodayAdapterPair extends BaseAdapter {
         gContext = context;
 
         //Create a map of tasks
-        for(Punch temp : listOfPunches){
-            Task tempTask = temp.getTask();
-            gTaskTable.insert(tempTask, temp);
-        }
+        if(listOfPunches != null)
+            for(Punch temp : listOfPunches){
+                Task tempTask = temp.getTask();
+                gTaskTable.insert(tempTask, temp);
+            }
 
         generatePunchPair();
     }

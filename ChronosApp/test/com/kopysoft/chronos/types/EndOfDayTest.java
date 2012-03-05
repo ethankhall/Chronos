@@ -22,18 +22,35 @@
 
 package com.kopysoft.chronos.types;
 
-import android.app.Application;
-import android.content.Context;
+import com.kopysoft.chronos.enums.PayPeriodDuration;
+import com.kopysoft.chronos.types.holders.PunchTable;
+import org.joda.time.DateMidnight;
+import org.junit.Test;
 
-public class AppContext extends Application {
-	private static Context context;
+import java.util.List;
 
-	public void onCreate(){
-		AppContext.context=getApplicationContext();
-	}
+import static junit.framework.Assert.fail;
 
-	public static Context getAppContext(){
-		return context;
-	}
+public class EndOfDayTest {
 
+    @Test
+    public void basicTest(){
+        int numberToCreate = 5;
+        //Create basic pay period, starting at midnight
+        DateMidnight today = new DateMidnight();
+        Job thisJob = new Job("test", (float)10.0, today.toDateTime(), PayPeriodDuration.ONE_WEEK);
+        Task thisTask = new Task(thisJob, 1, "task");
+
+        PunchTable table = new PunchTable(today.toDateTime(), PayPeriodDuration.ONE_WEEK, thisJob);
+        for(int i = 0; i < numberToCreate; i++){
+            Punch newPunch = new Punch(thisJob, thisTask, today.toDateTime().plusHours(i + 1));
+            table.insert(newPunch);
+        }
+
+        List<Punch> listOfPunches = table.getPunchesByDay(today.toDateTime());
+        if(listOfPunches.size() != numberToCreate){
+            fail("Number of punches created didn't match the number of punches retieved");
+        }
+
+    }
 }

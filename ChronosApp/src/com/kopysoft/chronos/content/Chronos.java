@@ -321,7 +321,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
             DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
 
-            punches = new PunchTable(startOfPP.toDateMidnight(), endOfPP.toDateMidnight(), jobId);
+            punches = new PunchTable(startOfPP, endOfPP, jobId);
             
             Log.d(TAG, "Start of Pay Period: " + startOfPP.getMillis());
             Log.d(TAG, "End of Pay Period: " + endOfPP.getMillis());

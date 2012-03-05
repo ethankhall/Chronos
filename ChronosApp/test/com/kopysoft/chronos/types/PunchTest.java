@@ -60,6 +60,5 @@ public class PunchTest {
         if(per.getHours() != 0){
             fail("Time Zone Test Failed");
         }
-        
     }
 }

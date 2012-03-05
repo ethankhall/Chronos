@@ -29,6 +29,9 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
@@ -46,47 +49,42 @@ public class DatePairView extends LinearLayout {
     private SherlockActivity parent;
     private final String TAG = Defines.TAG + " - DatePairView";
     private TodayAdapterPair adapter;
+    private ActionMode mMode;
 
     public DatePairView(SherlockActivity prnt, DateTime date){
         super(prnt.getApplicationContext());
 
         parent = prnt;
 
-        //Log.d(TAG, "Position: " + position);
-        setOrientation(LinearLayout.VERTICAL);
-
         Chronos chrono = new Chronos(parent);
-        ListView retView = new ListView( parent );
-
-        retView.setOnItemClickListener(listener);
-        
-        View header = View.inflate(getContext(), R.layout.header, null);
-
-        //header to the row
-        addView(header);
-        addView(retView);
-
         adapter = new TodayAdapterPair( parent,
                 chrono.getPunchesByJobAndDate(chrono.getJobs().get(0), date ) );
-        retView.setAdapter( adapter );
-        retView.setSelection( 0 );
+
+        createUI(adapter);
 
         chrono.close();
-
     }
+
 
     public DatePairView(SherlockActivity prnt, List<Punch> punches){
         super(prnt.getApplicationContext());
 
         parent = prnt;
 
+        adapter = new TodayAdapterPair( parent, punches );
+        createUI(adapter);
+    }
+
+    private void createUI(TodayAdapterPair adpter){
+
+
         //Log.d(TAG, "Position: " + position);
         setOrientation(LinearLayout.VERTICAL);
 
-        Chronos chrono = new Chronos(parent);
         ListView retView = new ListView( parent );
 
         retView.setOnItemClickListener(listener);
+        retView.setOnItemLongClickListener(LongClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
 
@@ -94,11 +92,8 @@ public class DatePairView extends LinearLayout {
         addView(header);
         addView(retView);
 
-        adapter = new TodayAdapterPair( parent, punches );
-        retView.setAdapter( adapter );
+        retView.setAdapter( adpter );
         retView.setSelection( 0 );
-
-        chrono.close();
 
     }
 
@@ -120,4 +115,59 @@ public class DatePairView extends LinearLayout {
             parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
         }
     };
+
+    AdapterView.OnItemLongClickListener LongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+            Log.d(TAG, "Long Clicked: " + position);
+
+            PunchPair pp = adapter.getItem(position);
+            mMode = parent.startActionMode(new AnActionModeOfEpicProportions(pp.getOutPunch() != null));
+
+            ((ListView)adapterView).setItemChecked(position, true);
+
+            return true;
+        }
+    };
+
+    private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
+        private boolean enableBoth; 
+        public AnActionModeOfEpicProportions(boolean bothVisible){
+            super();
+            enableBoth = bothVisible;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            menu.add("Remove IN")
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+            if(enableBoth){
+
+                menu.add("Remove OUT")
+                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+                menu.add("Remove Both")
+                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+        }
+    }
 }

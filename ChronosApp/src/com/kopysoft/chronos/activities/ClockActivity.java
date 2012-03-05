@@ -41,7 +41,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -134,7 +134,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         
         if(tab.getPosition() == 0){
 
-            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateMidnight())));
+            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
         } else if(tab.getPosition() == 1){
             setContentView(new PayPeriodSummaryView(this, localPunchTable) );
         }
@@ -167,7 +167,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         }
 
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){
-            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateMidnight())));
+            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
         } else if(getSupportActionBar().getSelectedNavigationIndex() == 1){
             setContentView(new PayPeriodSummaryView(this, localPunchTable) );
         }

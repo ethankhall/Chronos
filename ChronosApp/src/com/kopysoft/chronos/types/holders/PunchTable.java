@@ -24,9 +24,11 @@ package com.kopysoft.chronos.types.holders;
 
 import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import java.util.*;
 
@@ -34,24 +36,68 @@ public class PunchTable {
 
     private static final String TAG = Defines.TAG + " - TaskTable";
     Map gMap;
-    List<DateMidnight> listOfDays;
+    List<DateTime> listOfDays;
     PayPeriodHolder gPayPeriod;
+    private DateTime startOfTable;
 
-    public PunchTable(DateMidnight start, DateMidnight end, Job inJob){
+    public PunchTable(DateTime start, DateTime end, Job inJob){
         int days = (int)(end.getMillis() - start.getMillis())/1000/60/60/24;
-        listOfDays = new LinkedList<DateMidnight>();
-        gMap = new HashMap<DateMidnight, List<Punch>>();
+        startOfTable = start;
+
+        try{
+            Log.d(TAG, "Punch Table Size: " + days);
+        } catch(Exception e) {
+            System.out.println("Punch Table Size: " + days);
+        }
+
+        createTable(inJob, days, start);
+    }
+    
+    private void createTable(Job inJob, int days, DateTime start){
+        listOfDays = new LinkedList<DateTime>();
+        gMap = new HashMap<DateTime, List<Punch>>();
         gPayPeriod = new PayPeriodHolder(inJob);
-        
-        Log.d(TAG, "Punch Table Size: " + days);
+
 
         for(int i = 0; i < days; i++){
 
-            DateMidnight key = start.plusDays(i);
+            DateTime key = start.plusDays(i);
             LinkedList<Punch> list = new LinkedList<Punch>();
             gMap.put(key, list);
             listOfDays.add(key);
+        }        
+    }
+
+    public PunchTable(DateTime start, PayPeriodDuration dur, Job inJob){
+        startOfTable = start;
+        int days;
+        switch (dur){
+            case ONE_WEEK:
+                days = 7;
+                break;
+            case TWO_WEEKS:
+                days = 14;
+                break;
+            case THREE_WEEKS:
+                days = 3 * 7;
+                break;
+            case FOUR_WEEKS:
+                days = 4 * 7;
+                break;
+            //TODO: add more options
+            default:
+                days = 14;
+                break;
         }
+
+        try{
+            Log.d(TAG, "Punch Table Size: " + days);
+        } catch(Exception e) {
+            System.out.println("Punch Table Size: " + days);
+        }
+
+        createTable(inJob, days, start);
+
     }
 
     public PayPeriodHolder getPayPeriodInfo(){
@@ -60,23 +106,44 @@ public class PunchTable {
 
     public void insert( Punch value){
         //Add key
-        DateMidnight key = value.getTime().toDateMidnight();
+        DateTime key = value.getTime();
+        //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
+        Duration dur = new Duration(startOfTable, key);
+        if( key.getSecondOfDay() >= startOfTable.getSecondOfDay()){
+            //key is after start of day... set it to the start of the day
+            key = startOfTable.plusDays((int)dur.getStandardDays());
+            
+        } else {
+            //put it back a day
+            key = startOfTable.plusDays((int)dur.getStandardDays() - 1);
+        }
 
         LinkedList<Punch> list = (LinkedList) gMap.get(key);
         list.add(value);
         Collections.sort(list);
     }
     
-    public List<Punch> getPunchesByDay(DateMidnight date){
-        return ((List)gMap.get(date));
+    public List<Punch> getPunchesByDay(DateTime key){
+
+        //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
+        Duration dur = new Duration(startOfTable, key);
+        if( key.getSecondOfDay() >= startOfTable.getSecondOfDay()){
+            //key is after start of day... set it to the start of the day
+            key = startOfTable.plusDays((int)dur.getStandardDays());
+
+        } else {
+            //put it back a day
+            key = startOfTable.plusDays((int)dur.getStandardDays() - 1);
+        }
+        return ((List)gMap.get(key));
     }
 
-    public List<DateMidnight> getDays(){
+    public List<DateTime> getDays(){
         //Log.d(TAG, "Table Date Size: " + listOfDays.size());
         return listOfDays;
     }
     
-    public List<PunchPair> getPunchPair(DateMidnight date){
+    public List<PunchPair> getPunchPair(DateTime date){
         List<PunchPair> returnList = new LinkedList<PunchPair>();
 
         TaskTable taskTable = new TaskTable();
