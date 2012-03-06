@@ -387,7 +387,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
      public List<Job> getJobs(){
 
-        List<Job> retValue = null;
+        List<Job> retValue = new LinkedList<Job>();
         try{
             ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
@@ -419,7 +419,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             //Create 1 Job
             DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
-            Job currentJob = new Job("My First Job", 7,
+            Job currentJob = new Job("My First Job", 10,
                     jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);
             currentJob.setOvertimeThreshold(40);

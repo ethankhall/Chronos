@@ -28,17 +28,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.ActionMode;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import java.util.List;
 
@@ -47,7 +49,6 @@ public class DatePairView extends LinearLayout {
     private SherlockActivity parent;
     private final String TAG = Defines.TAG + " - DatePairView";
     private TodayAdapterPair adapter;
-    private ActionMode mMode;
 
     public DatePairView(SherlockActivity prnt, DateTime date){
         super(prnt.getApplicationContext());
@@ -55,12 +56,13 @@ public class DatePairView extends LinearLayout {
         parent = prnt;
 
         Chronos chrono = new Chronos(parent);
+        Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
+        Job thisJob = chrono.getJobs().get(0);
         adapter = new TodayAdapterPair( parent,
-                chrono.getPunchesByJobAndDate(chrono.getJobs().get(0), date ) );
-
-        createUI(adapter);
-
+                chrono.getPunchesByJobAndDate(thisJob, date ) );
         chrono.close();
+
+        createUI(adapter, thisJob);
     }
 
 
@@ -69,11 +71,16 @@ public class DatePairView extends LinearLayout {
 
         parent = prnt;
 
+        Chronos chrono = new Chronos(parent);
+        Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
+        Job thisJob = chrono.getJobs().get(0);
+        chrono.close();
+
         adapter = new TodayAdapterPair( parent, punches );
-        createUI(adapter);
+        createUI(adapter, thisJob);
     }
 
-    private void createUI(TodayAdapterPair adpter){
+    private void createUI(TodayAdapterPair adpter, Job thisJob){
 
 
         //Log.d(TAG, "Position: " + position);
@@ -85,6 +92,25 @@ public class DatePairView extends LinearLayout {
         //retView.setOnItemLongClickListener(LongClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
+        TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
+        Duration dur = adapter.getTime();
+        int seconds = (int)dur.getStandardSeconds();
+        int minutes = (seconds / 60) % 60;
+        int hours = (seconds / 60 / 60);
+        String output = String.format("%d:%02d.%02d", hours, minutes, seconds % 60);
+        tx.setText(output);
+        
+        Log.d(TAG, "job: " + thisJob);
+        Log.d(TAG, "seconds: " + seconds);
+        Log.d(TAG, "dur: " + dur.toString());
+        Log.d(TAG, "pay rate: " + thisJob.getPayRate());
+
+        double money = seconds * (thisJob.getPayRate() / 60 / 60);
+        output = String.format("$ %.2f", money);
+        tx = (TextView)header.findViewById(R.id.moneyViewTotal);
+        tx.setText(output);
+        Log.d(TAG, "pay amount: " + output);
+
 
         //header to the row
         addView(header);
@@ -113,60 +139,4 @@ public class DatePairView extends LinearLayout {
             parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
         }
     };
-
-    /*
-    AdapterView.OnItemLongClickListener LongClickListener = new AdapterView.OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-            Log.d(TAG, "Long Clicked: " + position);
-
-            PunchPair pp = adapter.getItem(position);
-            mMode = parent.startActionMode(new AnActionModeOfEpicProportions(pp.getOutPunch() != null));
-            adapter.setSelected(position);
-
-            return true;
-        }
-    };
-
-    private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
-        private boolean enableBoth; 
-        public AnActionModeOfEpicProportions(boolean bothVisible){
-            super();
-            enableBoth = bothVisible;
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add("Remove IN")
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-            if(enableBoth){
-
-                menu.add("Remove OUT")
-                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-                menu.add("Remove Both")
-                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            adapter.clearSelected();
-            mode.finish();
-            return true;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-        }
-    }
-    */
 }

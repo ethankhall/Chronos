@@ -34,7 +34,8 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import com.kopysoft.chronos.types.holders.TaskTable;
-import com.kopysoft.chronos.view.RowElement;
+import com.kopysoft.chronos.views.helpers.RowElement;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -142,6 +143,16 @@ public class TodayAdapterPair extends BaseAdapter {
     public long getItemId(int i) {
         return i;
     }
+    
+    public Duration getTime(){
+        Duration dur = new Duration(0);
+        for(PunchPair pp : listOfPunchPairs){
+            //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+            dur = dur.plus(pp.getInterval().toDuration());
+        }
+
+        return dur;
+    }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
@@ -175,11 +186,6 @@ public class TodayAdapterPair extends BaseAdapter {
 
         //Set Center text
         center.setText(pp.getTask().getName());
-        
-        if(i == selected)
-            curr.setSelected(true);
-        else
-            curr.setSelected(false);
 
         return curr;  //To change body of implemented methods use File | Settings | File Templates.
     }

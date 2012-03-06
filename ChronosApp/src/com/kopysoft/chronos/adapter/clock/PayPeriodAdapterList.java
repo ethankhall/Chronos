@@ -33,7 +33,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import com.kopysoft.chronos.types.holders.PunchTable;
-import com.kopysoft.chronos.view.RowElement;
+import com.kopysoft.chronos.views.helpers.RowElement;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -96,6 +96,19 @@ public class PayPeriodAdapterList extends BaseAdapter {
     @Override
     public boolean hasStableIds() {
         return false;
+    }
+    
+    public Duration getTime(){
+        Duration dur = new Duration(0);
+
+        for(DateTime date : gPunchesByDay.getDays()){
+            for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
+                //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+                dur = dur.plus(pp.getInterval().toDuration());
+            }
+        }
+
+        return dur;
     }
 
     @Override

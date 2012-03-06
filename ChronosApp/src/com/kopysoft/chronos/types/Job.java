@@ -76,6 +76,14 @@ public class Job {
         overTime = 40;
 
     }
+
+    /**
+     * Gets the pay rate for this job.
+     * @return float containing the pay rate
+     */
+    public float getPayRate(){
+        return payRate;
+    }
     /**
      * Constructor required by ormlite
      */

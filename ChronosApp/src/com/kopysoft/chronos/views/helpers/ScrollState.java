@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.view;
+package com.kopysoft.chronos.views.helpers;
 
 import android.os.Parcel;
 import android.os.Parcelable;

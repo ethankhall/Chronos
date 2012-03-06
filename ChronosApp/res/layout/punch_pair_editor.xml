@@ -37,21 +37,22 @@
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:layout_weight="1">
+            <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Time In"
+                    android:layout_gravity="center"/>
 
             <Spinner
                     android:id="@+id/taskSpinnerIn"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Time In"
-                android:layout_gravity="center"/>
             <TimePicker
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:id="@+id/TimePicker1" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -61,21 +62,23 @@
                 android:layout_weight="1"
                 android:layout_marginTop="10dip"
                 android:id="@+id/outLayout">
-            <Spinner
-                    android:id="@+id/taskSpinnerOut"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-
             <TextView
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="Time Out"
                     android:layout_gravity="center"/>
+
+            <Spinner
+                    android:id="@+id/taskSpinnerOut"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
             <TimePicker
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:id="@+id/TimePicker2" />
         </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>

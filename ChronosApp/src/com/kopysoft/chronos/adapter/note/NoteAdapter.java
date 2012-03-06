@@ -31,7 +31,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Note;
-import com.kopysoft.chronos.view.TwoLineElement;
+import com.kopysoft.chronos.views.helpers.TwoLineElement;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 

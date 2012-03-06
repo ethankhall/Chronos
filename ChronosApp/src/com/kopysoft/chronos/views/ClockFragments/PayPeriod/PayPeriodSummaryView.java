@@ -36,14 +36,15 @@ import com.kopysoft.chronos.activities.Viewers.DateViewerActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PunchTable;
+import org.joda.time.Duration;
 
 public class PayPeriodSummaryView extends LinearLayout {
 
     PayPeriodAdapterList adapter;
 
     private int position = 0;
-    private final String argumentString = "position";
     private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
     private SherlockActivity parent;
 
@@ -57,13 +58,39 @@ public class PayPeriodSummaryView extends LinearLayout {
         Chronos chrono = new Chronos(parent);
         ListView retView = new ListView( parent );
         retView.setOnItemClickListener(listener);
+
+        adapter = new PayPeriodAdapterList(parent, table);
+        retView.setAdapter( adapter );
+        retView.setSelection( position );
         //registerForContextMenu(retView);
         //retView.setOnChildClickListener(childClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
+
+        TextView timeView = (TextView)header.findViewById(R.id.timeViewTotal);
+        TextView moneyView = (TextView)header.findViewById(R.id.moneyViewTotal);        
         TextView leftHeader = (TextView)header.findViewById(R.id.headerLeft);
         TextView centerHeader = (TextView)header.findViewById(R.id.headerCenter);
         TextView rightHeader = (TextView)header.findViewById(R.id.headerRight);
+
+        Duration dur = adapter.getTime();
+        int seconds = (int)dur.getStandardSeconds();
+        int minutes = (seconds / 60) % 60;
+        int hours = (seconds / 60 / 60);
+        String output = String.format("%d:%02d.%02d", hours, minutes, seconds % 60);
+        timeView.setText(output);
+        Job thisJob = chrono.getJobs().get(0);
+
+        Log.d(TAG, "job: " + thisJob);
+        Log.d(TAG, "seconds: " + seconds);
+        Log.d(TAG, "dur: " + dur.toString());
+        Log.d(TAG, "pay rate: " + thisJob.getPayRate());
+
+        double money = seconds * (thisJob.getPayRate() / 60 / 60);
+        output = String.format("$ %.2f", money);
+
+        moneyView.setText(output);
+        Log.d(TAG, "pay amount: " + output);
 
         leftHeader.setText("Date");
         centerHeader.setText("");
@@ -71,10 +98,6 @@ public class PayPeriodSummaryView extends LinearLayout {
 
         addView(header);
         addView(retView);
-
-        adapter = new PayPeriodAdapterList(parent, table);
-        retView.setAdapter( adapter );
-        retView.setSelection( position );
 
         chrono.close();
     }
