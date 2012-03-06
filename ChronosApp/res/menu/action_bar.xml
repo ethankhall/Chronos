@@ -27,21 +27,22 @@
     <item android:id="@+id/menu_insert"
           android:icon="@drawable/ic_menu_add"
           android:title="@string/menu_insert"
-          android:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/menu_note"
-          android:icon="@drawable/ic_menu_compose"
-          android:title="@string/menu_note"
-          android:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/menu_send"
-          android:icon="@drawable/ic_menu_send"
-          android:title="@string/menu_send"
-          android:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/menu_preferences"
-          android:icon="@drawable/ic_menu_preferences"
-          android:title="@string/menu_preferences" />
+          android:text="@string/menu_insert"
+          android:showAsAction="ifRoom|withText"/>
+    
+    <item
+            android:icon="@drawable/ic_menu_moreoverflow_holo_dark"
+            android:title="Options"
+            android:text="Options"
+            android:showAsAction="ifRoom|withText">
+        <menu>
+            <item android:id="@+id/menu_preferences"
+                  android:icon="@drawable/ic_menu_preferences"
+                  android:title="@string/menu_preferences"
+                  android:text="@string/menu_preferences"
+                  android:showAsAction="ifRoom|withText"/>
+        </menu>
+    </item>
 
 
 </menu>

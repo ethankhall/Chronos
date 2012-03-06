@@ -68,6 +68,11 @@ public class Task implements Comparable<Task>{
     public Task(){ }
 
     @Override
+    public String toString(){
+        return taskName;
+    }
+
+    @Override
     public int compareTo(Task task) {
         return taskOrder - task.taskOrder;
     }

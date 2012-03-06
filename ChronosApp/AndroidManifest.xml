@@ -29,6 +29,11 @@
                   android:label="Date Viewer"
                   android:uiOptions="splitActionBarWhenNarrow"/>
 
+        <activity android:name=".activities.Editors.NewPunchActivity"
+                  android:label="New Punch"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
     </application>
 
     <uses-sdk android:minSdkVersion="7"

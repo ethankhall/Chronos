@@ -49,6 +49,17 @@ public class TodayAdapterPair extends BaseAdapter {
     Context gContext;
     TaskTable gTaskTable = new TaskTable();
     List<PunchPair> listOfPunchPairs = new LinkedList<PunchPair>();
+    int selected = -1;
+    
+    public void setSelected(int i){
+        selected = i;
+        notifyDataSetChanged();
+    }
+
+    public void clearSelected(){
+        selected = -1;
+        notifyDataSetChanged();
+    }
 
     public TodayAdapterPair(Context context, List<Punch> listOfPunches){
         gContext = context;
@@ -164,9 +175,14 @@ public class TodayAdapterPair extends BaseAdapter {
 
         //Set Center text
         center.setText(pp.getTask().getName());
-
-
+        
+        if(i == selected)
+            curr.setSelected(true);
+        else
+            curr.setSelected(false);
 
         return curr;  //To change body of implemented methods use File | Settings | File Templates.
     }
+    
+    
 }

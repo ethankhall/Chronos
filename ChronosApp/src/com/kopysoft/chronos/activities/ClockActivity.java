@@ -34,10 +34,11 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
@@ -53,6 +54,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     private static String TAG = Defines.TAG + " - ClockActivity";
     private PunchTable localPunchTable;
     public static int FROM_CLOCK_ACTIVITY = 0;
+    private long jobId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,9 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         setContentView(R.layout.header);
         
         Chronos chronos = new Chronos(this);
-        localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+        Job curJob = chronos.getJobs().get(0);
+        jobId = curJob.getID();
+        localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
         chronos.close();
 
         //getSupportActionBar().setListNavigationCallbacks(list, this)
@@ -112,6 +116,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        /*
         menu.add("Add")
                 .setIcon(R.drawable.ic_menu_add)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -125,6 +130,9 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
         MenuItem subMenu1Item = subMenu1.getItem();
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        */
+
+        getSupportMenuInflater().inflate(R.menu.action_bar, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -164,12 +172,39 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                 localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
                 chronos.close();
             }
+        } else if(requestCode == NewPunchActivity.NEW_PUNCH){
+            Log.d(TAG, "New Punch Created");
+            if (resultCode == RESULT_OK) {
+                Chronos chronos = new Chronos(this);
+                localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+                chronos.close();
+            }
         }
 
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){
             setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
         } else if(getSupportActionBar().getSelectedNavigationIndex() == 1){
             setContentView(new PayPeriodSummaryView(this, localPunchTable) );
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Log.d(TAG, "Selected item: " + item);
+        Log.d(TAG, "Selected item id: " + item.getItemId());
+        switch (item.getItemId()) {
+            case R.id.menu_insert:
+                Intent newIntent =
+                        new Intent().setClass(this,
+                                NewPunchActivity.class);
+
+                newIntent.putExtra("job", jobId);
+                startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
+            case android.R.id.home:
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 }

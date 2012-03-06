@@ -30,8 +30,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
@@ -84,7 +82,7 @@ public class DatePairView extends LinearLayout {
         ListView retView = new ListView( parent );
 
         retView.setOnItemClickListener(listener);
-        retView.setOnItemLongClickListener(LongClickListener);
+        //retView.setOnItemLongClickListener(LongClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
 
@@ -116,6 +114,7 @@ public class DatePairView extends LinearLayout {
         }
     };
 
+    /*
     AdapterView.OnItemLongClickListener LongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -123,8 +122,7 @@ public class DatePairView extends LinearLayout {
 
             PunchPair pp = adapter.getItem(position);
             mMode = parent.startActionMode(new AnActionModeOfEpicProportions(pp.getOutPunch() != null));
-
-            ((ListView)adapterView).setItemChecked(position, true);
+            adapter.setSelected(position);
 
             return true;
         }
@@ -161,7 +159,7 @@ public class DatePairView extends LinearLayout {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
+            adapter.clearSelected();
             mode.finish();
             return true;
         }
@@ -170,4 +168,5 @@ public class DatePairView extends LinearLayout {
         public void onDestroyActionMode(ActionMode mode) {
         }
     }
+    */
 }

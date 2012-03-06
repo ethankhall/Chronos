@@ -28,13 +28,29 @@
             android:text="Save"
             android:title="Save"
             android:icon="@drawable/ic_menu_save"
-            android:showAsAction="ifRoom|withText"/>
+            android:showAsAction="always|withText"/>
 
     <item
             android:id="@+id/menuCancel"
             android:text="Cancel"
             android:title="Cancel"
             android:icon="@drawable/ic_menu_close_clear_cancel"
-            android:showAsAction="ifRoom|withText"/>
+            android:showAsAction="always|withText"/>
+
+    <item
+            android:id="@+id/RemoveMenu"
+            android:text="Remove"
+            android:title="Remove"
+            android:showAsAction="always|withText"
+            android:icon="@drawable/ic_menu_delete">
+        <menu>
+            <item android:id="@+id/remove_in"
+                  android:title="Remove In" />
+            <item android:id="@+id/remove_out"
+                  android:title="Remove Out" />
+            <item android:id="@+id/remove_both"
+                  android:title="Remove Both" />
+        </menu>
+    </item>
 
 </menu>

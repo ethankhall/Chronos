@@ -151,6 +151,42 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return gNoteDoa;
     }
 
+    public void deleteNote(Note note){
+        try{
+            Dao<Note, String> doa = getNoteDao();
+            doa.delete(note);
+        } catch( SQLException e){
+            Log.d(TAG, "Trouble deleting Note: " + e.getMessage());
+        }
+    }
+
+    public void deletePunch(Punch punch){
+        try{
+            Dao<Punch, String> doa = getPunchDao();
+            doa.delete(punch);
+        } catch( SQLException e){
+            Log.d(TAG, "Trouble deleting Punch: " + e.getMessage());
+        }
+    }
+
+    public void deleteTask(Task task){
+        try{
+            Dao<Task, String> doa = getTaskDao();
+            doa.delete(task);
+        } catch( SQLException e){
+            Log.d(TAG, "Trouble deleting Task: " + e.getMessage());
+        }
+    }
+
+    public void insertPunch(Punch punch){
+        try {
+            Dao<Punch,String> punchDao = getPunchDao();
+            punchDao.create(punch);
+        } catch (SQLException e) {
+            Log.d(TAG, "Insert Punch: " + e.getMessage());
+        }
+    }
+
     public Punch getPunchById(int id){
 
         Punch retValue = null;
