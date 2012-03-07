@@ -58,7 +58,6 @@ public class DatePairView extends LinearLayout {
         parent = prnt;
 
         Chronos chrono = new Chronos(parent);
-        if(enableLog) Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
         Job thisJob = chrono.getJobs().get(0);
         adapter = new TodayAdapterPair( parent,
                 chrono.getPunchesByJobAndDate(thisJob, date ) );
@@ -75,7 +74,6 @@ public class DatePairView extends LinearLayout {
         if(enableLog) Log.d(TAG, "Entry 2");
 
         Chronos chrono = new Chronos(parent);
-        if(enableLog) Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
         Job thisJob = chrono.getJobs().get(0);
         chrono.close();
 

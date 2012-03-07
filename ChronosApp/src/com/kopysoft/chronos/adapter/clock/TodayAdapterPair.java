@@ -55,6 +55,11 @@ public class TodayAdapterPair extends BaseAdapter {
     public TodayAdapterPair(Context context, List<Punch> listOfPunches){
         gContext = context;
 
+
+        for(Punch p : listOfPunches){
+            Log.d(TAG, "Punch in: " + p.getTime());
+        }
+
         //Create a map of tasks
         if(listOfPunches != null)
             for(Punch temp : listOfPunches){

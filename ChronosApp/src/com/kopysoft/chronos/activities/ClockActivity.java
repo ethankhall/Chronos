@@ -58,7 +58,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     private Job jobId;
     private PayPeriodHolder payHolder;
 
-    private static final boolean enableLog = Defines.DEBUG_PRINT;
+    private static final boolean enableLog = true;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,7 +196,8 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         }
 
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){
-            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
+            //setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
+            setContentView(new DatePairView(this, new DateTime()));
         } else if(getSupportActionBar().getSelectedNavigationIndex() == 1){
             setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
         }

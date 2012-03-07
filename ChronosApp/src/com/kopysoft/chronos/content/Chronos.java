@@ -183,7 +183,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     public void insertPunch(Punch punch){
         try {
             Dao<Punch,String> punchDao = getPunchDao();
-            punchDao.update(punch);
+            punchDao.createOrUpdate(punch);
         } catch (SQLException e) {
             if(enableLog) Log.e(TAG, "Insert Punch: " + e.getMessage());
             e.getCause();
@@ -355,12 +355,15 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     public PunchTable getAllPunchesForThisPayPeriodByJob(Job jobId){
 
-            //Get the start and end of pay period
-            PayPeriodHolder pph = new PayPeriodHolder(jobId);
-            DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
-            DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
+        //Get the start and end of pay period
+        PayPeriodHolder pph = new PayPeriodHolder(jobId);
+        DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
+        DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
+    
+        Log.d(TAG, "start of pp: " + startOfPP);
+        Log.d(TAG, "end of pp: " + endOfPP);
 
-            return getAllPunchesForPayPeriodByJob(jobId, startOfPP, endOfPP);
+        return getAllPunchesForPayPeriodByJob(jobId, startOfPP, endOfPP);
     }
 
     public PunchTable getAllPunchesForPayPeriodByJob(Job jobId, DateTime startDate, DateTime endDate){
