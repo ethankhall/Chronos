@@ -39,7 +39,6 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import java.sql.SQLException;
@@ -217,7 +216,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     public void updatePunch(Punch punch){
 
-        List<Punch> retValue = null;
         try{
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = getPunchDao();
@@ -343,8 +341,17 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     public PunchTable getAllPunchesForThisPayPeriodByJob(Job jobId){
 
+            //Get the start and end of pay period
+            PayPeriodHolder pph = new PayPeriodHolder(jobId);
+            DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
+            DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
+
+            return getAllPunchesForPayPeriodByJob(jobId, startOfPP, endOfPP);
+    }
+
+    public PunchTable getAllPunchesForPayPeriodByJob(Job jobId, DateTime startDate, DateTime endDate){
+
         PunchTable punches = null;
-        List<Punch> retValue = null;
         try{
 
             // instantiate the DAO to handle Account with String id
@@ -352,24 +359,18 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Task,String> taskDAO = getTaskDao();
             Dao<Job,String> jobDAO = getJobDao();
 
-            //Get the start and end of pay period
-            PayPeriodHolder pph = new PayPeriodHolder(jobId);
-            DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
-            DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
+            punches = new PunchTable(startDate, endDate, jobId);
 
-            punches = new PunchTable(startOfPP, endOfPP, jobId);
-            
-            Log.d(TAG, "Start of Pay Period: " + startOfPP.getMillis());
-            Log.d(TAG, "End of Pay Period: " + endOfPP.getMillis());
+            Log.d(TAG, "Start of Pay Period: " + startDate.getMillis());
+            Log.d(TAG, "End of Pay Period: " + endDate.getMillis());
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
-                    .gt(Punch.TIME_OF_PUNCH, startOfPP.getMillis()).and()
-                    .le(Punch.TIME_OF_PUNCH, endOfPP.getMillis());
+                    .between(Punch.TIME_OF_PUNCH, startDate.getMillis(), endDate.getMillis());
 
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
-            retValue = punchDao.query(preparedQuery);
+            List<Punch> retValue = punchDao.query(preparedQuery);
             Log.d(TAG, "Punches for this pay period: " + retValue.size());
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
@@ -379,8 +380,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         } catch(SQLException e){
             Log.d(TAG, e.getMessage());
-        } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
         }
         return punches;
     }
@@ -418,7 +417,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Note,String> noteDAO = getNoteDao();
 
             //Create 1 Job
-            DateMidnight jobMidnight = DateTime.now().withDayOfWeek(1).toDateMidnight();
+            DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
             Job currentJob = new Job("My First Job", 10,
                     jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);

@@ -39,6 +39,7 @@ import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
@@ -54,16 +55,18 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     private static String TAG = Defines.TAG + " - ClockActivity";
     private PunchTable localPunchTable;
     public static int FROM_CLOCK_ACTIVITY = 0;
-    private long jobId;
+    private Job jobId;
+    private PayPeriodHolder payHolder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.header);
-        
+
         Chronos chronos = new Chronos(this);
         Job curJob = chronos.getJobs().get(0);
-        jobId = curJob.getID();
+        jobId = curJob;
+        payHolder = new PayPeriodHolder(curJob);
         localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
         chronos.close();
 
@@ -131,20 +134,34 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         MenuItem subMenu1Item = subMenu1.getItem();
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         */
-
         getSupportMenuInflater().inflate(R.menu.action_bar, menu);
 
+        int pos = getSupportActionBar().getSelectedTab().getPosition();
+        if(pos == 1){
+            menu.findItem(R.id.menu_insert).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_navigate).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
+    }
+    
+    private PunchTable getPunchesByDate(){
+        Chronos chronos = new Chronos(this);
+        PunchTable temp =  chronos.getAllPunchesForPayPeriodByJob(jobId,
+                payHolder.getStartOfPayPeriod(), payHolder.getEndOfPayPeriod());
+        chronos.close();
+        return temp;
     }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab) {
-        
-        if(tab.getPosition() == 0){
 
+        invalidateOptionsMenu();    //Redo the menu
+        if(tab.getPosition() == 0){
             setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
         } else if(tab.getPosition() == 1){
-            setContentView(new PayPeriodSummaryView(this, localPunchTable) );
+            setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
         }
         Log.d(TAG, "onTabSelected: " + tab);
         Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
@@ -167,11 +184,9 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         Log.d(TAG, "Selected Navigation Index: " + getSupportActionBar().getSelectedNavigationIndex());
 
         if (requestCode == FROM_CLOCK_ACTIVITY) {
-            if (resultCode == RESULT_OK) {
-                Chronos chronos = new Chronos(this);
-                localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
-                chronos.close();
-            }
+            Chronos chronos = new Chronos(this);
+            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+            chronos.close();
         } else if(requestCode == NewPunchActivity.NEW_PUNCH){
             Log.d(TAG, "New Punch Created");
             if (resultCode == RESULT_OK) {
@@ -184,13 +199,12 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){
             setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
         } else if(getSupportActionBar().getSelectedNavigationIndex() == 1){
-            setContentView(new PayPeriodSummaryView(this, localPunchTable) );
+            setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         Log.d(TAG, "Selected item: " + item);
         Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
@@ -199,12 +213,24 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                         new Intent().setClass(this,
                                 NewPunchActivity.class);
 
-                newIntent.putExtra("job", jobId);
+                newIntent.putExtra("job", jobId.getID());
                 startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
+                return true;
+            case R.id.menu_navigate_today:
+                payHolder.generate();
+                setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
+                return true;
+            case R.id.menu_navigate_back:
+                payHolder.moveBackwards();
+                setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
+                return true;
+            case R.id.menu_navigate_forward:
+                payHolder.moveForwards();
+                setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
+                return true;
             case android.R.id.home:
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
 }

@@ -65,6 +65,7 @@ public class PunchTable {
             LinkedList<Punch> list = new LinkedList<Punch>();
             gMap.put(key, list);
             listOfDays.add(key);
+            System.out.println("Days: " + key);
         }        
     }
 
@@ -109,15 +110,18 @@ public class PunchTable {
         DateTime key = value.getTime();
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
         Duration dur = new Duration(startOfTable, key);
-        if( key.getSecondOfDay() >= startOfTable.getSecondOfDay()){
+        /*if( key.getSecondOfDay() >= startOfTable.getSecondOfDay()){
             //key is after start of day... set it to the start of the day
             key = startOfTable.plusDays((int)dur.getStandardDays());
             
         } else {
             //put it back a day
             key = startOfTable.plusDays((int)dur.getStandardDays() - 1);
-        }
+        }*/
 
+        key = startOfTable.plusDays((int)dur.getStandardDays());
+
+        System.out.println("Key: " + key.getMillis());
         LinkedList<Punch> list = (LinkedList) gMap.get(key);
         list.add(value);
         Collections.sort(list);

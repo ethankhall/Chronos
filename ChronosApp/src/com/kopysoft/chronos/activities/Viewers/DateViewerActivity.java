@@ -28,13 +28,16 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
+import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
+import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
@@ -42,12 +45,17 @@ public class DateViewerActivity extends SherlockActivity{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
     private long date;
+    private long jobId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         date = getIntent().getExtras().getLong("dateTime");
+        Chronos chronos = new Chronos(this);
+        Job curJob = chronos.getJobs().get(0);
+        jobId = curJob.getID();
+        chronos.close();
         setContentView(new DatePairView(this, new DateTime(date)) );
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,8 +76,9 @@ public class DateViewerActivity extends SherlockActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        /*
         menu.add("Add")
-                .setIcon(R.drawable.ic_menu_add)
+                 .setIcon(R.drawable.ic_menu_add)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
         //collapsed menu
@@ -81,15 +90,31 @@ public class DateViewerActivity extends SherlockActivity{
 
         MenuItem subMenu1Item = subMenu1.getItem();
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        */
+
+        getSupportMenuInflater().inflate(R.menu.action_bar, menu);
+
+        menu.findItem(R.id.menu_navigate).setVisible(false);
+
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "Selected item: " + item);
+        Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
+            case R.id.menu_insert:
+                Intent newIntent =
+                        new Intent().setClass(this,
+                                NewPunchActivity.class);
+
+                newIntent.putExtra("job", jobId);
+                startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
+                return true;
             case android.R.id.home:
-                // app icon in action bar clicked; go home
+                setResult(RESULT_OK);
                 finish();
                 return true;
             default:
@@ -100,6 +125,10 @@ public class DateViewerActivity extends SherlockActivity{
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ClockActivity.FROM_CLOCK_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                setContentView(new DatePairView(this, new DateTime(date)) );
+            }
+        }   else if(requestCode == NewPunchActivity.NEW_PUNCH){
             if (resultCode == RESULT_OK) {
                 setContentView(new DatePairView(this, new DateTime(date)) );
             }

@@ -34,8 +34,9 @@ import org.joda.time.Interval;
 public class PayPeriodHolder {
 
     Job gJob;
-    DateMidnight gStartOfPP = null;
-    DateMidnight gEndOfPP = null;
+    DateTime gStartOfPP = null;
+    DateTime gEndOfPP = null;
+    PayPeriodDuration gDuration;
 
     /**
      * Default constructor for PayPeriodHolder
@@ -44,6 +45,7 @@ public class PayPeriodHolder {
      */
     public PayPeriodHolder(Job inputJob){
         gJob = inputJob;
+        generate();
     }
 
     /**
@@ -51,7 +53,6 @@ public class PayPeriodHolder {
      * @return int of the day's in the the pay period
      */
     public int getDays(){
-        DateTime thisDateTime;
         switch (gJob.getDuration()){
             case ONE_WEEK:
                 return 7;
@@ -62,15 +63,12 @@ public class PayPeriodHolder {
             case FOUR_WEEKS:
                 return 7 * 4;
             case FULL_MONTH:
-                thisDateTime = new DateTime();
-                return thisDateTime.dayOfMonth().getMaximumValue();
+                return gStartOfPP.dayOfMonth().getMaximumValue();
             case FIRST_FIFTEENTH:
-
-                thisDateTime = new DateTime();
-                if(thisDateTime.getDayOfMonth() <= 15)
+                if(gStartOfPP.getDayOfMonth() <= 15)
                     return 15;
                 else
-                    return thisDateTime.dayOfMonth().getMaximumValue() - 15;
+                    return gStartOfPP.dayOfMonth().getMaximumValue() - 15;
         }
         return 0;
     }
@@ -80,7 +78,7 @@ public class PayPeriodHolder {
      *
      * @return DateMidnight containing the start of the Pay Period
      */
-    public DateMidnight getStartOfPayPeriod(){
+    public DateTime getStartOfPayPeriod(){
         if(gStartOfPP == null){
             generate();
         }
@@ -92,7 +90,7 @@ public class PayPeriodHolder {
      *
      * @return DateMidnight containing the end of the Pay Period
      */
-    public DateMidnight getEndOfPayPeriod(){
+    public DateTime getEndOfPayPeriod(){
         if(gEndOfPP == null){
             generate();
         }
@@ -105,12 +103,12 @@ public class PayPeriodHolder {
     public void generate(){
         //Get the start and end of pay period
         DateTime startOfPP = gJob.getStartOfPayPeriod();
-        PayPeriodDuration PPduration = gJob.getDuration();
+        gDuration = gJob.getDuration();
         DateTime endOfPP = new DateTime(); //Today
 
         Interval interval =  new Interval(startOfPP, endOfPP);
         int days = (int)interval.toDuration().getStandardDays();
-        switch (PPduration){
+        switch (gDuration){
             case ONE_WEEK:
                 days = days / 7;
                 startOfPP = startOfPP.plusWeeks(days);
@@ -162,7 +160,17 @@ public class PayPeriodHolder {
                 break;
         }
 
-        gStartOfPP = startOfPP.toDateMidnight();
-        gEndOfPP = endOfPP.toDateMidnight();
+        gStartOfPP = startOfPP;
+        gEndOfPP = endOfPP;
+    }
+
+    public void moveBackwards(){
+        gStartOfPP = gStartOfPP.minusDays(getDays());
+        gEndOfPP = gStartOfPP.plusDays(getDays());
+    }
+
+    public void moveForwards(){
+        gStartOfPP = gStartOfPP.plusDays(getDays());
+        gEndOfPP = gStartOfPP.plusDays(getDays());
     }
 }
