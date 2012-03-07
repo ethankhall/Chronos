@@ -54,10 +54,11 @@ public class NewPunchActivity extends SherlockActivity{
     List<Task> tasks;
     long jobID;
     DateTime date;
+    private static final boolean enableLog = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        if(enableLog) Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.punch_pair_editor);
 
@@ -71,6 +72,9 @@ public class NewPunchActivity extends SherlockActivity{
             jobID = getIntent().getExtras().getLong("job");
             date = new DateTime(getIntent().getExtras().getLong("date"));
         }
+
+        if(enableLog) Log.d(TAG, "JobID: " + jobID);
+        if(enableLog) Log.d(TAG, "DateTime: " + date);
 
         Chronos chron = new Chronos(this);
         tasks = chron.getAllTasks();
@@ -96,8 +100,8 @@ public class NewPunchActivity extends SherlockActivity{
 
         DateTime now = new DateTime();
 
-        Log.d(TAG, "P1 Current Hour: " + now.getHourOfDay());
-        Log.d(TAG, "P1 Current Minute: " + now.getMinuteOfHour());
+        if(enableLog) Log.d(TAG, "P1 Current Hour: " + now.getHourOfDay());
+        if(enableLog) Log.d(TAG, "P1 Current Minute: " + now.getMinuteOfHour());
 
         inTime.setCurrentHour(now.getHourOfDay());
         inTime.setCurrentMinute(now.getMinuteOfHour());
@@ -160,7 +164,7 @@ public class NewPunchActivity extends SherlockActivity{
                 thisJob = job;
         }
         Punch newPunch = new Punch(thisJob, inTask, date1);
-        Log.d(TAG, "Date Time: " + newPunch.getTime().getMillis());
+        if(enableLog) Log.d(TAG, "Date Time: " + newPunch.getTime().getMillis());
 
         chrono.insertPunch(newPunch);
         chrono.close();
@@ -177,8 +181,8 @@ public class NewPunchActivity extends SherlockActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-        Log.d(TAG, "Selected item: " + item);
-        Log.d(TAG, "Selected item id: " + item.getItemId());
+        if(enableLog) Log.d(TAG, "Selected item: " + item);
+        if(enableLog) Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.menuSave:
                 updateDatabase();

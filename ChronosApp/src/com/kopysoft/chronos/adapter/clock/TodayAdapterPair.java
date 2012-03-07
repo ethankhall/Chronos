@@ -50,17 +50,7 @@ public class TodayAdapterPair extends BaseAdapter {
     Context gContext;
     TaskTable gTaskTable = new TaskTable();
     List<PunchPair> listOfPunchPairs = new LinkedList<PunchPair>();
-    int selected = -1;
-    
-    public void setSelected(int i){
-        selected = i;
-        notifyDataSetChanged();
-    }
-
-    public void clearSelected(){
-        selected = -1;
-        notifyDataSetChanged();
-    }
+    public static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public TodayAdapterPair(Context context, List<Punch> listOfPunches){
         gContext = context;
@@ -79,18 +69,18 @@ public class TodayAdapterPair extends BaseAdapter {
         listOfPunchPairs.clear();
         List<Punch> punches;
         List<Integer> tasks = gTaskTable.getTasks();
-        Log.d(TAG, "Number of Tasks: " + tasks.size());
+        if(enableLog) Log.d(TAG, "Number of Tasks: " + tasks.size());
         for(Integer curTask : tasks){
             punches = gTaskTable.getPunchesForKey(curTask);
             Collections.sort(punches);
-            Log.d(TAG, "Task Number: " + curTask);
+            if(enableLog) Log.d(TAG, "Task Number: " + curTask);
             //for(Punch temp : punches){
-            //    Log.d(TAG, "Punch ID: " + temp.getID());
+            //    if(enableLog) Log.d(TAG, "Punch ID: " + temp.getID());
             //}
 
             for(int i = 0; i < punches.size(); i += 2){
-                //Log.d(TAG, "Size: " + punches.size());
-                //Log.d(TAG, "index: " + i);
+                //if(enableLog) Log.d(TAG, "Size: " + punches.size());
+                //if(enableLog) Log.d(TAG, "index: " + i);
                 Punch inTime = punches.get(i);
                 if(i < punches.size() - 1) {
                     Punch outTime = punches.get(i + 1);
@@ -105,11 +95,11 @@ public class TodayAdapterPair extends BaseAdapter {
 
         //For Debug
         //for(PunchPair pp : listOfPunchPairs){
-        //    Log.d(TAG, "In Time: " + pp.getInPunch().getTime().toString());
-        //    Log.d(TAG, "In Time: " + pp.getPunch1().getTime().toString());
+        //    if(enableLog) Log.d(TAG, "In Time: " + pp.getInPunch().getTime().toString());
+        //    if(enableLog) Log.d(TAG, "In Time: " + pp.getPunch1().getTime().toString());
         //    if(pp.getOutPunch() != null){
-        //       Log.d(TAG, "Out Time: " + pp.getOutPunch().getTime().toString());
-        //        Log.d(TAG, "Out Time: " + pp.getPunch2().getTime().toString());
+        //       if(enableLog) Log.d(TAG, "Out Time: " + pp.getOutPunch().getTime().toString());
+        //        if(enableLog) Log.d(TAG, "Out Time: " + pp.getPunch2().getTime().toString());
         //    }
         //}
     }
@@ -147,7 +137,7 @@ public class TodayAdapterPair extends BaseAdapter {
     public Duration getTime(){
         Duration dur = new Duration(0);
         for(PunchPair pp : listOfPunchPairs){
-            //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+            if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
             dur = dur.plus(pp.getInterval().toDuration());
         }
 

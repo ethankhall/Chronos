@@ -47,6 +47,7 @@ public class PayPeriodSummaryView extends LinearLayout {
     private int position = 0;
     private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
     private SherlockActivity parent;
+    private final static boolean enableLog = true;
 
 
     public PayPeriodSummaryView(SherlockActivity prnt, PunchTable table){
@@ -81,16 +82,16 @@ public class PayPeriodSummaryView extends LinearLayout {
         timeView.setText(output);
         Job thisJob = chrono.getJobs().get(0);
 
-        Log.d(TAG, "job: " + thisJob);
-        Log.d(TAG, "seconds: " + seconds);
-        Log.d(TAG, "dur: " + dur.toString());
-        Log.d(TAG, "pay rate: " + thisJob.getPayRate());
+        if(enableLog) Log.d(TAG, "job: " + thisJob);
+        if(enableLog) Log.d(TAG, "seconds: " + seconds);
+        if(enableLog) Log.d(TAG, "dur: " + dur.toString());
+        if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
         double money = seconds * (thisJob.getPayRate() / 60 / 60);
         output = String.format("$ %.2f", money);
 
         moneyView.setText(output);
-        Log.d(TAG, "pay amount: " + output);
+        if(enableLog) Log.d(TAG, "pay amount: " + output);
 
         leftHeader.setText("Date");
         centerHeader.setText("");
@@ -105,7 +106,7 @@ public class PayPeriodSummaryView extends LinearLayout {
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            Log.d(TAG, "Clicked: " + position);
+            if(enableLog) Log.d(TAG, "Clicked: " + position);
             Intent newIntent =
                     new Intent().setClass(parent,
                             DateViewerActivity.class);
@@ -113,7 +114,7 @@ public class PayPeriodSummaryView extends LinearLayout {
             newIntent.putExtra("dateTime", adapter.getDate(position).getMillis());
             parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
             
-            Log.d(TAG, "Date Viewer Activity: " + adapter.getDate(position).getMillis());
+            if(enableLog) Log.d(TAG, "Date Viewer Activity Started With: " + adapter.getDate(position).getMillis());
         }
     };
 

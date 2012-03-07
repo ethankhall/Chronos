@@ -54,10 +54,12 @@ public class PairEditorActivity extends SherlockActivity{
     List<Task> tasks;
 
     private enum RemoveOption {IN_TIME, OUT_TIME, BOTH};
+    
+    private final boolean enableLog = Defines.DEBUG_PRINT;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        if(enableLog) Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.punch_pair_editor);
 
@@ -72,8 +74,8 @@ public class PairEditorActivity extends SherlockActivity{
             punch2 = getIntent().getExtras().getInt("punch2");
         }
 
-        Log.d(TAG, "Punch 1: " + punch1);
-        Log.d(TAG, "Punch 2: " + punch2);
+        if(enableLog) Log.d(TAG, "Punch 1: " + punch1);
+        if(enableLog) Log.d(TAG, "Punch 2: " + punch2);
         updateUi(punch1, punch2);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -123,8 +125,8 @@ public class PairEditorActivity extends SherlockActivity{
         p1 = chron.getPunchById(punch1);
         p2 = chron.getPunchById(punch2);
 
-        Log.d(TAG, "P1 Current Hour: " + p1.getTime().getHourOfDay());
-        Log.d(TAG, "P1 Current Minute: " + p1.getTime().getMinuteOfHour());
+        if(enableLog) Log.d(TAG, "P1 Current Hour: " + p1.getTime().getHourOfDay());
+        if(enableLog) Log.d(TAG, "P1 Current Minute: " + p1.getTime().getMinuteOfHour());
 
         inTime.setCurrentHour(p1.getTime().getHourOfDay());
         inTime.setCurrentMinute(p1.getTime().getMinuteOfHour());
@@ -134,8 +136,8 @@ public class PairEditorActivity extends SherlockActivity{
         }
 
         if(p2 != null){
-            Log.d(TAG, "P2 Current Hour: " + p2.getTime().getHourOfDay());
-            Log.d(TAG, "P2 Current Minute: " + p2.getTime().getMinuteOfHour());
+            if(enableLog) Log.d(TAG, "P2 Current Hour: " + p2.getTime().getHourOfDay());
+            if(enableLog) Log.d(TAG, "P2 Current Minute: " + p2.getTime().getMinuteOfHour());
 
             outTime.setCurrentHour(p2.getTime().getHourOfDay());
             outTime.setCurrentMinute(p2.getTime().getMinuteOfHour());
@@ -245,8 +247,8 @@ public class PairEditorActivity extends SherlockActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-        Log.d(TAG, "Selected item: " + item);
-        Log.d(TAG, "Selected item id: " + item.getItemId());
+        if(enableLog) Log.d(TAG, "Selected item: " + item);
+        if(enableLog) Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.menuSave:
                 updateDatabase();

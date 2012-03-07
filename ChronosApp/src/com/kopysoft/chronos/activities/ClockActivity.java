@@ -58,6 +58,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     private Job jobId;
     private PayPeriodHolder payHolder;
 
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,37 +164,35 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         } else if(tab.getPosition() == 1){
             setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
         }
-        Log.d(TAG, "onTabSelected: " + tab);
-        Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
+        if(enableLog) Log.d(TAG, "onTabSelected: " + tab);
+        if(enableLog) Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab) {
-        Log.d(TAG, "onTabUnselected: " + tab);
+        if(enableLog) Log.d(TAG, "onTabUnselected: " + tab);
     }
 
     @Override
     public void onTabReselected(ActionBar.Tab tab) {
-        Log.d(TAG, "onTabReselected: " + tab);
+        if(enableLog) Log.d(TAG, "onTabReselected: " + tab);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "Request Code: " + requestCode);
-        Log.d(TAG, "Result Code: " + resultCode);
-        Log.d(TAG, "Selected Navigation Index: " + getSupportActionBar().getSelectedNavigationIndex());
+        if(enableLog) Log.d(TAG, "Request Code: " + requestCode);
+        if(enableLog) Log.d(TAG, "Result Code: " + resultCode);
+        if(enableLog) Log.d(TAG, "Selected Navigation Index: " + getSupportActionBar().getSelectedNavigationIndex());
 
         if (requestCode == FROM_CLOCK_ACTIVITY) {
             Chronos chronos = new Chronos(this);
             localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
             chronos.close();
         } else if(requestCode == NewPunchActivity.NEW_PUNCH){
-            Log.d(TAG, "New Punch Created");
-            if (resultCode == RESULT_OK) {
-                Chronos chronos = new Chronos(this);
-                localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
-                chronos.close();
-            }
+            if(enableLog) Log.d(TAG, "New Punch Created");
+            Chronos chronos = new Chronos(this);
+            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+            chronos.close();
         }
 
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){
@@ -205,15 +204,15 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "Selected item: " + item);
-        Log.d(TAG, "Selected item id: " + item.getItemId());
+        if(enableLog) Log.d(TAG, "Selected item: " + item);
+        if(enableLog) Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.menu_insert:
                 Intent newIntent =
                         new Intent().setClass(this,
                                 NewPunchActivity.class);
 
-                newIntent.putExtra("job", jobId.getID());
+                newIntent.putExtra("job", (long)jobId.getID());
                 newIntent.putExtra("date", DateTime.now().getMillis());
                 startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
                 return true;

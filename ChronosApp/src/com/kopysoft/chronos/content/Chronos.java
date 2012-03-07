@@ -42,6 +42,7 @@ import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateTime;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -62,6 +63,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     Dao<Task, String>   gTaskDoa = null;
     Dao<Job, String>    gJobDoa = null;
     Dao<Note, String>    gNoteDoa = null;
+
+    public static final boolean enableLog = true;
 
     public Chronos(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -155,7 +158,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Note, String> doa = getNoteDao();
             doa.delete(note);
         } catch( SQLException e){
-            Log.d(TAG, "Trouble deleting Note: " + e.getMessage());
+            if(enableLog) Log.e(TAG, "Trouble deleting Note: " + e.getMessage());
         }
     }
 
@@ -164,7 +167,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Punch, String> doa = getPunchDao();
             doa.delete(punch);
         } catch( SQLException e){
-            Log.d(TAG, "Trouble deleting Punch: " + e.getMessage());
+            if(enableLog) Log.e(TAG, "Trouble deleting Punch: " + e.getMessage());
         }
     }
 
@@ -173,16 +176,17 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Task, String> doa = getTaskDao();
             doa.delete(task);
         } catch( SQLException e){
-            Log.d(TAG, "Trouble deleting Task: " + e.getMessage());
+            if(enableLog) Log.e(TAG, "Trouble deleting Task: " + e.getMessage());
         }
     }
 
     public void insertPunch(Punch punch){
         try {
             Dao<Punch,String> punchDao = getPunchDao();
-            punchDao.create(punch);
+            punchDao.update(punch);
         } catch (SQLException e) {
-            Log.d(TAG, "Insert Punch: " + e.getMessage());
+            if(enableLog) Log.e(TAG, "Insert Punch: " + e.getMessage());
+            e.getCause();
         }
     }
 
@@ -207,9 +211,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             }
 
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            if(enableLog) Log.e(TAG,e.getMessage());
         }
         return retValue;
     }
@@ -222,9 +226,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             punchDao.update(punch);
 
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            if(enableLog) Log.e(TAG,e.getMessage());
         }
     }
 
@@ -240,13 +244,12 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             retValue = punchDao.queryForAll();
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
-                taskDAO.refresh(work.getTask());
             }
 
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            if(enableLog) Log.e(TAG,e.getMessage());
         }
         return retValue;
     }
@@ -257,14 +260,21 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         try{
             // instantiate the DAO to handle Account with String id
             Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+            
 
             //accountDao.refresh(order.getAccount());
             retValue = taskDAO.queryForAll();
+            for(Task t : retValue){
+                jobDAO.refresh(t.getJob());
+                
+            }
+
 
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            if(enableLog) Log.e(TAG,e.getMessage());
         }
         return retValue;
     }
@@ -290,9 +300,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             }
 
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            if(enableLog) Log.e(TAG,e.getMessage());
         }
         return retValue;
     }
@@ -317,8 +327,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             DateTime endOfDay = startOfDay.plusDays(1);
 
-            Log.d(TAG, "Start of Day: " + startOfDay.getMillis());
-            Log.d(TAG, "End of Day: " + endOfDay.getMillis());
+            if(enableLog) Log.d(TAG, "Start of Day: " + startOfDay.getMillis());
+            if(enableLog) Log.d(TAG, "End of Day: " + endOfDay.getMillis());
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
@@ -327,7 +337,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
             punches = punchDao.query(preparedQuery);
-            Log.d(TAG, "Punches for this day: " + punches.size());
+            Collections.sort(punches);
+            if(enableLog) Log.d(TAG, "Punches for this day: " + punches.size());
             for(Punch work : punches){
                 taskDAO.refresh(work.getTask());
                 jobDAO.refresh(work.getJobNumber());
@@ -364,8 +375,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             punches = new PunchTable(startDate, endDate, jobId);
 
-            Log.d(TAG, "Start of Pay Period: " + startDate.getMillis());
-            Log.d(TAG, "End of Pay Period: " + endDate.getMillis());
+            if(enableLog) Log.d(TAG, "Start of Pay Period: " + startDate.getMillis());
+            if(enableLog) Log.d(TAG, "End of Pay Period: " + endDate.getMillis());
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
@@ -374,7 +385,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
             List<Punch> retValue = punchDao.query(preparedQuery);
-            Log.d(TAG, "Punches for this pay period: " + retValue.size());
+            if(enableLog) Log.d(TAG, "Punches for this pay period: " + retValue.size());
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
                 jobDAO.refresh(work.getJobNumber());
@@ -382,7 +393,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             }
 
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         }
         return punches;
     }
@@ -400,9 +411,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             connectionSource.close();
         } catch(SQLException e){
-            Log.d(TAG, e.getMessage());
+            if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            Log.d(TAG,e.getMessage());
+            if(enableLog) Log.e(TAG,e.getMessage());
         }
         return retValue;
     }
@@ -420,7 +431,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Note,String> noteDAO = getNoteDao();
 
             //Create 1 Job
-            DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
+            DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2).toDateMidnight().toDateTime();
             Job currentJob = new Job("My First Job", 10,
                     jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);

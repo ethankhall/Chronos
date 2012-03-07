@@ -49,14 +49,16 @@ public class DatePairView extends LinearLayout {
     private SherlockActivity parent;
     private final String TAG = Defines.TAG + " - DatePairView";
     private TodayAdapterPair adapter;
+    public static final boolean enableLog = true;
 
     public DatePairView(SherlockActivity prnt, DateTime date){
         super(prnt.getApplicationContext());
+        if(enableLog) Log.d(TAG, "Entry 1");
 
         parent = prnt;
 
         Chronos chrono = new Chronos(parent);
-        Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
+        if(enableLog) Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
         Job thisJob = chrono.getJobs().get(0);
         adapter = new TodayAdapterPair( parent,
                 chrono.getPunchesByJobAndDate(thisJob, date ) );
@@ -70,9 +72,10 @@ public class DatePairView extends LinearLayout {
         super(prnt.getApplicationContext());
 
         parent = prnt;
+        if(enableLog) Log.d(TAG, "Entry 2");
 
         Chronos chrono = new Chronos(parent);
-        Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
+        if(enableLog) Log.d(TAG, "Jobs size" + chrono.getJobs().size() );
         Job thisJob = chrono.getJobs().get(0);
         chrono.close();
 
@@ -83,7 +86,7 @@ public class DatePairView extends LinearLayout {
     private void createUI(TodayAdapterPair adpter, Job thisJob){
 
 
-        //Log.d(TAG, "Position: " + position);
+        //if(enableLog) Log.d(TAG, "Position: " + position);
         setOrientation(LinearLayout.VERTICAL);
 
         ListView retView = new ListView( parent );
@@ -100,16 +103,16 @@ public class DatePairView extends LinearLayout {
         String output = String.format("%d:%02d.%02d", hours, minutes, seconds % 60);
         tx.setText(output);
         
-        Log.d(TAG, "job: " + thisJob);
-        Log.d(TAG, "seconds: " + seconds);
-        Log.d(TAG, "dur: " + dur.toString());
-        Log.d(TAG, "pay rate: " + thisJob.getPayRate());
+        if(enableLog) Log.d(TAG, "job: " + thisJob);
+        if(enableLog) Log.d(TAG, "seconds: " + seconds);
+        if(enableLog) Log.d(TAG, "dur: " + dur.toString());
+        if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
         double money = seconds * (thisJob.getPayRate() / 60 / 60);
         output = String.format("$ %.2f", money);
         tx = (TextView)header.findViewById(R.id.moneyViewTotal);
         tx.setText(output);
-        Log.d(TAG, "pay amount: " + output);
+        if(enableLog) Log.d(TAG, "pay amount: " + output);
 
 
         //header to the row
@@ -124,7 +127,7 @@ public class DatePairView extends LinearLayout {
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            Log.d(TAG, "Clicked: " + position);
+            if(enableLog) Log.d(TAG, "Clicked: " + position);
             Intent newIntent =
                     new Intent().setClass(parent,
                             PairEditorActivity.class);

@@ -39,17 +39,18 @@ public class PunchTable {
     List<DateTime> listOfDays;
     PayPeriodHolder gPayPeriod;
     private DateTime startOfTable;
+    private static final boolean enableLog = true;
 
     public PunchTable(DateTime start, DateTime end, Job inJob){
         int days = (int)(end.getMillis() - start.getMillis())/1000/60/60/24;
         startOfTable = start;
 
         try{
-            Log.d(TAG, "Punch Table Size: " + days);
+             if(enableLog) Log.d(TAG, "Punch Table Size: " + days);
         } catch(Exception e) {
             try{
-                Log.d(TAG, "Punch Table Size: " + days);
-                Log.d(TAG, e.getMessage());
+                 if(enableLog) Log.d(TAG, "Punch Table Size: " + days);
+                 if(enableLog) Log.d(TAG, e.getMessage());
             } catch (Exception e2){
                 System.out.println("Punch Table Size: " + days);
                 System.out.println(e.getMessage());
@@ -98,11 +99,11 @@ public class PunchTable {
         }
 
         try{
-            Log.d(TAG, "Punch Table Size: " + days);
+             if(enableLog) Log.d(TAG, "Punch Table Size: " + days);
         } catch(Exception e) {
             try{
-                Log.d(TAG, "Punch Table Size: " + days);
-                Log.d(TAG, e.getMessage());
+                 if(enableLog) Log.d(TAG, "Punch Table Size: " + days);
+                 if(enableLog) Log.d(TAG, e.getMessage());
             } catch (Exception e2){
                 System.out.println("Punch Table Size: " + days);
                 System.out.println(e.getMessage());
@@ -152,11 +153,16 @@ public class PunchTable {
             key = startOfTable.plusDays((int)dur.getStandardDays() - 1);
         }*/
         key = startOfTable.plusDays((int)dur.getStandardDays());
+        try{
+             if(enableLog) Log.d(TAG, "GetPunchesByDay: " + key.getMillis());
+        } catch (Exception e){
+
+        }
         return ((List)gMap.get(key));
     }
 
     public List<DateTime> getDays(){
-        //Log.d(TAG, "Table Date Size: " + listOfDays.size());
+        // if(enableLog) Log.d(TAG, "Table Date Size: " + listOfDays.size());
         return listOfDays;
     }
     

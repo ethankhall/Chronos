@@ -46,6 +46,8 @@ public class DateViewerActivity extends SherlockActivity{
     private static String TAG = Defines.TAG + " - DateViewerActivity";
     private long date;
     private long jobId;
+    
+    private static final boolean enableLog = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,8 +104,8 @@ public class DateViewerActivity extends SherlockActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "Selected item: " + item);
-        Log.d(TAG, "Selected item id: " + item.getItemId());
+        if(enableLog) Log.d(TAG, "Selected item: " + item);
+        if(enableLog) Log.d(TAG, "Selected item id: " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.menu_insert:
                 Intent newIntent =
