@@ -43,7 +43,7 @@ import org.joda.time.DateTime;
 
 public class DateViewerActivity extends SherlockActivity{
     
-    private static String TAG = Defines.TAG + " - ClockActivity";
+    private static String TAG = Defines.TAG + " - DateViewerActivity";
     private long date;
     private long jobId;
 
@@ -111,6 +111,7 @@ public class DateViewerActivity extends SherlockActivity{
                                 NewPunchActivity.class);
 
                 newIntent.putExtra("job", jobId);
+                newIntent.putExtra("date", date);
                 startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
                 return true;
             case android.R.id.home:
@@ -125,13 +126,9 @@ public class DateViewerActivity extends SherlockActivity{
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ClockActivity.FROM_CLOCK_ACTIVITY) {
-            if (resultCode == RESULT_OK) {
-                setContentView(new DatePairView(this, new DateTime(date)) );
-            }
+            setContentView(new DatePairView(this, new DateTime(date)) );
         }   else if(requestCode == NewPunchActivity.NEW_PUNCH){
-            if (resultCode == RESULT_OK) {
-                setContentView(new DatePairView(this, new DateTime(date)) );
-            }
+          setContentView(new DatePairView(this, new DateTime(date)) );
         }
     }
 }

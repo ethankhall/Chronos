@@ -214,6 +214,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                                 NewPunchActivity.class);
 
                 newIntent.putExtra("job", jobId.getID());
+                newIntent.putExtra("date", DateTime.now().getMillis());
                 startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
                 return true;
             case R.id.menu_navigate_today:

@@ -308,18 +308,21 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Job,String> jobDAO = getJobDao();
             
             DateTime startOfPP = jobId.getStartOfPayPeriod();
-            int days = (int)(date.getMillis() - startOfPP.getMillis())/1000/60/60/24;
-            DateTime startOfDay = startOfPP.plusDays(days);
+            DateTime startOfDay = new DateTime(
+                    date.getYear(),
+                    date.getMonthOfYear(),
+                    date.getDayOfMonth(),
+                    startOfPP.getHourOfDay(),
+                    startOfPP.getMinuteOfHour());
+
             DateTime endOfDay = startOfDay.plusDays(1);
 
-            Log.d(TAG, "Days in: " + days);
             Log.d(TAG, "Start of Day: " + startOfDay.getMillis());
             Log.d(TAG, "End of Day: " + endOfDay.getMillis());
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
-                    .gt(Punch.TIME_OF_PUNCH, startOfDay.getMillis()).and()
-                    .le(Punch.TIME_OF_PUNCH, endOfDay.getMillis());
+                    .between(Punch.TIME_OF_PUNCH, startOfDay.getMillis(), endOfDay.getMillis());
 
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
@@ -438,7 +441,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Random rand = new Random();
 
             for(int i = 0; i < 3; i++){
-                for(int j = 0; j < 15; j++){
+                for(int j = 0; j < 5; j++){
 
                     DateTime tempTime = iTime.minusHours(j);
                     tempTime = tempTime.minusMinutes(rand.nextInt() % 60);

@@ -53,6 +53,7 @@ public class NewPunchActivity extends SherlockActivity{
 
     List<Task> tasks;
     long jobID;
+    DateTime date;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,8 +66,10 @@ public class NewPunchActivity extends SherlockActivity{
 
         if(savedInstanceState != null){
             jobID = savedInstanceState.getLong("job");
+            date = new DateTime(savedInstanceState.getLong("date"));
         } else {
             jobID = getIntent().getExtras().getLong("job");
+            date = new DateTime(getIntent().getExtras().getLong("date"));
         }
 
         Chronos chron = new Chronos(this);
@@ -141,12 +144,11 @@ public class NewPunchActivity extends SherlockActivity{
         min= inTime.getCurrentMinute();
         
         Task inTask =  tasks.get(taskSpinnerIn.getSelectedItemPosition());
-        DateTime now = new DateTime();
         
         DateTime date1 = new DateTime(
-                now.getYear(),
-                now.getMonthOfYear(),
-                now.getDayOfMonth(),
+                date.getYear(),
+                date.getMonthOfYear(),
+                date.getDayOfMonth(),
                 hour,
                 min);
 
@@ -158,6 +160,7 @@ public class NewPunchActivity extends SherlockActivity{
                 thisJob = job;
         }
         Punch newPunch = new Punch(thisJob, inTask, date1);
+        Log.d(TAG, "Date Time: " + newPunch.getTime().getMillis());
 
         chrono.insertPunch(newPunch);
         chrono.close();

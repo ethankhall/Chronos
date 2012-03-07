@@ -112,6 +112,8 @@ public class PayPeriodSummaryView extends LinearLayout {
 
             newIntent.putExtra("dateTime", adapter.getDate(position).getMillis());
             parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
+            
+            Log.d(TAG, "Date Viewer Activity: " + adapter.getDate(position).getMillis());
         }
     };
 
