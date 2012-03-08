@@ -36,6 +36,10 @@ public class Task implements Comparable<Task>{
     private int taskOrder;
     @DatabaseField(canBeNull = false, foreign = true)
     private Job job;
+    @DatabaseField(canBeNull = false)
+    private float payOverride;
+    @DatabaseField(canBeNull = false)
+    private boolean enablePayOverride;
     @DatabaseField
     private String taskName;
 
@@ -43,6 +47,24 @@ public class Task implements Comparable<Task>{
         job = iJob;
         taskName = iTaskName;
         taskOrder = iTaskOrder;
+        enablePayOverride = false;
+        payOverride = 0.0f;
+    }
+    
+    public void setPayOverride(float pay){
+        payOverride = pay;
+    }
+
+    public float getPayOverride(){
+        return payOverride;
+    }
+
+    public void setEnablePayOverride(boolean enabled){
+        enablePayOverride = enabled;
+    }
+
+    public boolean getEnablePayOverride(){
+        return enablePayOverride;
     }
 
     public void setName(String inName){

@@ -23,6 +23,7 @@
 package com.kopysoft.chronos.types.holders;
 
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.Interval;
@@ -43,6 +44,10 @@ public class PunchPair implements Comparable<PunchPair>{
             throw new IllegalArgumentException("Argument Tasks do not match");
 
         punchTask = gPunch1.getTask();
+    }
+    
+    public Job getJob(){
+        return punchTask.getJob();
     }
 
     /**

@@ -87,7 +87,7 @@ public class PayPeriodSummaryView extends LinearLayout {
         if(enableLog) Log.d(TAG, "dur: " + dur.toString());
         if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
-        double money = seconds * (thisJob.getPayRate() / 60 / 60);
+        double money = adapter.getPayableTime();
         output = String.format("$ %.2f", money);
 
         moneyView.setText(output);

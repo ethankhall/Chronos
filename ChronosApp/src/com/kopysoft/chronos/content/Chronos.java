@@ -25,7 +25,6 @@ package com.kopysoft.chronos.content;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -85,6 +84,46 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             //Job
             TableUtils.createTable(connectionSource, Note.class); //Create Table
+
+            //create basic entries
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+
+            //Create 1 Job
+            DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(2).toDateMidnight().toDateTime();
+            Job currentJob = new Job("", 10,
+                    jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
+            currentJob.setDoubletimeThreshold(60);
+            currentJob.setOvertimeThreshold(40);
+            currentJob.setOvertimeEnabled(true);
+            jobDAO.create(currentJob);
+
+            Task newTask;   //Basic element
+            newTask = new Task(currentJob, 0 , "Regular");
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 1 , "Lunch Break");
+            newTask.setEnablePayOverride(true);
+            newTask.setPayOverride(0.0f);
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 2 , "Other Break");
+            newTask.setEnablePayOverride(true);
+            newTask.setPayOverride(0.0f);
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 3 , "Travel");
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 4 , "Admin");
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 5 , "Sick Leave");
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 6 , "Personal Time");
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 7 , "Other");
+            taskDAO.create(newTask);
+            newTask = new Task(currentJob, 8 , "Holiday Pay");
+            taskDAO.create(newTask);
+            
+            Log.d(TAG, "Created Elements");
+
 
             //Create elements for testing
             dropAndTest();
@@ -405,14 +444,12 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         List<Job> retValue = new LinkedList<Job>();
         try{
-            ConnectionSource connectionSource = new AndroidConnectionSource(this);
 
             // instantiate the DAO to handle Account with String id
             Dao<Job,String> jobDAO = getJobDao();
 
             retValue = jobDAO.queryForAll();
 
-            connectionSource.close();
         } catch(SQLException e){
             if(enableLog) Log.e(TAG, e.getMessage());
         } catch (Exception e) {
@@ -424,49 +461,41 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     public void dropAndTest(){
         try{
 
-            final int numberOfTasks = 3; //Number of tasks
-            final int jobNumber = 3; //Number of tasks
-
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = getPunchDao();
             Dao<Task,String> taskDAO = getTaskDao();
             Dao<Job,String> jobDAO = getJobDao();
             Dao<Note,String> noteDAO = getNoteDao();
 
-            //Create 1 Job
-            DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2).toDateMidnight().toDateTime();
-            Job currentJob = new Job("My First Job", 10,
-                    jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
-            currentJob.setDoubletimeThreshold(60);
-            currentJob.setOvertimeThreshold(40);
-            currentJob.setOvertimeEnabled(true);
-            jobDAO.create(currentJob);
-
-            LinkedList<Task> tasks = new LinkedList<Task>();
-
-            //create tasks
-            for( int i = 0; i < numberOfTasks; i++){
-                Task newTask = new Task(currentJob, i , "Task " + (i+1) );
-                tasks.add(newTask);
-                taskDAO.create(newTask);
-            }
+            List<Task> tasks = taskDAO.queryForAll();
+            Job currentJob =  jobDAO.queryForAll().get(0);
 
             DateTime iTime = new DateTime();
             Random rand = new Random();
+            DateTime tempTime = null;
 
             for(int i = 0; i < 3; i++){
                 for(int j = 0; j < 5; j++){
 
-                    DateTime tempTime = iTime.minusHours(j);
+                    tempTime = iTime.minusHours(j);
                     tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
-                    Punch temp = new Punch(currentJob, tasks.get(j % numberOfTasks), tempTime);
+                    Punch temp = new Punch(currentJob,
+                            tasks.get(0),
+                            tempTime);
+
                     Note newNote = new Note(tempTime, currentJob,
                             "Note number " + String.valueOf(j + 1) );
-                    newNote.setTask(tasks.get(j % numberOfTasks));
+                    newNote.setTask(tasks.get(j % tasks.size()));
 
                     noteDAO.create(newNote);
                     punchDao.create(temp);
                 }
+
+                tempTime = tempTime.minusMinutes(rand.nextInt() % 60);
+                punchDao.create(new Punch(currentJob,
+                        tasks.get((int)(Math.random() * 100) % tasks.size()),
+                        tempTime) );
+
                 iTime = iTime.plusDays(1);
             }
 

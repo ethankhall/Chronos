@@ -143,11 +143,28 @@ public class TodayAdapterPair extends BaseAdapter {
         Duration dur = new Duration(0);
         for(PunchPair pp : listOfPunchPairs){
             if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
-            dur = dur.plus(pp.getInterval().toDuration());
+            if(!pp.getInPunch().getTask().getEnablePayOverride())
+                dur = dur.plus(pp.getInterval().toDuration());
         }
 
         return dur;
     }
+
+    public float getPayableTime(){
+        float totalPay = 0.0f;
+        for(PunchPair pp : listOfPunchPairs){
+            //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+            long mili = pp.getInterval().toDurationMillis();
+            if(pp.getTask().getEnablePayOverride()) {
+                totalPay += pp.getTask().getPayOverride()/1000/60/60 * mili;
+            } else {
+                totalPay += pp.getJob().getPayRate()/1000/60/60 * mili;
+            }
+        }
+
+        return totalPay;
+    }
+
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
