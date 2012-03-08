@@ -27,12 +27,19 @@
 
         <activity android:name=".activities.Viewers.DateViewerActivity"
                   android:label="Date Viewer"
-                  android:uiOptions="splitActionBarWhenNarrow"/>
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
 
         <activity android:name=".activities.Editors.NewPunchActivity"
                   android:label="New Punch"
                   android:uiOptions="splitActionBarWhenNarrow"
                   android:configChanges="orientation"/>
+
+        <activity android:name=".activities.JobEditor"
+                  android:label="Job Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"
+                  android:theme="@style/Theme.Sherlock"/>
 
     </application>
 

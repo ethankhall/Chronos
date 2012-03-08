@@ -46,7 +46,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
     private Context gContext;
     private PunchTable gPunchesByDay;
-
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public PayPeriodAdapterList(Context context, Job inJob){
         gContext = context;
@@ -55,7 +55,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
         gPunchesByDay = chrono.getAllPunchesForThisPayPeriodByJob(inJob);
         chrono.close();
         //gPayPeriod = new PayPeriodHolder(inJob);
-        Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
+        if(enableLog) Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
     }
 
     public PayPeriodAdapterList(Context context, PunchTable punchTable){
@@ -63,7 +63,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
         gPunchesByDay = punchTable;
         //gPayPeriod = new PayPeriodHolder(inJob);
-        Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
+        if(enableLog) Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
     }
 
     public void update(PunchTable table){
@@ -103,7 +103,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
         for(DateTime date : gPunchesByDay.getDays()){
             for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
-                //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+                if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
                 if(!pp.getInPunch().getTask().getEnablePayOverride())
                     dur = dur.plus(pp.getInterval().toDuration());
             }
@@ -116,7 +116,6 @@ public class PayPeriodAdapterList extends BaseAdapter {
         float totalPay = 0.0f;
         for(DateTime date : gPunchesByDay.getDays()){
             for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
-                //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
                 long mili = pp.getInterval().toDurationMillis();
                 if(pp.getTask().getEnablePayOverride()) {
                     totalPay += pp.getTask().getPayOverride()/1000/60/60 * mili;

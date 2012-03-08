@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright (c) 2011 Ethan Hall
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a
+  ~ copy of this software and associated documentation files (the "Software"),
+  ~  to deal in the Software without restriction, including without limitation
+  ~ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  ~ and/or sell copies of the Software, and to permit persons to whom the
+  ~ Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included
+  ~ in all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+  ~ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  ~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  ~ DEALINGS IN THE SOFTWARE.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Pay Rate">
+
+        <EditTextPreference
+                android:title="Normal Pay "
+                android:summary="The amount you make normally. This can be overridden by tasks."
+                android:defaultValue="7.25"
+                android:inputType="numberDecimal"
+                android:key="normal_pay"  />
+
+        <CheckBoxPreference android:title="Enable Overtime"
+                            android:key="enable_overtime" />
+
+        <EditTextPreference
+                android:title="Hours per week"
+                android:summary="Hours when over time starts."
+                android:defaultValue="40"
+                android:inputType="number"
+                android:key="over_time_threshold"
+                android:dependency="enable_overtime" />
+
+        <EditTextPreference
+                android:title="Double time threshold "
+                android:summary="Hours when it double time starts"
+                android:defaultValue="60"
+                android:inputType="number"
+                android:key="double_time_threshold"
+                android:dependency="enable_overtime" />
+
+        <ListPreference android:title="Overtime Pay Options"
+                        android:key="8_or_40_hours"
+                        android:dependency="enable_overtime" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+            android:title="Task">
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -69,6 +69,12 @@
                   android:title="@string/menu_preferences"
                   android:text="@string/menu_preferences"
                   android:showAsAction="ifRoom|withText"/>
+
+            <item android:id="@+id/menu_configure_job"
+                  android:icon="@drawable/ic_menu_login"
+                  android:title="@string/menu_configure"
+                  android:text="@string/menu_configure"
+                  android:showAsAction="ifRoom|withText"/>
         </menu>
     </item>
 

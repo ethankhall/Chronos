@@ -75,6 +75,7 @@ public class DatePairView extends LinearLayout {
 
         Chronos chrono = new Chronos(parent);
         Job thisJob = chrono.getJobs().get(0);
+        Log.d(TAG, "Entry 2 Pay: " + thisJob.getPayRate());
         chrono.close();
 
         adapter = new TodayAdapterPair( parent, punches );

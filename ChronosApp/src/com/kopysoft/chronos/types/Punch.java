@@ -68,7 +68,7 @@ public class Punch implements Comparable<Punch> {
      *
      * @param jobNum used to set the job number
      */
-    public void setJobNumber(Job jobNum){
+    public void setJob(Job jobNum){
         job = jobNum;
     }
 
@@ -77,7 +77,7 @@ public class Punch implements Comparable<Punch> {
      *
      * @return int gets this job number
      */
-    public Job getJobNumber(){
+    public Job getJob(){
         return job;
     }
 

@@ -238,13 +238,6 @@ public class PairEditorActivity extends SherlockActivity{
     }
 
     @Override
-    protected void onSaveInstanceState (Bundle outState){
-        outState.putInt("punch1", p1.getID());
-        outState.putInt("punch2", p2.getID());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
         if(enableLog) Log.d(TAG, "Selected item: " + item);
@@ -276,7 +269,7 @@ public class PairEditorActivity extends SherlockActivity{
                 finish();
                 return true;
             case R.id.RemoveMenu:
-                return false;
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 

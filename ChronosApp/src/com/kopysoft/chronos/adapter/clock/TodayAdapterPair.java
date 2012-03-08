@@ -55,10 +55,10 @@ public class TodayAdapterPair extends BaseAdapter {
     public TodayAdapterPair(Context context, List<Punch> listOfPunches){
         gContext = context;
 
-
-        for(Punch p : listOfPunches){
-            Log.d(TAG, "Punch in: " + p.getTime());
-        }
+        if(enableLog)
+            for(Punch p : listOfPunches){
+                Log.d(TAG, "Punch in: " + p.getTime());
+            }
 
         //Create a map of tasks
         if(listOfPunches != null)
@@ -152,13 +152,15 @@ public class TodayAdapterPair extends BaseAdapter {
 
     public float getPayableTime(){
         float totalPay = 0.0f;
+        if(enableLog) Log.d(TAG, "Pay Rate: " + listOfPunchPairs.get(0).getInPunch().getJob().getPayRate());
         for(PunchPair pp : listOfPunchPairs){
             //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
             long mili = pp.getInterval().toDurationMillis();
             if(pp.getTask().getEnablePayOverride()) {
+                if(enableLog) Log.d(TAG, "Pay Rate Task: " + pp.getTask().getPayOverride() );
                 totalPay += pp.getTask().getPayOverride()/1000/60/60 * mili;
             } else {
-                totalPay += pp.getJob().getPayRate()/1000/60/60 * mili;
+                totalPay += pp.getInPunch().getJob().getPayRate()/1000/60/60 * mili;
             }
         }
 

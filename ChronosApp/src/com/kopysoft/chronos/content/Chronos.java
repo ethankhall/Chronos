@@ -90,13 +90,15 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Job,String> jobDAO = getJobDao();
 
             //Create 1 Job
-            DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(2).toDateMidnight().toDateTime();
+            DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
             Job currentJob = new Job("", 10,
                     jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);
             currentJob.setOvertimeThreshold(40);
             currentJob.setOvertimeEnabled(true);
             jobDAO.create(currentJob);
+            
+            Log.d(TAG, "Pay Rate: " + currentJob.getPayRate());
 
             Task newTask;   //Basic element
             newTask = new Task(currentJob, 0 , "Regular");
@@ -246,7 +248,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             retValue = punchDao.queryForFirst(preparedQuery);
             if(retValue != null){
                 taskDAO.refresh(retValue.getTask());
-                jobDAO.refresh(retValue.getJobNumber());
+                jobDAO.refresh(retValue.getTask().getJob());
+                jobDAO.refresh(retValue.getJob());
             }
 
         } catch(SQLException e){
@@ -278,11 +281,13 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = getPunchDao();
             Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
 
             //accountDao.refresh(order.getAccount());
             retValue = punchDao.queryForAll();
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
+                jobDAO.refresh(work.getTask().getJob());
             }
 
         } catch(SQLException e){
@@ -335,7 +340,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             retValue = punchDao.query(preparedQuery);
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
-                jobDAO.refresh(work.getJobNumber());
+                jobDAO.refresh(work.getTask().getJob());
+                jobDAO.refresh(work.getJob());
             }
 
         } catch(SQLException e){
@@ -380,7 +386,10 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             if(enableLog) Log.d(TAG, "Punches for this day: " + punches.size());
             for(Punch work : punches){
                 taskDAO.refresh(work.getTask());
-                jobDAO.refresh(work.getJobNumber());
+                jobDAO.refresh(work.getTask().getJob());
+                jobDAO.refresh(work.getJob());
+                Log.d(TAG, "in loop Pay Rate: " + work.getJob().getPayRate());
+                
             }
 
 
@@ -430,7 +439,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             if(enableLog) Log.d(TAG, "Punches for this pay period: " + retValue.size());
             for(Punch work : retValue){
                 taskDAO.refresh(work.getTask());
-                jobDAO.refresh(work.getJobNumber());
+                jobDAO.refresh(work.getTask().getJob());
+                jobDAO.refresh(work.getJob());
                 punches.insert(work);
             }
 

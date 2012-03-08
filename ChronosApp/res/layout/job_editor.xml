@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright (c) 2011 Ethan Hall
   ~
@@ -20,22 +21,27 @@
   ~ DEALINGS IN THE SOFTWARE.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<resources>
-    <string name="menu_insert">Insert</string>
-    <string name="menu_note">Note</string>
-    <string name="menu_send">Send</string>
-    <string name="menu_preferences">Preferences</string>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
 
-    <string name="menu_cancel">Cancel</string>
-    <string name="menu_save">Save</string>
-    <string name="menu_delete">Delete</string>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Pay Rate: " />
+        <EditText
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/pay_rate"
+            android:text="10.00"
+            android:inputType="numberDecimal" />
 
-    <string name="menu_configure">Configure Pay</string>
+    </LinearLayout>
 
 
-    <string name="clock_title">Clock</string>
-    <string-array name="navigation">
-        <item>Clock</item>
-        <item>Other</item>
-    </string-array>
-</resources>
+
+</LinearLayout>
