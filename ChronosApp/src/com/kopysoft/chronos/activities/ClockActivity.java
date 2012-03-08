@@ -31,10 +31,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.content.Chronos;
@@ -166,7 +169,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab) {
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction transaction) {
 
         invalidateOptionsMenu();    //Redo the menu
         if(tab.getPosition() == 0){
@@ -179,12 +182,12 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab) {
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction transaction) {
         if(enableLog) Log.d(TAG, "onTabUnselected: " + tab);
     }
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab) {
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction transaction) {
         if(enableLog) Log.d(TAG, "onTabReselected: " + tab);
     }
 
