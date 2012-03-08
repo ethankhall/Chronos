@@ -24,11 +24,12 @@ package com.kopysoft.chronos.activities;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -45,11 +46,6 @@ import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
-
 public class ClockActivity extends SherlockActivity implements ActionBar.TabListener{
     
     private static String TAG = Defines.TAG + " - ClockActivity";
@@ -58,7 +54,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     private Job jobId;
     private PayPeriodHolder payHolder;
 
-    private static final boolean enableLog = Defines.DEBUG_PRINT;
+    private static final boolean enableLog = true;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +92,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             getSupportActionBar().addTab(tab);
         }
 
+        /*
         try {
             File sd = Environment.getExternalStorageDirectory();
             File data = Environment.getDataDirectory();
@@ -114,7 +111,20 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             }
         }catch (Exception e) {
             Log.e(TAG, "ERROR: Can not move file");
-        }
+        }*/
+
+
+        Chronos chron = new Chronos(this);
+        Job thisJob = chron.getJobs().get(0);
+        chron.close();
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString("normal_pay", Float.toString(thisJob.getPayRate()) );
+        edit.putString("over_time_threshold", Float.toString(thisJob.getOvertime()) );
+        edit.putString("double_time_threshold", Float.toString(thisJob.getDoubleTime()) );
+        edit.putBoolean("enable_overtime", thisJob.isOverTimeEnabled());
+        edit.commit();
     }
 
     @Override
@@ -193,6 +203,17 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             Chronos chronos = new Chronos(this);
             localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
             chronos.close();
+        } else if(requestCode == JobEditor.UPDATE_JOB){
+            Chronos chron = new Chronos(this);
+            Job thisJob = chron.getJobs().get(0);
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            thisJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
+            thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
+            thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
+            thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+            chron.updateJob(thisJob);
+            localPunchTable = chron.getAllPunchesForThisPayPeriodByJob(thisJob);
+            chron.close();
         }
 
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){

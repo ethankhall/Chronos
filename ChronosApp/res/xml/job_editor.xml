@@ -26,10 +26,15 @@
 
         <EditTextPreference
                 android:title="Normal Pay "
-                android:summary="The amount you make normally. This can be overridden by tasks."
+                android:summary="The amount you make normally. This can be overridden by Tasks."
                 android:defaultValue="7.25"
                 android:inputType="numberDecimal"
                 android:key="normal_pay"  />
+
+        <ListPreference android:title="Length of Month"
+                        android:key="len_of_month" android:entries="@array/periodTimes"
+                        android:entryValues="@array/NumOneToSix" android:summary="Length of a Pay Period"
+                        android:defaultValue="2" />
 
         <CheckBoxPreference android:title="Enable Overtime"
                             android:key="enable_overtime" />
@@ -50,13 +55,9 @@
                 android:key="double_time_threshold"
                 android:dependency="enable_overtime" />
 
-        <ListPreference android:title="Overtime Pay Options"
+        <CheckBoxPreference android:title="Select for 40 hours then overtime"
                         android:key="8_or_40_hours"
                         android:dependency="enable_overtime" />
-
-    </PreferenceCategory>
-    <PreferenceCategory
-            android:title="Task">
 
     </PreferenceCategory>
 

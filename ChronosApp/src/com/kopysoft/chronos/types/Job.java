@@ -76,6 +76,26 @@ public class Job {
         overTime = 40;
 
     }
+    
+    public void setOvertime(float in){
+        overTime = in;
+    }
+
+    public float getOvertime(){
+        return overTime;
+    }
+
+    public float getDoubleTime(){
+        return doubleTime;
+    }
+
+    public boolean isOverTimeEnabled(){
+        return overTimeEnabled;
+    }
+
+    public void setPayRate(float in){
+        payRate = in;
+    }
 
     /**
      * Gets the pay rate for this job.

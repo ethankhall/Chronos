@@ -25,4 +25,22 @@
         <item>Today</item>
         <item>Pay Period</item>
     </string-array>
+
+    <string-array name="NumOneToSix">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="periodTimes">
+        <item>One Week</item>
+        <item>Two Weeks</item>
+        <item>Three Weeks</item>
+        <item>Four Weeks</item>
+        <item>Full Month</item>
+        <item>First and Fifteenth</item>
+    </string-array>
 </resources>

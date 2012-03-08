@@ -274,6 +274,21 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    public void updateJob(Job job){
+
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Job,String> jobDAO = getJobDao();
+            jobDAO.update(job);
+            Log.d(TAG, "Pay: " + job.getPayRate());
+
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+    }
+
     public List<Punch> getAllPunches(){
 
         List<Punch> retValue = null;
