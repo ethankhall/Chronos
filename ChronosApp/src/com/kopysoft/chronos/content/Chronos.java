@@ -23,7 +23,9 @@
 package com.kopysoft.chronos.content;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -40,6 +42,10 @@ import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateTime;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -53,9 +59,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //0.9 = 7
     //1.0.1 - 1.1.0 = 10
     //1.2.0	= 11
-    //2.0.0 = 12
+    //2.0.0RC1 = 15
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 15;
     public static final String DATABASE_NAME = "Chronos";
 
     Dao<Punch, String>  gPunchDoa = null;
@@ -141,20 +147,152 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Log.w(TAG, "Upgrading database, this will drop tables and recreate.");
             Log.w(TAG, "oldVerion: " + oldVersion + "\tnewVersion: " + newVersion);
 
-            //Punch
-            TableUtils.dropTable(connectionSource, Punch.class, true); //Drop all
+            //Back up database
+            try {
+                File sd = Environment.getExternalStorageDirectory();
+                File data = Environment.getDataDirectory();
+                if (sd.canWrite()) {
+                    String currentDBPath = "/data/com.kopysoft.chronos/databases/" + DATABASE_NAME;
+                    String backupDBPath = DATABASE_NAME + ".db";
+                    File currentDB = new File(data, currentDBPath);
+                    File backupDB = new File(sd, backupDBPath);
+                    if (currentDB.exists()) {
+                        FileChannel src = new FileInputStream(currentDB).getChannel();
+                        FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        src.close();
+                        dst.close();
+                    }
+                }
+            }catch (Exception e) {
+                Log.e(TAG, "ERROR: Can not move file");
+            }
 
-            //Task
-            TableUtils.dropTable(connectionSource, Task.class, true); //Drop all
+            /*
+            db.execSQL("CREATE TABLE " + TABLE_NAME_CLOCK +
+                    " ( _id INTEGER PRIMARY KEY NOT NULL, time LONG NOT NULL, actionReason INTEGER NOT NULL )");
+            db.execSQL("CREATE TABLE " + TABLE_NAME_NOTE +
+                    " ( _id LONG PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
+            */
 
-            //Job
-            TableUtils.dropTable(connectionSource, Job.class, true); //Drop all
+            DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
+            Job currentJob = new Job("", 10,
+                    jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
+            currentJob.setDoubletimeThreshold(60);
+            currentJob.setOvertimeThreshold(40);
+            currentJob.setOvertimeEnabled(true);
 
-            //Job
-            TableUtils.dropTable(connectionSource, Note.class, true); //Drop all
+            List<Punch> punches = new LinkedList<Punch>();
+            List<Task> tasks = new LinkedList<Task>();
+            List<Note> notes = new LinkedList<Note>();
+
+            Task newTask;   //Basic element
+            newTask = new Task(currentJob, 0 , "Regular");
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 1 , "Lunch Break");
+            newTask.setEnablePayOverride(true);
+            newTask.setPayOverride(0.0f);
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 2 , "Other Break");
+            newTask.setEnablePayOverride(true);
+            newTask.setPayOverride(0.0f);
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 3 , "Travel");
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 4 , "Admin");
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 5 , "Sick Leave");
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 6 , "Personal Time");
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 7 , "Other");
+            tasks.add(newTask);
+            newTask = new Task(currentJob, 8 , "Holiday Pay");
+            tasks.add(newTask);
+
+            if(oldVersion <= 15){
+                Cursor cursor = db.query("clockactions", null,
+                        null, null, null, null, "_id desc");
+                
+                final int colTime = cursor.getColumnIndex("time");
+                final int colAR = cursor.getColumnIndex("actionReason");
+
+                if (cursor.moveToFirst()) {
+                    do {
+                        long time = cursor.getLong(colTime);
+                        Task type = tasks.get(0);
+                        if(colAR != -1){
+                            type = tasks.get(cursor.getInt(colAR));
+                        }                             
+                        punches.add(new Punch(currentJob, type, new DateTime(time)));
+
+
+                    } while (cursor.moveToNext());
+                }
+
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+
+                cursor = db.query("notes", null,
+                        null, null, null, null, "_id desc");
+
+                final int colInsertTime = cursor.getColumnIndex("time");
+                final int colText = cursor.getColumnIndex("note_string");
+
+                if (cursor.moveToFirst()) {
+                    do {
+                        long time = cursor.getLong(colInsertTime);
+                        String note = cursor.getString(colText);
+                        notes.add(new Note(new DateTime(time), currentJob,  note));
+
+
+                    } while (cursor.moveToNext());
+                }
+
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+
+                db.execSQL("DROP TABLE IF EXISTS clockactions");
+                db.execSQL("DROP TABLE IF EXISTS notes");
+                db.execSQL("DROP TABLE IF EXISTS misc");
+
+                //"CREATE TABLE " + TABLE_NAME_NOTE " ( _id LONG PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
+            } else {
+                //Drop
+                //DB - 15
+                //TableUtils.dropTable(connectionSource, Punch.class, true); //Punch - Drop all
+                //TableUtils.dropTable(connectionSource, Task.class, true); //Task - Drop all
+                //TableUtils.dropTable(connectionSource, Job.class, true); //Job - Drop all
+                //TableUtils.dropTable(connectionSource, Note.class, true); //Note - Drop all
+            }
 
             //Recreate DB
-            onCreate(db, connectionSource);
+            TableUtils.createTable(connectionSource, Punch.class); //Punch - Create Table
+            TableUtils.createTable(connectionSource, Task.class); //Task - Create Table
+            TableUtils.createTable(connectionSource, Job.class); //Job - Create Table
+            TableUtils.createTable(connectionSource, Note.class); //Task - Create Table
+
+            //recreate entries
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+            Dao<Note,String> noteDAO = getNoteDao();
+            Dao<Punch,String> punchDOA = getPunchDao();
+
+            jobDAO.create(currentJob);
+
+            for(Task t: tasks){
+                taskDAO.create(t);
+            }
+
+            for(Note n: notes){
+                noteDAO.create(n);
+            }
+            
+            for(Punch p: punches){
+                punchDOA.create(p);
+            }
 
         } catch (SQLException e) {
             Log.e(TAG, "Could not upgrade the table for Thing", e);

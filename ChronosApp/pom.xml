@@ -48,6 +48,7 @@
             <groupId>com.jayway.maven.plugins.android.generation2</groupId>
             <artifactId>android-maven-plugin</artifactId>
             <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Time Management -->
@@ -65,8 +66,6 @@
         </dependency>
 
         <!-- Android -->
-
-
 
         <dependency>
             <groupId>com.google.android</groupId>
@@ -102,13 +101,6 @@
         <!-- TEST scope -->
 
         <dependency>
-            <groupId>com.pivotallabs</groupId>
-            <artifactId>robolectric</artifactId>
-            <version>0.9.6</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
@@ -124,6 +116,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>

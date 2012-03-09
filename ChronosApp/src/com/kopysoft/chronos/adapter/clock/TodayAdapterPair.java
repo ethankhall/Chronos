@@ -188,8 +188,8 @@ public class TodayAdapterPair extends BaseAdapter {
         else
             fmt = DateTimeFormat.forPattern("HH:mm");
 
-        //Set left text
-        left.setText(pp.getInPunch().getTime().toString(fmt));
+        //Set center text
+        center.setText(pp.getInPunch().getTime().toString(fmt));
 
         //Set right text
         String rightString = "---     ";
@@ -198,8 +198,8 @@ public class TodayAdapterPair extends BaseAdapter {
         }
         right.setText(rightString);
 
-        //Set Center text
-        center.setText(pp.getTask().getName());
+        //Set left text
+        left.setText(pp.getTask().getName());
 
         return curr;  //To change body of implemented methods use File | Settings | File Templates.
     }

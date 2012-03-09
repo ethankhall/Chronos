@@ -31,6 +31,10 @@
                 android:inputType="numberDecimal"
                 android:key="normal_pay"  />
 
+        <com.kopysoft.chronos.subActivites.DateSelect
+                android:key="date" android:title="Start of PayPeriod"
+                android:defaultValue="2011.1.17" />
+
         <ListPreference android:title="Length of Month"
                         android:key="len_of_month" android:entries="@array/periodTimes"
                         android:entryValues="@array/NumOneToSix" android:summary="Length of a Pay Period"

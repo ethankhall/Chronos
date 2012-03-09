@@ -65,15 +65,18 @@
             android:showAsAction="ifRoom|withText">
         <menu>
             <item android:id="@+id/menu_preferences"
-                  android:icon="@drawable/ic_menu_preferences"
                   android:title="@string/menu_preferences"
                   android:text="@string/menu_preferences"
                   android:showAsAction="ifRoom|withText"/>
 
             <item android:id="@+id/menu_configure_job"
-                  android:icon="@drawable/ic_menu_login"
-                  android:title="@string/menu_configure"
-                  android:text="@string/menu_configure"
+                  android:title="@string/menu_configure_job"
+                  android:text="@string/menu_configure_job"
+                  android:showAsAction="ifRoom|withText"/>
+
+            <item android:id="@+id/menu_configure_task"
+                  android:title="@string/menu_configure_tasks"
+                  android:text="@string/menu_configure_tasks"
                   android:showAsAction="ifRoom|withText"/>
         </menu>
     </item>

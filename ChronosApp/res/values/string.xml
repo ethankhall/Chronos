@@ -30,7 +30,8 @@
     <string name="menu_save">Save</string>
     <string name="menu_delete">Delete</string>
 
-    <string name="menu_configure">Configure Pay</string>
+    <string name="menu_configure_job">Configure Pay</string>
+    <string name="menu_configure_tasks">Configure Tasks </string>
 
 
     <string name="clock_title">Clock</string>

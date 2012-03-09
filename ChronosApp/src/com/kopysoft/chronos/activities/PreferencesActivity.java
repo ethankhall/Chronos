@@ -29,17 +29,16 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.enums.Defines;
 
-public class JobEditor extends SherlockPreferenceActivity  {
+public class PreferencesActivity extends SherlockPreferenceActivity  {
 
-    private static String TAG = Defines.TAG + " - JobEditor";
-    public static final int UPDATE_JOB = 3;
+    private static String TAG = Defines.TAG + " - PreferencesActivity";
     private final boolean enableLog = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if(enableLog) Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.job_editor);
+        addPreferencesFromResource(R.xml.preferences);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

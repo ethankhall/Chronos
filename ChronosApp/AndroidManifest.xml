@@ -6,7 +6,7 @@
     <application android:icon="@drawable/icon"
                  android:label="Chronos"
                  android:allowBackup="true"
-                 android:debuggable="true"
+                 android:debuggable="false"
                  android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
 
         <activity android:name=".activities.ClockActivity"
@@ -37,6 +37,12 @@
 
         <activity android:name=".activities.JobEditor"
                   android:label="Job Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"
+                  android:theme="@style/Theme.Sherlock"/>
+
+        <activity android:name=".activities.PreferencesActivity"
+                  android:label="Preferences"
                   android:uiOptions="splitActionBarWhenNarrow"
                   android:configChanges="orientation"
                   android:theme="@style/Theme.Sherlock"/>

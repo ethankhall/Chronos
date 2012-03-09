@@ -84,13 +84,11 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         ActionBar.Tab tab = getSupportActionBar().newTab();
         tab.setText("Today");
         tab.setTabListener(this);
-        tab.setCustomView(new DatePairView(this, new DateTime()));
         getSupportActionBar().addTab(tab);
 
         tab = getSupportActionBar().newTab();
         tab.setText("Pay Period");
         tab.setTabListener(this);
-        tab.setCustomView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
         getSupportActionBar().addTab(tab);
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -124,8 +122,8 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         return temp;
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction transaction) {
+    //@Override
+    public void onTabSelected(ActionBar.Tab tab) {
 
         invalidateOptionsMenu();    //Redo the menu
         if(tab.getPosition() == 0){
@@ -137,13 +135,13 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         if(enableLog) Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
     }
 
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction transaction) {
+    //@Override
+    public void onTabUnselected(ActionBar.Tab tab) {
         if(enableLog) Log.d(TAG, "onTabUnselected: " + tab);
     }
 
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction transaction) {
+    //@Override
+    public void onTabReselected(ActionBar.Tab tab) {
         if(enableLog) Log.d(TAG, "onTabReselected: " + tab);
     }
 
@@ -216,9 +214,38 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
                 startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
                 return true;
+            case R.id.menu_preferences:
+                newIntent =
+                        new Intent().setClass(this,
+                                PreferencesActivity.class);
+
+                startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
+            case R.id.menu_configure_task:
             case android.R.id.home:
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        invalidateOptionsMenu();    //Redo the menu
+        if(tab.getPosition() == 0){
+            setContentView(new DatePairView(this, localPunchTable.getPunchesByDay(new DateTime())));
+        } else if(tab.getPosition() == 1){
+            setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
+        }
+        if(enableLog) Log.d(TAG, "onTabSelected: " + tab);
+        if(enableLog) Log.d(TAG, "onTabSelected Position: " + tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

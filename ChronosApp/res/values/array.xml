@@ -26,6 +26,16 @@
         <item>Pay Period</item>
     </string-array>
 
+    <string-array name="VerbosLevel">
+        <item>Every Punch</item>
+        <item>Day Summary</item>
+    </string-array>
+
+    <string-array name="NumOneToTwo">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="NumOneToSix">
         <item>1</item>
         <item>2</item>
