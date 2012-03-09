@@ -30,14 +30,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.support.v4.app.FragmentTransaction;
-
+import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.content.Chronos;
@@ -83,71 +81,29 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         }
 
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        {
-            ActionBar.Tab tab = getSupportActionBar().newTab();
-            tab.setText("Today");
-            tab.setTabListener(this);
-            getSupportActionBar().addTab(tab);
+        ActionBar.Tab tab = getSupportActionBar().newTab();
+        tab.setText("Today");
+        tab.setTabListener(this);
+        tab.setCustomView(new DatePairView(this, new DateTime()));
+        getSupportActionBar().addTab(tab);
 
-            tab = getSupportActionBar().newTab();
-            tab.setText("Pay Period");
-            tab.setTabListener(this);
-            getSupportActionBar().addTab(tab);
-        }
-
-        /*
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-            if (sd.canWrite()) {
-                String currentDBPath = "/data/com.kopysoft.chronos/databases/" + Chronos.DATABASE_NAME;
-                String backupDBPath = Chronos.DATABASE_NAME + ".db";
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                }
-            }
-        }catch (Exception e) {
-            Log.e(TAG, "ERROR: Can not move file");
-        }*/
-
-
-        Chronos chron = new Chronos(this);
-        Job thisJob = chron.getJobs().get(0);
-        chron.close();
+        tab = getSupportActionBar().newTab();
+        tab.setText("Pay Period");
+        tab.setTabListener(this);
+        tab.setCustomView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
+        getSupportActionBar().addTab(tab);
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor edit = pref.edit();
-        edit.putString("normal_pay", Float.toString(thisJob.getPayRate()) );
-        edit.putString("over_time_threshold", Float.toString(thisJob.getOvertime()) );
-        edit.putString("double_time_threshold", Float.toString(thisJob.getDoubleTime()) );
-        edit.putBoolean("enable_overtime", thisJob.isOverTimeEnabled());
+        edit.putString("normal_pay", Float.toString(curJob.getPayRate()) );
+        edit.putString("over_time_threshold", Float.toString(curJob.getOvertime()) );
+        edit.putString("double_time_threshold", Float.toString(curJob.getDoubleTime()) );
+        edit.putBoolean("enable_overtime", curJob.isOverTimeEnabled());
         edit.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        /*
-        menu.add("Add")
-                .setIcon(R.drawable.ic_menu_add)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-        //collapsed menu
-        SubMenu subMenu1 = menu.addSubMenu("Options")
-                .setIcon(R.drawable.ic_menu_moreoverflow_holo_dark);
-        subMenu1.add("Preferences")
-                .setIcon(R.drawable.ic_menu_preferences);
-        subMenu1.add("Items");
-
-        MenuItem subMenu1Item = subMenu1.getItem();
-        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        */
         getSupportMenuInflater().inflate(R.menu.action_bar, menu);
 
         int pos = getSupportActionBar().getSelectedTab().getPosition();
