@@ -24,7 +24,6 @@ package com.kopysoft.chronos.types.holders;
 
 import android.util.Log;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import org.joda.time.DateTime;
@@ -39,7 +38,7 @@ public class PunchTable {
     List<DateTime> listOfDays;
     PayPeriodHolder gPayPeriod;
     private DateTime startOfTable;
-    private static final boolean enableLog = Defines.DEBUG_PRINT;
+    private static final boolean enableLog = true;
 
     public PunchTable(DateTime start, DateTime end, Job inJob){
         int days = (int)(end.getMillis() - start.getMillis())/1000/60/60/24;
@@ -57,7 +56,7 @@ public class PunchTable {
             }
         }
 
-        createTable(inJob, days, start);
+        createTable(inJob, days + 1, start);
     }
     
     private void createTable(Job inJob, int days, DateTime start){
@@ -76,7 +75,7 @@ public class PunchTable {
         }        
     }
 
-    public PunchTable(DateTime start, PayPeriodDuration dur, Job inJob){
+    /*public PunchTable(DateTime start, PayPeriodDuration dur, Job inJob){
         startOfTable = start;
         int days;
         switch (dur){
@@ -112,7 +111,7 @@ public class PunchTable {
 
         createTable(inJob, days, start);
 
-    }
+    }*/
 
     public PayPeriodHolder getPayPeriodInfo(){
         return gPayPeriod;
@@ -134,10 +133,12 @@ public class PunchTable {
 
         key = startOfTable.plusDays((int)dur.getStandardDays());
 
-        //System.out.println("Key: " + key.getMillis());
+        Log.d(TAG, "insert Key: " + key.getMillis());
         LinkedList<Punch> list = (LinkedList) gMap.get(key);
-        list.add(value);
-        Collections.sort(list);
+        if(list != null){
+            list.add(value);
+            Collections.sort(list);
+        }
     }
     
     public List<Punch> getPunchesByDay(DateTime key){
@@ -194,5 +195,4 @@ public class PunchTable {
         
         return returnList;
     }
-
 }

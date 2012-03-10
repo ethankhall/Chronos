@@ -24,12 +24,12 @@ package com.kopysoft.chronos.activities;
 
 import android.os.Bundle;
 import android.util.Log;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.enums.Defines;
 
-public class JobEditor extends SherlockPreferenceActivity  {
+public class TaskEditor extends SherlockActivity {
 
     private static String TAG = Defines.TAG + " - JobEditor";
     public static final int UPDATE_JOB = 3;
@@ -39,7 +39,7 @@ public class JobEditor extends SherlockPreferenceActivity  {
     public void onCreate(Bundle savedInstanceState) {
         if(enableLog) Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.job_editor);
+        setContentView(R.layout.task_editor);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

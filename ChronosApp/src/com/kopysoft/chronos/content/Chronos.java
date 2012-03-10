@@ -23,9 +23,11 @@
 package com.kopysoft.chronos.content;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -63,6 +65,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     private static final int DATABASE_VERSION = 15;
     public static final String DATABASE_NAME = "Chronos";
+    private Context gContext;
 
     Dao<Punch, String>  gPunchDoa = null;
     Dao<Task, String>   gTaskDoa = null;
@@ -73,6 +76,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
     public Chronos(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        gContext = context;
     }
 
     @Override
@@ -175,12 +179,28 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     " ( _id LONG PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
             */
 
+           
             DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
             Job currentJob = new Job("", 10,
                     jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
-            currentJob.setDoubletimeThreshold(60);
-            currentJob.setOvertimeThreshold(40);
-            currentJob.setOvertimeEnabled(true);
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(gContext);
+            currentJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
+            currentJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
+            currentJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
+            currentJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+            SharedPreferences.Editor edit = pref.edit();
+            edit.remove("8_or_40_hours");   //Moved from string to boolean
+            edit.commit();
+            String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
+            jobMidnight = new DateTime(Integer.parseInt(date[0]),
+                    Integer.parseInt(date[1]),
+                    Integer.parseInt(date[2]),
+                    0,
+                    0);
+
+            currentJob.setStartOfPayPeriod(jobMidnight);
+
 
             List<Punch> punches = new LinkedList<Punch>();
             List<Task> tasks = new LinkedList<Task>();
@@ -210,7 +230,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             newTask = new Task(currentJob, 8 , "Holiday Pay");
             tasks.add(newTask);
 
-            if(oldVersion <= 15){
+            if(oldVersion < 15){
                 Cursor cursor = db.query("clockactions", null,
                         null, null, null, null, "_id desc");
                 
@@ -579,8 +599,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             punches = new PunchTable(startDate, endDate, jobId);
 
-            if(enableLog) Log.d(TAG, "Start of Pay Period: " + startDate.getMillis());
-            if(enableLog) Log.d(TAG, "End of Pay Period: " + endDate.getMillis());
+            if(enableLog) Log.d(TAG, "Chronos Start of Pay Period: " + startDate.getMillis());
+            if(enableLog) Log.d(TAG, "Chronos End of Pay Period: " + endDate.getMillis());
 
             QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
             queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID()).and()
@@ -614,9 +634,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             retValue = jobDAO.queryForAll();
 
         } catch(SQLException e){
-            if(enableLog) Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         } catch (Exception e) {
-            if(enableLog) Log.e(TAG,e.getMessage());
+            e.printStackTrace();
         }
         return retValue;
     }

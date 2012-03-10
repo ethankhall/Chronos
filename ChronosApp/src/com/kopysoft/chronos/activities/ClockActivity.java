@@ -29,6 +29,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -46,6 +47,11 @@ import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 
 public class ClockActivity extends SherlockActivity implements ActionBar.TabListener{
     
@@ -67,6 +73,26 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         payHolder = new PayPeriodHolder(curJob);
         localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
         chronos.close();
+
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+            if (sd.canWrite()) {
+                String currentDBPath = "/data/com.kopysoft.chronos/databases/Chronos";
+                String backupDBPath = "Chronos_update.db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+            }
+        }catch (Exception e) {
+            Log.e(TAG, "ERROR: Can not move file");
+        }
 
         //getSupportActionBar().setListNavigationCallbacks(list, this)
         //This is a workaround for http://b.android.com/15340 from http://stackoverflow.com/a/5852198/132047
@@ -97,6 +123,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         edit.putString("over_time_threshold", Float.toString(curJob.getOvertime()) );
         edit.putString("double_time_threshold", Float.toString(curJob.getDoubleTime()) );
         edit.putBoolean("enable_overtime", curJob.isOverTimeEnabled());
+        edit.remove("8_or_40_hours");
         edit.commit();
     }
 
@@ -168,6 +195,11 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
             thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
             thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+            String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
+            thisJob.setStartOfPayPeriod(new DateTime(Integer.parseInt(date[0]),
+                    Integer.parseInt(date[1]),
+                    Integer.parseInt(date[2]),
+                    0, 0));
             chron.updateJob(thisJob);
             localPunchTable = chron.getAllPunchesForThisPayPeriodByJob(thisJob);
             chron.close();

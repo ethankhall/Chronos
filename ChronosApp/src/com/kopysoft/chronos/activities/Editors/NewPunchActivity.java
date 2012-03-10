@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -64,6 +65,7 @@ public class NewPunchActivity extends SherlockActivity{
 
         Spinner taskSpinnerIn = (Spinner)findViewById(R.id.taskSpinnerIn);
         Spinner taskSpinnerOut = (Spinner)findViewById(R.id.taskSpinnerOut);
+        ((TextView)findViewById(R.id.punchTitleText)).setText("In/Out Time");
 
         if(savedInstanceState != null){
             jobID = savedInstanceState.getLong("job");

@@ -45,7 +45,7 @@ public class PayPeriodSummaryView extends LinearLayout {
     PayPeriodAdapterList adapter;
 
     private int position = 0;
-    private final String TAG = Defines.TAG + " - PayPeriod Summary Fragment";
+    private final String TAG = Defines.TAG + " - PayPeriod Summary View";
     private SherlockActivity parent;
     private final static boolean enableLog = true;
 
@@ -75,10 +75,10 @@ public class PayPeriodSummaryView extends LinearLayout {
         TextView rightHeader = (TextView)header.findViewById(R.id.headerRight);
 
         Duration dur = adapter.getTime();
-        int seconds = (int)dur.getStandardSeconds();
+        int seconds = dur.toStandardSeconds().getSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);
-        String output = String.format("%d:%02d.%02d", hours, minutes, seconds % 60);
+        String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
         timeView.setText(output);
         Job thisJob = chrono.getJobs().get(0);
 

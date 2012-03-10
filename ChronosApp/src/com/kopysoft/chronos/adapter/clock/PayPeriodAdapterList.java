@@ -34,7 +34,8 @@ import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.helpers.RowElement;
-import org.joda.time.*;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -46,7 +47,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
     private Context gContext;
     private PunchTable gPunchesByDay;
-    private static final boolean enableLog = Defines.DEBUG_PRINT;
+    private static final boolean enableLog = true;
 
     public PayPeriodAdapterList(Context context, Job inJob){
         gContext = context;
@@ -102,11 +103,21 @@ public class PayPeriodAdapterList extends BaseAdapter {
         Duration dur = new Duration(0);
 
         for(DateTime date : gPunchesByDay.getDays()){
-            for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
-                if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
-                if(!pp.getInPunch().getTask().getEnablePayOverride())
-                    dur = dur.plus(pp.getInterval().toDuration());
-            }
+            dur = dur.plus(getTime(gPunchesByDay.getPunchPair(date)));
+        }
+        if(enableLog) Log.d(TAG, "Duration: " + dur);
+
+        return dur;
+    }
+
+    public Duration getTime(List<PunchPair> punches ){
+        Duration dur = new Duration(0);
+        for(PunchPair pp : punches){
+            if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+            if(!pp.getInPunch().getTask().getEnablePayOverride())
+                dur = dur.plus(pp.getInterval().toDuration());
+            else
+                dur = dur.minus(pp.getInterval().toDuration());
         }
 
         return dur;
@@ -118,12 +129,16 @@ public class PayPeriodAdapterList extends BaseAdapter {
             for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
                 long mili = pp.getInterval().toDurationMillis();
                 if(pp.getTask().getEnablePayOverride()) {
-                    totalPay += pp.getTask().getPayOverride()/1000/60/60 * mili;
+                    totalPay -= pp.getTask().getPayOverride()/1000/60/60 * mili;
                 } else {
-                    totalPay += pp.getJob().getPayRate()/1000/60/60 * mili;
+                    totalPay += pp.getTask().getPayOverride()/1000/60/60 * mili;
+                    //correct way, need to update to it, totalPay += pp.getJob().getPayRate()/1000/60/60 * mili;
                 }
             }
         }
+
+        if(totalPay < 0)
+            totalPay = 0;
 
         return totalPay;
     }
@@ -140,13 +155,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
         center.setText("");
         left.setText("");
 
-        List<PunchPair> ppList = getItem(i);
-
-        Duration dur = new Duration(0);
-        for(PunchPair pp : ppList){
-            //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
-            dur = dur.plus(pp.getInterval().toDuration());
-        }
+        Duration dur = getTime(getItem(i));
 
         Log.d(TAG, "Dur Total: " + dur.getMillis());
 

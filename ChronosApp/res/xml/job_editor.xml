@@ -31,7 +31,7 @@
                 android:inputType="numberDecimal"
                 android:key="normal_pay"  />
 
-        <com.kopysoft.chronos.subActivites.DateSelect
+        <com.kopysoft.chronos.views.DateSelect
                 android:key="date" android:title="Start of PayPeriod"
                 android:defaultValue="2011.1.17" />
 

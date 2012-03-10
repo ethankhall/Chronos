@@ -23,6 +23,7 @@
 package com.kopysoft.chronos.types;
 
 import com.kopysoft.chronos.enums.PayPeriodDuration;
+import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
@@ -40,8 +41,9 @@ public class EndOfDayTest {
         DateMidnight today = new DateMidnight();
         Job thisJob = new Job("test", (float)10.0, today.toDateTime(), PayPeriodDuration.ONE_WEEK);
         Task thisTask = new Task(thisJob, 1, "task");
+        PayPeriodHolder pph = new PayPeriodHolder(thisJob);
 
-        PunchTable table = new PunchTable(today.toDateTime(), PayPeriodDuration.ONE_WEEK, thisJob);
+        PunchTable table = new PunchTable(pph.getStartOfPayPeriod(), pph.getEndOfPayPeriod(), thisJob);
         for(int i = 0; i < numberToCreate; i++){
             Punch newPunch = new Punch(thisJob, thisTask, today.toDateTime().plusHours(i + 1));
             table.insert(newPunch);

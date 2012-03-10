@@ -106,7 +106,11 @@ public class PayPeriodHolder {
         gDuration = gJob.getDuration();
         DateTime endOfPP = new DateTime(); //Today
 
-        Interval interval =  new Interval(startOfPP, endOfPP);
+        Interval interval;
+        if(startOfPP.isBefore(endOfPP))
+            interval =  new Interval(startOfPP, endOfPP);
+        else
+            interval =  new Interval(endOfPP, startOfPP);
         int days = (int)interval.toDuration().getStandardDays();
         switch (gDuration){
             case ONE_WEEK:
@@ -166,11 +170,11 @@ public class PayPeriodHolder {
 
     public void moveBackwards(){
         gStartOfPP = gStartOfPP.minusDays(getDays());
-        gEndOfPP = gStartOfPP.plusDays(getDays());
+        gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
     }
 
     public void moveForwards(){
         gStartOfPP = gStartOfPP.plusDays(getDays());
-        gEndOfPP = gStartOfPP.plusDays(getDays());
+        gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
     }
 }

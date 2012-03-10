@@ -74,7 +74,10 @@ public class Job {
         payPeriodDuration = ppd;
         doubleTime = 60;
         overTime = 40;
-
+    }
+    
+    public void setStartOfPayPeriod(DateTime date){
+        startOfPayPeriod = date;
     }
     
     public void setOvertime(float in){
