@@ -53,4 +53,11 @@
         </menu>
     </item>
 
+    <item   android:id="@+id/menuDelete"
+            android:text="Remove"
+            android:title="Remove"
+            android:icon="@drawable/ic_menu_delete"
+            android:showAsAction="always|withText"
+            android:visible="false" />
+
 </menu>

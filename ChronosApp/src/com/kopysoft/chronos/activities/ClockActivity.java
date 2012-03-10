@@ -38,7 +38,9 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
+import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
@@ -252,7 +254,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                                 PreferencesActivity.class);
 
                 startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
+                return true;
             case R.id.menu_configure_task:
+                newIntent =
+                        new Intent().setClass(this,
+                                TaskList.class);
+
+                startActivity(newIntent);
+                return true;
             case android.R.id.home:
             default:
                 return super.onOptionsItemSelected(item);
@@ -273,11 +282,11 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 }

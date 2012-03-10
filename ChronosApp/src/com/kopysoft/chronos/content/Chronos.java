@@ -29,6 +29,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -44,9 +45,7 @@ import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateTime;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -63,7 +62,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //1.2.0	= 11
     //2.0.0RC1 = 15
 
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
     public static final String DATABASE_NAME = "Chronos";
     private Context gContext;
 
@@ -278,40 +277,51 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 db.execSQL("DROP TABLE IF EXISTS notes");
                 db.execSQL("DROP TABLE IF EXISTS misc");
 
+                //Recreate DB
+                TableUtils.createTable(connectionSource, Punch.class); //Punch - Create Table
+                TableUtils.createTable(connectionSource, Task.class); //Task - Create Table
+                TableUtils.createTable(connectionSource, Job.class); //Job - Create Table
+                TableUtils.createTable(connectionSource, Note.class); //Task - Create Table
+
+                //recreate entries
+                Dao<Task,String> taskDAO = getTaskDao();
+                Dao<Job,String> jobDAO = getJobDao();
+                Dao<Note,String> noteDAO = getNoteDao();
+                Dao<Punch,String> punchDOA = getPunchDao();
+
+                jobDAO.create(currentJob);
+
+                for(Task t: tasks){
+                    taskDAO.create(t);
+                }
+
+                for(Note n: notes){
+                    noteDAO.create(n);
+                }
+
+                for(Punch p: punches){
+                    punchDOA.create(p);
+                }
+
                 //"CREATE TABLE " + TABLE_NAME_NOTE " ( _id LONG PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
-            } else {
+            } else if(oldVersion == 15) {
+
                 //Drop
                 //DB - 15
                 //TableUtils.dropTable(connectionSource, Punch.class, true); //Punch - Drop all
                 //TableUtils.dropTable(connectionSource, Task.class, true); //Task - Drop all
                 //TableUtils.dropTable(connectionSource, Job.class, true); //Job - Drop all
                 //TableUtils.dropTable(connectionSource, Note.class, true); //Note - Drop all
-            }
+                db.execSQL("DROP TABLE IF EXISTS tasks");
 
-            //Recreate DB
-            TableUtils.createTable(connectionSource, Punch.class); //Punch - Create Table
-            TableUtils.createTable(connectionSource, Task.class); //Task - Create Table
-            TableUtils.createTable(connectionSource, Job.class); //Job - Create Table
-            TableUtils.createTable(connectionSource, Note.class); //Task - Create Table
+                //create
+                TableUtils.createTable(connectionSource, Task.class); //Task - Create Table
+                Dao<Task,String> taskDAO = getTaskDao();
 
-            //recreate entries
-            Dao<Task,String> taskDAO = getTaskDao();
-            Dao<Job,String> jobDAO = getJobDao();
-            Dao<Note,String> noteDAO = getNoteDao();
-            Dao<Punch,String> punchDOA = getPunchDao();
+                for(Task t: tasks){
+                    taskDAO.create(t);
+                }
 
-            jobDAO.create(currentJob);
-
-            for(Task t: tasks){
-                taskDAO.create(t);
-            }
-
-            for(Note n: notes){
-                noteDAO.create(n);
-            }
-            
-            for(Punch p: punches){
-                punchDOA.create(p);
             }
 
         } catch (SQLException e) {
@@ -389,6 +399,32 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    public Task getTaskById(int id){
+
+        Task retValue = new Task();
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+
+            //prep string
+            QueryBuilder<Task, String> queryBuilder = taskDAO.queryBuilder();
+            queryBuilder.where().eq(Task.TASK_FIELD_NAME, id);
+            PreparedQuery<Task> preparedQuery = queryBuilder.prepare();
+
+            retValue = taskDAO.queryForFirst(preparedQuery);
+            if(retValue != null){
+                jobDAO.refresh(retValue.getJob());
+            }
+
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
     public Punch getPunchById(int id){
 
         Punch retValue = null;
@@ -424,6 +460,34 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             // instantiate the DAO to handle Account with String id
             Dao<Punch,String> punchDao = getPunchDao();
             punchDao.update(punch);
+
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+    }
+
+    public void updateNote(Note note){
+
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Note,String> noteDAO = getNoteDao();
+            noteDAO.createOrUpdate(note);
+
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+    }
+
+    public void updateTask(Task task){
+
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Task,String> taskDAO = getTaskDao();
+            taskDAO.createOrUpdate(task);
 
         } catch(SQLException e){
             if(enableLog) Log.e(TAG, e.getMessage());
@@ -686,6 +750,175 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Log.e(TAG, e.getMessage());
         } catch (Exception e) {
             Log.e(TAG,e.getMessage());
+        }
+    }
+    
+    static public void putDataOnSDCard(Context context){
+
+        if(getCardWriteStatus() == false){
+
+            CharSequence text = "Could not write to SD Card!.";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+
+        File directory =  Environment.getExternalStorageDirectory();
+        File backup = new File(directory, "Chronos_Backup.csv");
+        BufferedWriter br;
+
+        Chronos chron = new Chronos(context);
+        List<Punch> punches = chron.getAllPunches();
+        chron.close();
+
+        try{
+            br = new BufferedWriter( new FileWriter(backup));
+
+            for(Punch p : punches){
+                br.write(p.toCVS());
+            }
+            br.close();
+        } catch (IOException e){
+
+        }
+    }
+
+    static public void getDataOnSDCard(Context context){
+        if(getCardReadStatus() == false){
+
+            CharSequence text = "Could not read to SD Card!.";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+
+        //Create 1 Job
+        DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
+        Job currentJob = new Job("", 10,
+                jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
+        currentJob.setDoubletimeThreshold(60);
+        currentJob.setOvertimeThreshold(40);
+        currentJob.setOvertimeEnabled(true);
+
+        List<Punch> punches = new LinkedList<Punch>();
+        List<Task> tasks = new LinkedList<Task>();
+
+        Task newTask;   //Basic element
+        newTask = new Task(currentJob, 0 , "Regular");
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 1 , "Lunch Break");
+        newTask.setEnablePayOverride(true);
+        newTask.setPayOverride(0.0f);
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 2 , "Other Break");
+        newTask.setEnablePayOverride(true);
+        newTask.setPayOverride(0.0f);
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 3 , "Travel");
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 4 , "Admin");
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 5 , "Sick Leave");
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 6 , "Personal Time");
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 7 , "Other");
+        tasks.add(newTask);
+        newTask = new Task(currentJob, 8 , "Holiday Pay");
+        tasks.add(newTask);
+
+        try{
+            File directory =  Environment.getExternalStorageDirectory();
+            File backup = new File(directory, "Chronos_Backup.csv");
+
+            BufferedReader br = new BufferedReader( new FileReader(backup));
+            String strLine = "";
+
+            //id,date,name,task name, date in ms, job num, task num
+            while( (strLine = br.readLine()) != null){
+                String[] parcedString = strLine.split(",");   
+                int task = Integer.parseInt(parcedString[4]);
+                int time = Integer.parseInt(parcedString[6]);
+                
+                //Job iJob, Task iPunchTask, DateTime iTime
+                punches.add(new Punch(currentJob, tasks.get(task), new DateTime(time)));
+            }
+        } catch (Exception e){
+
+        }
+
+        try{
+            Chronos chronos = new Chronos(context);
+            TableUtils.dropTable(chronos.getConnectionSource(), Punch.class, true); //Punch - Drop all
+            TableUtils.dropTable(chronos.getConnectionSource(), Task.class, true); //Task - Drop all
+            TableUtils.dropTable(chronos.getConnectionSource(), Job.class, true); //Job - Drop all
+            TableUtils.dropTable(chronos.getConnectionSource(), Note.class, true); //Note - Drop all
+
+            //Recreate DB
+            TableUtils.createTable(chronos.getConnectionSource(), Punch.class); //Punch - Create Table
+            TableUtils.createTable(chronos.getConnectionSource(), Task.class); //Task - Create Table
+            TableUtils.createTable(chronos.getConnectionSource(), Job.class); //Job - Create Table
+            TableUtils.createTable(chronos.getConnectionSource(), Note.class); //Task - Create Table
+
+            //recreate entries
+            Dao<Task,String> taskDAO = chronos.getTaskDao();
+            Dao<Job,String> jobDAO = chronos.getJobDao();
+            Dao<Punch,String> punchDOA = chronos.getPunchDao();
+
+            jobDAO.create(currentJob);
+
+            for(Task t: tasks){
+                taskDAO.create(t);
+            }
+
+            for(Punch p: punches){
+                punchDOA.create(p);
+            }
+
+            chronos.close();
+
+        } catch (Exception e) {
+
+        }
+
+
+    }
+
+    public static boolean getCardWriteStatus(){
+
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            // We can read and write the media
+            return true;
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            // We can only read the media
+            return false;
+        } else {
+            // Something else is wrong. It may be one of many other states, but all we need
+            //  to know is we can neither read nor write
+            return false;
+        }
+    }
+
+    public static boolean getCardReadStatus(){
+
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            // We can read and write the media
+            return true;
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            // We can only read the media
+            return true;
+        } else {
+            // Something else is wrong. It may be one of many other states, but all we need
+            //  to know is we can neither read nor write
+            return false;
         }
     }
 }

@@ -178,5 +178,9 @@ public class Job {
         editor.putInt("DefaultJobNumber", id);
         editor.commit();
     }
+    
+    public String getName(){
+        return jobName;
+    }
 
 }

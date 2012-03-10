@@ -27,6 +27,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.Comparator;
 
@@ -129,5 +130,16 @@ public class Punch implements Comparable<Punch> {
         return ((new DateTime(time)).compareTo(another.getTime()));
     }
 
+    public String toCVS(){
+        //id,date,name,task name, date in ms, job num, task num
+        return String.format("%d,%s,%s,%s,%d,%d,%d\n",
+                getID(),
+                getTime().toString(DateTimeFormat.forPattern("E, MMM d, yyyy")),
+                getJob().getName(),
+                getTask().getName(),
+                getTime().getMillis(),
+                getJob().getID(),
+                getTask().getID() );
+    }
 
 }

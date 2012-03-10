@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.activities;
+package com.kopysoft.chronos.activities.Editors;
 
 import android.os.Bundle;
 import android.util.Log;

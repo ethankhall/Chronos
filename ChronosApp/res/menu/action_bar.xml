@@ -62,6 +62,7 @@
             android:icon="@drawable/ic_menu_moreoverflow_holo_dark"
             android:title="Options"
             android:text="Options"
+            android:id="@+id/menu_options"
             android:showAsAction="ifRoom|withText">
         <menu>
             <item android:id="@+id/menu_preferences"

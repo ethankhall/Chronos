@@ -59,7 +59,8 @@
                 android:key="double_time_threshold"
                 android:dependency="enable_overtime" />
 
-        <CheckBoxPreference android:title="Select for 40 hours then overtime"
+        <CheckBoxPreference android:title="40 Hour Week"
+                        android:summary="Select if overtime is done on a weekly basis"
                         android:key="8_or_40_hours"
                         android:dependency="enable_overtime" />
 

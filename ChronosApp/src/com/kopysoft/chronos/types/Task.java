@@ -29,8 +29,9 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Task implements Comparable<Task>{
 
     public final static String TASK_FIELD_NAME = "task_id";
+    //public final static String TASK_FIELD_NAME = "id";
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true, columnName = TASK_FIELD_NAME)
     private int id;
     @DatabaseField(canBeNull = false)
     private int taskOrder;

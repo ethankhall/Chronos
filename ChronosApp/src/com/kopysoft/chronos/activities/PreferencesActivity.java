@@ -22,17 +22,25 @@
 
 package com.kopysoft.chronos.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.util.Log;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 
 public class PreferencesActivity extends SherlockPreferenceActivity  {
 
     private static String TAG = Defines.TAG + " - PreferencesActivity";
     private final boolean enableLog = true;
+
+    private static final int BACKUP = 0;
+    private static final int RESTORE = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +49,64 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         addPreferencesFromResource(R.xml.preferences);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //---backup
+        Preference backupDB = (Preference) findPreference("backupDB");
+        backupDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                showDialog(BACKUP);
+
+                return true;
+            }
+
+        });
+        Preference restoreDB = (Preference) findPreference("restoreDB");
+        restoreDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                showDialog(RESTORE);
+                return true;
+            }
+        });
     }
+
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case BACKUP:
+                return new AlertDialog.Builder(PreferencesActivity.this)
+                        .setTitle("Are you sure?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Chronos.putDataOnSDCard(getApplicationContext());
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                /* User clicked Cancel so do some stuff */
+                            }
+                        })
+                        .create();
+            case RESTORE:
+                return new AlertDialog.Builder(PreferencesActivity.this)
+                        .setTitle("Are you sure?")
+                        .setMessage("This will replace all your punches. You will loosed everything!")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Chronos.getDataOnSDCard(getApplicationContext());
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .create();
+            default:
+                return null;
+        }
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

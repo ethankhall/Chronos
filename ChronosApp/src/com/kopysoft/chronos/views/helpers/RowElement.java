@@ -23,6 +23,7 @@
 package com.kopysoft.chronos.views.helpers;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,14 +51,17 @@ public class RowElement extends RelativeLayout {
 		leftText = new TextView(context);
 		leftText.setText("right");
 		leftText.setTextSize(18);
+        leftText.setTextColor(Color.BLACK);
 
 		rightText = new TextView(context);
 		rightText.setText("left");
 		rightText.setTextSize(18);
+        rightText.setTextColor(Color.BLACK);
 
         centerText = new TextView(context);
-        rightText.setText("");
+        centerText.setText("");
         centerText.setTextSize(18);
+        centerText.setTextColor(Color.BLACK);
 
 		//Set up the relitive layout
 		RelativeLayout.LayoutParams left =

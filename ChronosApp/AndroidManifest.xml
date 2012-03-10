@@ -35,17 +35,27 @@
                   android:uiOptions="splitActionBarWhenNarrow"
                   android:configChanges="orientation"/>
 
-        <activity android:name=".activities.JobEditor"
+        <activity android:name=".activities.Editors.JobEditor"
                   android:label="Job Editor"
                   android:uiOptions="splitActionBarWhenNarrow"
-                  android:configChanges="orientation"
-                  android:theme="@style/Theme.Sherlock"/>
+                  android:configChanges="orientation"/>
 
         <activity android:name=".activities.PreferencesActivity"
                   android:label="Preferences"
                   android:uiOptions="splitActionBarWhenNarrow"
                   android:configChanges="orientation"
                   android:theme="@style/Theme.Sherlock"/>
+
+        <activity android:name=".activities.Editors.TaskEditor"
+                  android:label="Task Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.Editors.TaskList"
+                  android:label="Task List"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
 
     </application>
 
