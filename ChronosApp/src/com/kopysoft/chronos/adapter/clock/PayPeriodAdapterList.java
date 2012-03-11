@@ -110,7 +110,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
         return dur;
     }
 
-    public Duration getTime(List<PunchPair> punches ){
+    public static Duration getTime(List<PunchPair> punches ){
         Duration dur = new Duration(0);
         for(PunchPair pp : punches){
             if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());

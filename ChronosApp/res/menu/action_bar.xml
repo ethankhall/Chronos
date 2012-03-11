@@ -79,6 +79,11 @@
                   android:title="@string/menu_configure_tasks"
                   android:text="@string/menu_configure_tasks"
                   android:showAsAction="ifRoom|withText"/>
+
+            <item android:id="@+id/menu_email"
+                  android:title="@string/menu_email"
+                  android:text="@string/menu_email"
+                  android:showAsAction="ifRoom|withText"/>
         </menu>
     </item>
 

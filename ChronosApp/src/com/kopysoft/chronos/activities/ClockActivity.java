@@ -42,6 +42,7 @@ import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.content.Chronos;
+import com.kopysoft.chronos.content.Email;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
@@ -262,10 +263,38 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
                 startActivity(newIntent);
                 return true;
+            case R.id.menu_email:
+                sendEmail();
+                return true;
             case android.R.id.home:
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    
+    private void sendEmail(){
+        //PayPeriodHolder payPeriodHolder, Job thisJob, Context context 
+        
+        PayPeriodHolder pph;
+        if(getSupportActionBar().getSelectedTab().getPosition() == 0){
+            pph = new PayPeriodHolder(jobId);
+        } else {
+            pph = payHolder;
+        }
+        Email newEmail = new Email(pph, jobId, getApplicationContext());
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        int reportLevel = Integer.valueOf(pref.getString("reportLevel", "1"));
+        String returnValue;
+        if(reportLevel == 1){
+            returnValue = newEmail.getBriefView();
+        } else {
+            returnValue = newEmail.getExpandedView();
+        }
+
+
+
+
     }
 
     @Override
