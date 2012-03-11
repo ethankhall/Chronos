@@ -777,7 +777,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             br = new BufferedWriter( new FileWriter(backup));
 
             for(Punch p : punches){
-                br.write(p.toCVS());
+                br.write(p.toCVS(context));
             }
             br.close();
         } catch (IOException e){
@@ -836,19 +836,24 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             File backup = new File(directory, "Chronos_Backup.csv");
 
             BufferedReader br = new BufferedReader( new FileReader(backup));
-            String strLine = "";
+            String strLine = br.readLine();
 
             //id,date,name,task name, date in ms, job num, task num
-            while( (strLine = br.readLine()) != null){
+            //1,Sun Mar 11 2012 15:46,null,Regular,1331498803269,1,1
+            while( strLine != null){
+                Log.d(TAG, strLine);
                 String[] parcedString = strLine.split(",");   
-                int task = Integer.parseInt(parcedString[4]);
-                int time = Integer.parseInt(parcedString[6]);
+                long time = Long.parseLong(parcedString[4]);
+                int task = Integer.parseInt(parcedString[6]);
+                Log.d(TAG, "task: " + task);
+                Log.d(TAG, "time: " + time);
                 
                 //Job iJob, Task iPunchTask, DateTime iTime
-                punches.add(new Punch(currentJob, tasks.get(task), new DateTime(time)));
+                punches.add(new Punch(currentJob, tasks.get(task - 1), new DateTime(time)));
+                strLine = br.readLine();
             }
         } catch (Exception e){
-
+            Log.e(TAG, e.getMessage());
         }
 
         try{
@@ -882,7 +887,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             chronos.close();
 
         } catch (Exception e) {
-
+            Log.e(TAG, e.getMessage());
         }
 
 

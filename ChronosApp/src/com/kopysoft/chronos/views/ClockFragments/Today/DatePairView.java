@@ -23,6 +23,8 @@
 package com.kopysoft.chronos.views.ClockFragments.Today;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,7 +51,7 @@ public class DatePairView extends LinearLayout {
     private SherlockActivity parent;
     private final String TAG = Defines.TAG + " - DatePairView";
     private TodayAdapterPair adapter;
-    public static final boolean enableLog = true;
+    public static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public DatePairView(SherlockActivity prnt, DateTime date){
         super(prnt.getApplicationContext());
@@ -66,6 +68,10 @@ public class DatePairView extends LinearLayout {
         createUI(adapter, thisJob);
     }
 
+    public boolean showPay(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent);
+        return pref.getBoolean("showPay", true);
+    }
 
     public DatePairView(SherlockActivity prnt, List<Punch> punches){
         super(prnt.getApplicationContext());
@@ -94,12 +100,18 @@ public class DatePairView extends LinearLayout {
         //retView.setOnItemLongClickListener(LongClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
+
+        if(!showPay()){
+            header.findViewById(R.id.moneyViewText).setVisibility(View.GONE);
+            header.findViewById(R.id.moneyViewTotal).setVisibility(View.GONE);
+        }
+
         TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
         Duration dur = adapter.getTime();
         int seconds = (int)dur.getStandardSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);
-        String output = String.format("%d:%02d.%02d", hours, minutes, seconds % 60);
+        String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
         tx.setText(output);
         
         if(enableLog) Log.d(TAG, "job: " + thisJob);

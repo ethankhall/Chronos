@@ -22,12 +22,15 @@
 
 package com.kopysoft.chronos.types;
 
+import android.content.Context;
+import android.text.format.DateFormat;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Comparator;
 
@@ -130,11 +133,18 @@ public class Punch implements Comparable<Punch> {
         return ((new DateTime(time)).compareTo(another.getTime()));
     }
 
-    public String toCVS(){
+    public String toCVS(Context context){
         //id,date,name,task name, date in ms, job num, task num
+
+        DateTimeFormatter fmt;
+        if (!DateFormat.is24HourFormat(context))
+            fmt = DateTimeFormat.forPattern("E MMM d yyyy h:mm a");
+        else
+            fmt = DateTimeFormat.forPattern("E MMM d yyyy HH:mm");
+        
         return String.format("%d,%s,%s,%s,%d,%d,%d\n",
                 getID(),
-                getTime().toString(DateTimeFormat.forPattern("E, MMM d, yyyy")),
+                getTime().toString(fmt),
                 getJob().getName(),
                 getTask().getName(),
                 getTime().getMillis(),

@@ -23,6 +23,8 @@
 package com.kopysoft.chronos.views.ClockFragments.PayPeriod;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -48,7 +50,11 @@ public class PayPeriodSummaryView extends LinearLayout {
     private final String TAG = Defines.TAG + " - PayPeriod Summary View";
     private SherlockActivity parent;
     private final static boolean enableLog = true;
-
+    
+    public boolean showPay(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent);
+        return pref.getBoolean("showPay", true);
+    }
 
     public PayPeriodSummaryView(SherlockActivity prnt, PunchTable table){
         super(prnt.getApplicationContext());
@@ -67,6 +73,11 @@ public class PayPeriodSummaryView extends LinearLayout {
         //retView.setOnChildClickListener(childClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
+        
+        if(!showPay()){
+            header.findViewById(R.id.moneyViewText).setVisibility(View.GONE);
+            header.findViewById(R.id.moneyViewTotal).setVisibility(View.GONE);
+        }
 
         TextView timeView = (TextView)header.findViewById(R.id.timeViewTotal);
         TextView moneyView = (TextView)header.findViewById(R.id.moneyViewTotal);        

@@ -38,7 +38,7 @@ public class PunchTable {
     List<DateTime> listOfDays;
     PayPeriodHolder gPayPeriod;
     private DateTime startOfTable;
-    private static final boolean enableLog = true;
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public PunchTable(DateTime start, DateTime end, Job inJob){
         int days = (int)(end.getMillis() - start.getMillis())/1000/60/60/24;

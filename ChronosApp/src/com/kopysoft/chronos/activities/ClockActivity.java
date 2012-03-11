@@ -63,7 +63,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     private Job jobId;
     private PayPeriodHolder payHolder;
 
-    private static final boolean enableLog = true;
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
