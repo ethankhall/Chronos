@@ -23,6 +23,7 @@
 package com.kopysoft.chronos.activities;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Shader;
@@ -73,9 +74,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         Chronos chronos = new Chronos(this);
         Job curJob = chronos.getJobs().get(0);
         jobId = curJob;
-        payHolder = new PayPeriodHolder(curJob);
         localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
         chronos.close();
+        
+        if(savedInstanceState != null){
+            payHolder = (PayPeriodHolder)savedInstanceState.getSerializable("payPeriod");
+        } else {
+            payHolder = new PayPeriodHolder(curJob);
+        }
 
         try {
             File sd = Environment.getExternalStorageDirectory();
@@ -120,6 +126,10 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         tab.setTabListener(this);
         getSupportActionBar().addTab(tab);
 
+        if(savedInstanceState != null){
+            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("position"));
+        }
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor edit = pref.edit();
         edit.putString("normal_pay", Float.toString(curJob.getPayRate()) );
@@ -128,6 +138,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         edit.putBoolean("enable_overtime", curJob.isOverTimeEnabled());
         edit.remove("8_or_40_hours");
         edit.commit();
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState)
+    {
+        outState.putInt("position", getSupportActionBar().getSelectedTab().getPosition());
+        outState.putSerializable("payPeriod", payHolder);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -273,7 +291,10 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     }
     
     private void sendEmail(){
-        //PayPeriodHolder payPeriodHolder, Job thisJob, Context context 
+        //PayPeriodHolder payPeriodHolder, Job thisJob, Context context
+
+        ProgressDialog dialog = ProgressDialog.show(ClockActivity.this, "",
+                "Generating. Please wait...");
         
         PayPeriodHolder pph;
         if(getSupportActionBar().getSelectedTab().getPosition() == 0){
@@ -285,15 +306,27 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         int reportLevel = Integer.valueOf(pref.getString("reportLevel", "1"));
+
         String returnValue;
-        if(reportLevel == 1){
+        if(reportLevel == 2){
             returnValue = newEmail.getBriefView();
         } else {
             returnValue = newEmail.getExpandedView();
         }
 
+        String emailBody = new String("Greetings!\n\tHere is my time card\n");
+        emailBody += returnValue;
 
 
+        dialog.dismiss();
+
+        //Create email
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Time Card");
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, emailBody);
+
+        emailIntent.setType("message/rfc822");
+        startActivity(emailIntent);
 
     }
 

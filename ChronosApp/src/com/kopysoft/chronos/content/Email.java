@@ -72,7 +72,7 @@ public class Email {
         String retString = "";
         List<DateTime> dates = punchTable.getDays();
 
-        DateTimeFormatter dateFormat = DateTimeFormat.forPattern("E, MMM d, yyyy\n");
+        DateTimeFormatter dateFormat = DateTimeFormat.forPattern("E, MMM d, yyyy:\n");
         DateTimeFormatter fmt;
         if (!DateFormat.is24HourFormat(gContext))
             fmt = DateTimeFormat.forPattern("h:mm a");
@@ -80,19 +80,21 @@ public class Email {
             fmt = DateTimeFormat.forPattern("HH:mm");
         
         for(DateTime date : dates){
-            retString += dateFormat.print(date);
+            if( punchTable.getPunchPair(date).size() > 0)
+                retString += dateFormat.print(date);
             
             for(PunchPair pp : punchTable.getPunchPair(date)){
-                retString += "\t" + fmt.print(pp.getInPunch().getTime()) + " - IN\n";
-                if(pp.getOutPunch().getTime() != null){
-                    retString += "\t" + fmt.print(pp.getOutPunch().getTime()) + " - OUT\n";
+                retString += "\t" + fmt.print(pp.getInPunch().getTime()) + " - \tIN - "
+                        + pp.getInPunch().getTask().getName() + "\n";
+                if(pp.getOutPunch() != null){
+                    retString += "\t" + fmt.print(pp.getOutPunch().getTime()) + " - \tOUT - "
+                            + pp.getOutPunch().getTask().getName() + "\n";
                 }
 
 
             }
 
         }
-
         return retString;
     }
 }

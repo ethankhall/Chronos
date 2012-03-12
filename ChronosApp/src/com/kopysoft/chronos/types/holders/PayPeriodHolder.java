@@ -28,10 +28,12 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
+import java.io.Serializable;
+
 /**
  * @author Ethan Hall
  */
-public class PayPeriodHolder {
+public class PayPeriodHolder implements Serializable {
 
     Job gJob;
     DateTime gStartOfPP = null;
@@ -170,11 +172,11 @@ public class PayPeriodHolder {
 
     public void moveBackwards(){
         gStartOfPP = gStartOfPP.minusDays(getDays());
-        gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
+        gEndOfPP = gStartOfPP.plusDays(getDays()  - 1);
     }
 
     public void moveForwards(){
         gStartOfPP = gStartOfPP.plusDays(getDays());
-        gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
+        gEndOfPP = gStartOfPP.plusDays(getDays());
     }
 }

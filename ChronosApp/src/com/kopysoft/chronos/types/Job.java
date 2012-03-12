@@ -31,8 +31,10 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 @DatabaseTable(tableName = "jobs")
-public class Job {
+public class Job implements Serializable{
 
     public final static String JOB_FIELD_NAME = "job_id";
 
