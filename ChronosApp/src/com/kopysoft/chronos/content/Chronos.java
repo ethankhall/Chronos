@@ -114,11 +114,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             taskDAO.create(newTask);
             newTask = new Task(currentJob, 1 , "Lunch Break");
             newTask.setEnablePayOverride(true);
-            newTask.setPayOverride(0.0f);
+            newTask.setPayOverride(-7.25f);
             taskDAO.create(newTask);
             newTask = new Task(currentJob, 2 , "Other Break");
             newTask.setEnablePayOverride(true);
-            newTask.setPayOverride(0.0f);
+            newTask.setPayOverride(-7.25f);
             taskDAO.create(newTask);
             newTask = new Task(currentJob, 3 , "Travel");
             taskDAO.create(newTask);
@@ -210,11 +210,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             tasks.add(newTask);
             newTask = new Task(currentJob, 1 , "Lunch Break");
             newTask.setEnablePayOverride(true);
-            newTask.setPayOverride(0.0f);
+            newTask.setPayOverride(-7.25f);
             tasks.add(newTask);
             newTask = new Task(currentJob, 2 , "Other Break");
             newTask.setEnablePayOverride(true);
-            newTask.setPayOverride(0.0f);
+            newTask.setPayOverride(-7.25f);
             tasks.add(newTask);
             newTask = new Task(currentJob, 3 , "Travel");
             tasks.add(newTask);
@@ -625,7 +625,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 taskDAO.refresh(work.getTask());
                 jobDAO.refresh(work.getTask().getJob());
                 jobDAO.refresh(work.getJob());
-                Log.d(TAG, "in loop Pay Rate: " + work.getJob().getPayRate());
+                //if(enableLog) Log.d(TAG, "in loop Pay Rate: " + work.getJob().getPayRate());
                 
             }
 

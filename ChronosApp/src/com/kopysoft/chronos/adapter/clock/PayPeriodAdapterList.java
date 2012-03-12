@@ -116,9 +116,14 @@ public class PayPeriodAdapterList extends BaseAdapter {
             if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
             if(!pp.getInPunch().getTask().getEnablePayOverride())
                 dur = dur.plus(pp.getInterval().toDuration());
+            else if(pp.getInPunch().getTask().getPayOverride() > 0)
+                dur = dur.plus(pp.getInterval().toDuration());
             else
                 dur = dur.minus(pp.getInterval().toDuration());
         }
+
+        if(dur.getMillis() < 0)
+            dur = new Duration(0);
 
         return dur;
     }
@@ -129,10 +134,10 @@ public class PayPeriodAdapterList extends BaseAdapter {
             for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
                 long mili = pp.getInterval().toDurationMillis();
                 if(pp.getTask().getEnablePayOverride()) {
-                    totalPay -= pp.getTask().getPayOverride()/1000/60/60 * mili;
+                    if(enableLog) Log.d(TAG, "Pay Rate Task: " + pp.getTask().getPayOverride() );
+                    totalPay += pp.getInPunch().getTask().getPayOverride()/1000/60/60 * mili;
                 } else {
-                    totalPay += pp.getTask().getPayOverride()/1000/60/60 * mili;
-                    //correct way, need to update to it, totalPay += pp.getJob().getPayRate()/1000/60/60 * mili;
+                    totalPay += pp.getInPunch().getJob().getPayRate()/1000/60/60 * mili;
                 }
             }
         }

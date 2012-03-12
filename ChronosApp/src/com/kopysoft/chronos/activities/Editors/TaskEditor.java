@@ -84,10 +84,11 @@ public class TaskEditor extends SherlockActivity {
         payRate.setEnabled(thisTask.getEnablePayOverride());
         taskSpinnerOut.setEnabled(thisTask.getEnablePayOverride());
 
-        if(thisTask.getEnablePayOverride()){
+        if(!thisTask.getEnablePayOverride()){
             payRate.setText(Float.toString(thisTask.getJob().getPayRate()));
             taskSpinnerOut.setSelection(0);
         } else {
+            if(enableLog) Log.d(TAG, "getPayOverride: " + thisTask.getPayOverride());
             if(thisTask.getPayOverride() > 0){
                  payRate.setText(Float.toString(thisTask.getPayOverride()));
                 taskSpinnerOut.setSelection(0);
@@ -138,6 +139,8 @@ public class TaskEditor extends SherlockActivity {
         
         thisTask.setName(taskName.getText().toString());
         thisTask.setEnablePayOverride(overridePay.isChecked());
+        
+        Log.d(TAG, "spinner position: " + taskSpinnerOut.getSelectedItemPosition());
 
         float payRateData = Float.parseFloat(payRate.getText().toString());
         if(taskSpinnerOut.getSelectedItemPosition() == 0){
