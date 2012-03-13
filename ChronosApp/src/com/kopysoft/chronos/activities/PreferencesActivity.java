@@ -108,10 +108,11 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
                                 if (Chronos.getDataOnSDCard(getApplicationContext() )) {
-                                    Toast.makeText(getApplicationContext(), "Backup Successful!", Toast.LENGTH_SHORT);
+                                    Toast.makeText(getApplicationContext(), "Backup Successful!",
+                                            Toast.LENGTH_SHORT).show();;
                                 } else {
                                     Toast.makeText(getApplicationContext(),
-                                            "Backup Failed! Contact developer.", Toast.LENGTH_LONG);
+                                            "Backup Failed! Contact developer.", Toast.LENGTH_LONG).show();
                                 }
                             }
                         })
@@ -128,10 +129,11 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 if (Chronos.getDataOnSDCard(getApplicationContext())) {
-                                    Toast.makeText(getApplicationContext(), "Restore Successful!", Toast.LENGTH_SHORT);
+                                    Toast.makeText(getApplicationContext(), "Restore Successful!",
+                                            Toast.LENGTH_SHORT).show();;
                                 } else {
                                     Toast.makeText(getApplicationContext(),
-                                            "Restore Failed! Contact developer.", Toast.LENGTH_LONG);
+                                            "Restore Failed! Contact developer.", Toast.LENGTH_LONG).show();
                                 }
                             }
                         })

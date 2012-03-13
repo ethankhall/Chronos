@@ -35,6 +35,11 @@
                 android:key="date" android:title="Start of PayPeriod"
                 android:defaultValue="2011.1.17" />
 
+        <com.kopysoft.chronos.views.TimeSelect
+                android:key="time" android:title="Start of Day"
+                android:summary="Normally midnight. This field is in 24 hours time."
+                android:defaultValue="00:00" />
+
         <ListPreference android:title="Length of Month"
                         android:key="len_of_month" android:entries="@array/periodTimes"
                         android:entryValues="@array/NumOneToSix" android:summary="Length of a Pay Period"

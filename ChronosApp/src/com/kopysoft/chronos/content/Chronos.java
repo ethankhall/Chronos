@@ -45,6 +45,7 @@ import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -324,9 +325,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 }
             } else if(oldVersion == 16) {
 
-                Cursor cursor = db.query("notes", null,
-                        null, null, null, null, null);
-
                 //Drop
                 //DB - 15
                 //TableUtils.dropTable(connectionSource, Punch.class, true); //Punch - Drop all
@@ -556,26 +554,21 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             // instantiate the DAO to handle Account with String id
             Dao<Note,String> noteDAO = getNoteDao();
             Dao<Job,String> jobDAO = getJobDao();
-            Dao<Task,String> taskDAO = getTaskDao();
             Job thisJob = getAllJobs().get(0);
             
-            date = new DateTime(
-                    date.getYear(),
-                    date.getMonthOfYear(),
-                    date.getDayOfMonth(),
-                    thisJob.getStartOfPayPeriod().getHourOfDay(),
-                    thisJob.getStartOfPayPeriod().getSecondOfMinute()
-            );
+            Period prd = new Period(thisJob.getStartOfPayPeriod(), date);
+            int displacementInDays = prd.getDays();
+            DateTime newDate = thisJob.getStartOfPayPeriod().plusDays(displacementInDays);
 
             QueryBuilder<Note, String> queryBuilder = noteDAO.queryBuilder();
-            queryBuilder.where().eq(Note.DATE_FIELD, date.getMillis());
+            queryBuilder.where().eq(Note.DATE_FIELD, newDate.getMillis());
             PreparedQuery<Note> preparedQuery = queryBuilder.prepare();
 
             retValue = noteDAO.queryForFirst(preparedQuery);
             if(retValue != null){
                 jobDAO.update(retValue.getJob());
             } else {
-                retValue = new Note(date, thisJob,  "");
+                retValue = new Note(newDate, thisJob,  "");
             }
 
 
@@ -650,7 +643,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Punch,String> punchDao = getPunchDao();
             Dao<Task,String> taskDAO = getTaskDao();
             Dao<Job,String> jobDAO = getJobDao();
-            
+
+            /*
             DateTime startOfPP = jobId.getStartOfPayPeriod();
             DateTime startOfDay = new DateTime(
                     date.getYear(),
@@ -658,6 +652,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     date.getDayOfMonth(),
                     startOfPP.getHourOfDay(),
                     startOfPP.getMinuteOfHour());
+                    */
+
+            Period prd = new Period(jobId.getStartOfPayPeriod(), date);
+            int displacementInDays = prd.getDays();
+            DateTime startOfDay = jobId.getStartOfPayPeriod().plusDays(displacementInDays);
 
             DateTime endOfDay = startOfDay.plusDays(1);
 

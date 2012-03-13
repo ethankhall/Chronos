@@ -65,12 +65,6 @@ public class TaskTable {
         list.add(value);
     }
 
-    public void createRow(Task key){
-        if(!gMap.containsKey(key.getID())){
-            gMap.put(key, new LinkedList<Punch>());
-        }
-    }
-
     public List<Punch> getPunchesForKey(Integer key){
         return (List<Punch>) gMap.get(key);
     }

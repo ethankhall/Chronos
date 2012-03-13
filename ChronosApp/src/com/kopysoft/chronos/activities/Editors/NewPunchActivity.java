@@ -157,6 +157,7 @@ public class NewPunchActivity extends SherlockActivity{
                 date.getDayOfMonth(),
                 hour,
                 min);
+        
 
         Chronos chrono = new Chronos(this);
         Job thisJob = null;
@@ -164,6 +165,11 @@ public class NewPunchActivity extends SherlockActivity{
         for(Job job : jobs){
             if(job.getID() == jobID)
                 thisJob = job;
+        }
+        
+        DateTime startOfPP = thisJob.getStartOfPayPeriod();
+        if(startOfPP.getSecondOfDay() > date1.getSecondOfDay()){
+            date1 = date1.plusDays(1);
         }
         Punch newPunch = new Punch(thisJob, inTask, date1);
         if(enableLog) Log.d(TAG, "Date Time: " + newPunch.getTime().getMillis());

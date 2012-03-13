@@ -112,6 +112,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
     public static Duration getTime(List<PunchPair> punches ){
         Duration dur = new Duration(0);
+
         for(PunchPair pp : punches){
             if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
             if(!pp.getInPunch().getTask().getEnablePayOverride())
@@ -130,7 +131,13 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
     public float getPayableTime(){
         float totalPay = 0.0f;
+        
+        Chronos chron = new Chronos(gContext);
+        Job thisJob = chron.getAllJobs().get(0);
+        chron.close();
+
         for(DateTime date : gPunchesByDay.getDays()){
+
             for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
                 long mili = pp.getInterval().toDurationMillis();
                 if(pp.getTask().getEnablePayOverride()) {
