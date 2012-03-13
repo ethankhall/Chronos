@@ -41,6 +41,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
+import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.Email;
@@ -72,7 +73,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         setContentView(R.layout.header);
 
         Chronos chronos = new Chronos(this);
-        Job curJob = chronos.getJobs().get(0);
+        Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob;
         localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
         chronos.close();
@@ -155,6 +156,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         int pos = getSupportActionBar().getSelectedTab().getPosition();
         if(pos == 1){
             menu.findItem(R.id.menu_insert).setVisible(false);
+            menu.findItem(R.id.menu_note).setVisible(false);
         } else {
             menu.findItem(R.id.menu_navigate).setVisible(false);
         }
@@ -201,16 +203,16 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
         if (requestCode == FROM_CLOCK_ACTIVITY) {
             Chronos chronos = new Chronos(this);
-            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
             chronos.close();
         } else if(requestCode == NewPunchActivity.NEW_PUNCH){
             if(enableLog) Log.d(TAG, "New Punch Created");
             Chronos chronos = new Chronos(this);
-            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getJobs().get(0));
+            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
             chronos.close();
         } else if(requestCode == JobEditor.UPDATE_JOB){
             Chronos chron = new Chronos(this);
-            Job thisJob = chron.getJobs().get(0);
+            Job thisJob = chron.getAllJobs().get(0);
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
             thisJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
             thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
@@ -259,6 +261,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             case R.id.menu_navigate_forward:
                 payHolder.moveForwards();
                 setContentView(new PayPeriodSummaryView(this, getPunchesByDate( ) ) );
+                return true;
+            case R.id.menu_note:
+                newIntent =
+                        new Intent().setClass(this,
+                                NoteEditor.class);
+                newIntent.putExtra("date", DateTime.now().getMillis());
+
+                startActivity(newIntent);
                 return true;
             case R.id.menu_configure_job:
                 newIntent =

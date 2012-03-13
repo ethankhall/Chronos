@@ -22,7 +22,6 @@
 
 package com.kopysoft.chronos.types;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
@@ -30,14 +29,17 @@ import org.joda.time.DateTime;
 @DatabaseTable(tableName = "notes")
 public class Note implements Comparable<Note> {
 
+    public static final String DATE_FIELD = "note_date";
+    public static final String NOTE_ID_FIELD = "note_id";
+
+    @DatabaseField(generatedId = true, columnName = NOTE_ID_FIELD)
+    private int id;
     @DatabaseField(canBeNull = false, defaultValue = "")
     String noteString;
-    @DatabaseField(canBeNull = false, dataType= DataType.SERIALIZABLE)
-    private DateTime gDateTime;
+    @DatabaseField(canBeNull = false, columnName = DATE_FIELD)
+    private long gDateTime;
     @DatabaseField(canBeNull = false, foreign = true, columnName = Job.JOB_FIELD_NAME)
     private Job job;
-    @DatabaseField(canBeNull = true, foreign = true, columnName = Task.TASK_FIELD_NAME)
-    private Task assignedTask;
 
 
     /**
@@ -52,7 +54,7 @@ public class Note implements Comparable<Note> {
      * @param note   Note
      */
     public Note(DateTime date, Job jobNumber,  String note){
-        gDateTime = date;
+        gDateTime = date.getMillis();
         noteString = note;
         job = jobNumber;
     }
@@ -66,11 +68,11 @@ public class Note implements Comparable<Note> {
     }
 
     public void setTime(DateTime date){
-        gDateTime = date;
+        gDateTime = date.getMillis();
     }
     
     public DateTime getTime(){
-        return gDateTime;
+        return new DateTime(gDateTime);
     }
 
     public void setNote(String message){
@@ -79,14 +81,6 @@ public class Note implements Comparable<Note> {
 
     public String getNote(){
         return noteString;
-    }
-    
-    public void setTask(Task incomingTask){
-        assignedTask = incomingTask;
-    }
-    
-    public Task getTask(){
-        return assignedTask;
     }
 
     @Override

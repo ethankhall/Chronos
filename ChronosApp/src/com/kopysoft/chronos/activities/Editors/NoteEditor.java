@@ -20,46 +20,62 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.activities.Viewers;
+package com.kopysoft.chronos.activities.Editors;
 
-
-import android.content.Intent;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.activities.ClockActivity;
-import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
-import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
+import com.kopysoft.chronos.types.Note;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-public class DateViewerActivity extends SherlockActivity{
-    
-    private static String TAG = Defines.TAG + " - DateViewerActivity";
+public class NoteEditor extends SherlockActivity {
+
+    private static String TAG = Defines.TAG + " - NoteEditor";
+    private final boolean enableLog = Defines.DEBUG_PRINT;
     private long date;
-    private long jobId;
-    
-    private static final boolean enableLog = true;
+    private Note gNote;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(enableLog) Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.note_editor);
 
-        date = getIntent().getExtras().getLong("dateTime");
-        Chronos chronos = new Chronos(this);
-        Job curJob = chronos.getAllJobs().get(0);
-        jobId = curJob.getID();
-        chronos.close();
-        setContentView(new DatePairView(this, new DateTime(date)) );
+        EditText editText = (EditText)findViewById(R.id.textField);
+        TextView tv = (TextView)findViewById(R.id.date);
+
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
+
+        if(savedInstanceState != null){
+            date = savedInstanceState.getLong("date");
+            Chronos chronos = new Chronos(this);
+            gNote = chronos.getNoteByDay(new DateTime(date));
+            chronos.close();
+            editText.setText(savedInstanceState.getString("data"));
+
+        } else {
+            date = getIntent().getExtras().getLong("date");
+            Chronos chronos = new Chronos(this);
+            gNote = chronos.getNoteByDay(new DateTime(date));
+            chronos.close();
+            editText.setText(gNote.getNote());
+        }
+
+        tv.setText(fmt.print(gNote.getTime()));
+        
+        Log.d(TAG, "Note Editor with Date: " + date);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -69,60 +85,66 @@ public class DateViewerActivity extends SherlockActivity{
             bg.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
             getSupportActionBar().setBackgroundDrawable(bg);
 
-            BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
+            BitmapDrawable bgSplit = (BitmapDrawable)getResources()
+                    .getDrawable(R.drawable.bg_striped_split_img);
             bgSplit.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
             getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
         }
+    }
 
+    @Override
+    protected void onSaveInstanceState (Bundle outState)
+    {
+        TextView tv = (TextView)findViewById(R.id.textField);
+        outState.putString("data", tv.getText().toString());
+        outState.putLong("date", date);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.action_bar, menu);
 
-        menu.findItem(R.id.menu_navigate).setVisible(false);
-
+        getSupportMenuInflater().inflate(R.menu.save_cancel_menu, menu);
+        menu.findItem(R.id.menuDelete).setVisible(true);
+        menu.findItem(R.id.RemoveMenu).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
+    
+    private void saveNote(){
+        TextView tv = (TextView)findViewById(R.id.textField);
+        gNote.setNote(tv.getText().toString());
+
+        Chronos chrono = new Chronos(this);
+        chrono.updateNote(gNote);
+        chrono.close();
+    }
+
+    private void deleteNote(){
+        Chronos chrono = new Chronos(this);
+        chrono.deleteNote(gNote);
+        chrono.close();
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(enableLog) Log.d(TAG, "Selected item: " + item);
-        if(enableLog) Log.d(TAG, "Selected item id: " + item.getItemId());
-        switch (item.getItemId()) {
-            case R.id.menu_insert:
-                Intent newIntent =
-                        new Intent().setClass(this,
-                                NewPunchActivity.class);
-
-                newIntent.putExtra("job", jobId);
-                newIntent.putExtra("date", date);
-                startActivityForResult(newIntent, NewPunchActivity.NEW_PUNCH);
+        switch (item.getItemId()){
+            case R.id.menuDelete:
+                deleteNote();
+                finish();
                 return true;
-            case R.id.menu_note:
-                newIntent =
-                        new Intent().setClass(this,
-                                NoteEditor.class);
-                newIntent.putExtra("date", date);
-
-                startActivity(newIntent);
+            case R.id.menuSave:
+                saveNote();
+                finish();
                 return true;
+            case R.id.menuCancel:
             case android.R.id.home:
-                setResult(RESULT_OK);
                 finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ClockActivity.FROM_CLOCK_ACTIVITY) {
-            setContentView(new DatePairView(this, new DateTime(date)) );
-        }   else if(requestCode == NewPunchActivity.NEW_PUNCH){
-          setContentView(new DatePairView(this, new DateTime(date)) );
         }
     }
 }

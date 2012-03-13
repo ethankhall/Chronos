@@ -24,8 +24,11 @@
 
     <PreferenceCategory android:title="Display Settings">
         <CheckBoxPreference android:title="Enable Notification"
-                            android:key="NotificationsEnabled" android:summary="Show a notification when clocked in"
+                            android:key="NotificationsEnabled"
+                            android:summary="Show a notification when clocked in. Will come soon"
+                            android:enabled="false"
                             android:defaultValue="true" />
+
         <CheckBoxPreference android:key="showPay"
                             android:title="Display Pay for a Day" android:defaultValue="true" />
     </PreferenceCategory>
@@ -46,7 +49,7 @@
                     android:key="restoreDB" />
 
     </PreferenceCategory>
-    <Preference android:title="Read ULA" android:summary="Read the User License Agreement"
+    <Preference android:title="Read EULA" android:summary="Read the End User License Agreement"
                 android:key="readULA" />
 
 </PreferenceScreen>

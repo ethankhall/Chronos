@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright (c) 2011 Ethan Hall
   ~
@@ -20,27 +21,25 @@
   ~ DEALINGS IN THE SOFTWARE.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<resources>
-    <string name="menu_insert">Insert</string>
-    <string name="menu_note">Note</string>
-    <string name="menu_send">Send</string>
-    <string name="menu_preferences">Preferences</string>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
 
-    <string name="menu_note">Note</string>
+   <TextView
+       android:id="@+id/date"
+       android:text="Insert Date"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:gravity="center" />
 
-    <string name="menu_cancel">Cancel</string>
-    <string name="menu_save">Save</string>
-    <string name="menu_delete">Delete</string>
-
-    <string name="menu_email">Email</string>
-
-    <string name="menu_configure_job">Configure Pay</string>
-    <string name="menu_configure_tasks">Configure Tasks </string>
-
-
-    <string name="clock_title">Clock</string>
-    <string-array name="navigation">
-        <item>Clock</item>
-        <item>Other</item>
-    </string-array>
-</resources>
+    <EditText
+        android:inputType="text|textMultiLine|textAutoCorrect|textCapSentences"
+        android:lines="5"
+        android:singleLine="false"
+        android:gravity="top"
+        android:id="@+id/textField"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+</LinearLayout>

@@ -51,7 +51,7 @@ public class TodayAdapterPair extends BaseAdapter {
     TaskTable gTaskTable = new TaskTable();
     List<PunchPair> listOfPunchPairs = new LinkedList<PunchPair>();
     //public static final boolean enableLog = Defines.DEBUG_PRINT;
-    public static final boolean enableLog = true;
+    public static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public TodayAdapterPair(Context context, List<Punch> listOfPunches){
         gContext = context;
@@ -160,7 +160,9 @@ public class TodayAdapterPair extends BaseAdapter {
 
     public float getPayableTime(){
         float totalPay = 0.0f;
-        if(enableLog) Log.d(TAG, "Pay Rate: " + listOfPunchPairs.get(0).getInPunch().getJob().getPayRate());
+        if(listOfPunchPairs.size()!= 0)
+            if(enableLog) Log.d(TAG, "Pay Rate: " + listOfPunchPairs.get(0).getInPunch().getJob().getPayRate());
+
         for(PunchPair pp : listOfPunchPairs){
             //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
             long mili = pp.getInterval().toDurationMillis();

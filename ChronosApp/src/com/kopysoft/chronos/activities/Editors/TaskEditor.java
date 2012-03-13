@@ -61,7 +61,7 @@ public class TaskEditor extends SherlockActivity {
             chron.close();
         }  else {
             Chronos chron = new Chronos(this);
-            Job thisJob = chron.getJobs().get(0);
+            Job thisJob = chron.getAllJobs().get(0);
             thisTask = new Task(thisJob, chron.getAllTasks().size(), "New Task");
             chron.close();
         }

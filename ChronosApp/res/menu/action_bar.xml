@@ -31,6 +31,13 @@
           android:showAsAction="ifRoom|withText"/>
 
     <item
+            android:id="@+id/menu_note"
+            android:icon="@drawable/ic_menu_start_conversation"
+            android:text="@string/menu_note"
+            android:title="@string/menu_note"
+            android:showAsAction="ifRoom|withText"   />
+
+    <item
         android:id="@+id/menu_navigate"
         android:icon="@drawable/ic_menu_goto"
         android:title="Go To"

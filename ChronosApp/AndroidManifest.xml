@@ -55,6 +55,13 @@
                   android:uiOptions="splitActionBarWhenNarrow"
                   android:configChanges="orientation"/>
 
+        <activity android:name=".activities.Editors.NoteEditor"
+                  android:label="Note Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.ShowEULA"
+                  android:label="EULA"/>
 
     </application>
 

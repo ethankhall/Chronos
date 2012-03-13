@@ -133,7 +133,7 @@ public class PunchTable {
 
         key = startOfTable.plusDays((int)dur.getStandardDays());
 
-        Log.d(TAG, "insert Key: " + key.getMillis());
+        if(enableLog) Log.d(TAG, "insert Key: " + Long.toString(key.getMillis()) );
         LinkedList<Punch> list = (LinkedList) gMap.get(key);
         if(list != null){
             list.add(value);

@@ -36,6 +36,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Note;
@@ -62,7 +63,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //1.2.0	= 11
     //2.0.0RC1 = 15
 
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 17;
     public static final String DATABASE_NAME = "Chronos";
     private Context gContext;
 
@@ -71,7 +72,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     Dao<Job, String>    gJobDoa = null;
     Dao<Note, String>    gNoteDoa = null;
 
-    public static final boolean enableLog = true;
+    public static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public Chronos(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -100,7 +101,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             //Create 1 Job
             DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
-            Job currentJob = new Job("", 10,
+            Job currentJob = new Job("", 7.25f,
                     jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);
             currentJob.setOvertimeThreshold(40);
@@ -137,7 +138,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
 
             //Create elements for testing
-            dropAndTest();
+            //dropAndTest();
 
         } catch (SQLException e) {
             Log.e(TAG, "Could not create new table for Thing", e);
@@ -321,7 +322,20 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 for(Task t: tasks){
                     taskDAO.create(t);
                 }
+            } else if(oldVersion == 16) {
 
+                Cursor cursor = db.query("notes", null,
+                        null, null, null, null, null);
+
+                //Drop
+                //DB - 15
+                //TableUtils.dropTable(connectionSource, Punch.class, true); //Punch - Drop all
+                //TableUtils.dropTable(connectionSource, Task.class, true); //Task - Drop all
+                //TableUtils.dropTable(connectionSource, Job.class, true); //Job - Drop all
+                TableUtils.dropTable(connectionSource, Note.class, true); //Note - Drop all
+
+                //create
+                TableUtils.createTable(connectionSource, Note.class); //Task - Create Table
             }
 
         } catch (SQLException e) {
@@ -535,6 +549,44 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
+    public Note getNoteByDay(DateTime date){
+
+        Note retValue = new Note();
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Note,String> noteDAO = getNoteDao();
+            Dao<Job,String> jobDAO = getJobDao();
+            Dao<Task,String> taskDAO = getTaskDao();
+            Job thisJob = getAllJobs().get(0);
+            
+            date = new DateTime(
+                    date.getYear(),
+                    date.getMonthOfYear(),
+                    date.getDayOfMonth(),
+                    thisJob.getStartOfPayPeriod().getHourOfDay(),
+                    thisJob.getStartOfPayPeriod().getSecondOfMinute()
+            );
+
+            QueryBuilder<Note, String> queryBuilder = noteDAO.queryBuilder();
+            queryBuilder.where().eq(Note.DATE_FIELD, date.getMillis());
+            PreparedQuery<Note> preparedQuery = queryBuilder.prepare();
+
+            retValue = noteDAO.queryForFirst(preparedQuery);
+            if(retValue != null){
+                jobDAO.update(retValue.getJob());
+            } else {
+                retValue = new Note(date, thisJob,  "");
+            }
+
+
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
     public List<Task> getAllTasks(){
 
         List<Task> retValue = null;
@@ -687,7 +739,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return punches;
     }
 
-     public List<Job> getJobs(){
+     public List<Job> getAllJobs(){
 
         List<Job> retValue = new LinkedList<Job>();
         try{
@@ -732,7 +784,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
                     Note newNote = new Note(tempTime, currentJob,
                             "Note number " + String.valueOf(j + 1) );
-                    newNote.setTask(tasks.get(j % tasks.size()));
 
                     noteDAO.create(newNote);
                     punchDao.create(temp);
@@ -753,7 +804,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         }
     }
     
-    static public void putDataOnSDCard(Context context){
+    static public boolean putDataOnSDCard(Context context){
 
         if(getCardWriteStatus() == false){
 
@@ -762,7 +813,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-            return;
+            return false;
         }
 
         File directory =  Environment.getExternalStorageDirectory();
@@ -781,11 +832,13 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             }
             br.close();
         } catch (IOException e){
-
+            Log.e(TAG, e.getMessage());
+            return false;
         }
+        return true;
     }
 
-    static public void getDataOnSDCard(Context context){
+    static public boolean getDataOnSDCard(Context context){
         if(getCardReadStatus() == false){
 
             CharSequence text = "Could not read to SD Card!.";
@@ -793,7 +846,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-            return;
+            return false;
         }
 
         //Create 1 Job
@@ -834,6 +887,9 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         try{
             File directory =  Environment.getExternalStorageDirectory();
             File backup = new File(directory, "Chronos_Backup.csv");
+            if(!backup.exists()){
+                return false;
+            }
 
             BufferedReader br = new BufferedReader( new FileReader(backup));
             String strLine = br.readLine();
@@ -854,6 +910,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             }
         } catch (Exception e){
             Log.e(TAG, e.getMessage());
+            return false;
         }
 
         try{
@@ -888,9 +945,10 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
+            return false;
         }
 
-
+        return true;
     }
 
     public static boolean getCardWriteStatus(){

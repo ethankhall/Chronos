@@ -160,7 +160,7 @@ public class NewPunchActivity extends SherlockActivity{
 
         Chronos chrono = new Chronos(this);
         Job thisJob = null;
-        List<Job> jobs = chrono.getJobs();
+        List<Job> jobs = chrono.getAllJobs();
         for(Job job : jobs){
             if(job.getID() == jobID)
                 thisJob = job;

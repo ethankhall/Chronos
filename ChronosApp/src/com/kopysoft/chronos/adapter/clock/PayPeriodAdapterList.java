@@ -47,7 +47,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
     private Context gContext;
     private PunchTable gPunchesByDay;
-    private static final boolean enableLog = true;
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public PayPeriodAdapterList(Context context, Job inJob){
         gContext = context;

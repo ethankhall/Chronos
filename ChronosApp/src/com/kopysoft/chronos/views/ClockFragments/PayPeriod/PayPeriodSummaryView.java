@@ -49,7 +49,7 @@ public class PayPeriodSummaryView extends LinearLayout {
     private int position = 0;
     private final String TAG = Defines.TAG + " - PayPeriod Summary View";
     private SherlockActivity parent;
-    private final static boolean enableLog = true;
+    private final static boolean enableLog = Defines.DEBUG_PRINT;
     
     public boolean showPay(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent);
@@ -91,7 +91,7 @@ public class PayPeriodSummaryView extends LinearLayout {
         int hours = (seconds / 60 / 60);
         String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
         timeView.setText(output);
-        Job thisJob = chrono.getJobs().get(0);
+        Job thisJob = chrono.getAllJobs().get(0);
 
         if(enableLog) Log.d(TAG, "job: " + thisJob);
         if(enableLog) Log.d(TAG, "seconds: " + seconds);

@@ -25,9 +25,11 @@ package com.kopysoft.chronos.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.util.Log;
+import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
@@ -69,6 +71,32 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                 return true;
             }
         });
+
+        Preference emailDev = (Preference) findPreference("emailDev");
+        emailDev.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
+                        new String[] { "ethan@kopysoft.com" });
+                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Chronos");
+                emailIntent.setType("message/rfc822");
+                startActivity(emailIntent);
+                return true;
+            }
+        });
+
+        Preference readUla = (Preference) findPreference("readULA");
+        readUla.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent().setClass(getApplicationContext(),
+                        ShowEULA.class);
+                startActivity(intent);
+
+                return true;
+            }
+        });
     }
 
     protected Dialog onCreateDialog(int id) {
@@ -78,7 +106,13 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setTitle("Are you sure?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                Chronos.putDataOnSDCard(getApplicationContext());
+
+                                if (Chronos.getDataOnSDCard(getApplicationContext() )) {
+                                    Toast.makeText(getApplicationContext(), "Backup Successful!", Toast.LENGTH_SHORT);
+                                } else {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Backup Failed! Contact developer.", Toast.LENGTH_LONG);
+                                }
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -90,10 +124,15 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
             case RESTORE:
                 return new AlertDialog.Builder(PreferencesActivity.this)
                         .setTitle("Are you sure?")
-                        .setMessage("This will replace all your punches. You will loosed everything!")
+                        .setMessage("This will replace all your punches. You will loose everything!")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                Chronos.getDataOnSDCard(getApplicationContext());
+                                if (Chronos.getDataOnSDCard(getApplicationContext())) {
+                                    Toast.makeText(getApplicationContext(), "Restore Successful!", Toast.LENGTH_SHORT);
+                                } else {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Restore Failed! Contact developer.", Toast.LENGTH_LONG);
+                                }
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {

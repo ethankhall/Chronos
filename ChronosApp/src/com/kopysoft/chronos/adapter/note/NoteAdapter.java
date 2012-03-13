@@ -113,7 +113,7 @@ public class NoteAdapter extends BaseAdapter {
 
         left.setText(note.getTime().toString(fmt));
 
-        right.setText(note.getTask().getName());
+        //right.setText(note.getTask().getName());
 
         bottom.setText(note.getNote());
 
