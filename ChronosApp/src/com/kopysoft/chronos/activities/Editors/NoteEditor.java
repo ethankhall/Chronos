@@ -103,10 +103,7 @@ public class NoteEditor extends SherlockActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        getSupportMenuInflater().inflate(R.menu.save_cancel_menu, menu);
-        menu.findItem(R.id.menuDelete).setVisible(true);
-        menu.findItem(R.id.RemoveMenu).setVisible(false);
+        getSupportMenuInflater().inflate(R.menu.save_cancel_note_editor, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

@@ -33,7 +33,7 @@ public class JobEditor extends SherlockPreferenceActivity  {
 
     private static String TAG = Defines.TAG + " - JobEditor";
     public static final int UPDATE_JOB = 3;
-    private final boolean enableLog = true;
+    private final boolean enableLog = Defines.DEBUG_PRINT;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

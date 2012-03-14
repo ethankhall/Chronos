@@ -38,9 +38,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class PairEditorActivity extends SherlockActivity{
     Punch p1;
     Punch p2;
     List<Task> tasks;
+    DateTime date;
 
     private enum RemoveOption {IN_TIME, OUT_TIME, BOTH};
     
@@ -125,6 +128,10 @@ public class PairEditorActivity extends SherlockActivity{
         p1 = chron.getPunchById(punch1);
         p2 = chron.getPunchById(punch2);
 
+        Job tempJob = chron.getAllJobs().get(0);
+        Period prd = new Period(tempJob.getStartOfPayPeriod(), p1.getTime());
+        date = tempJob.getStartOfPayPeriod().plusDays(prd.getDays());
+
         if(enableLog) Log.d(TAG, "P1 Current Hour: " + p1.getTime().getHourOfDay());
         if(enableLog) Log.d(TAG, "P1 Current Minute: " + p1.getTime().getMinuteOfHour());
 
@@ -179,15 +186,22 @@ public class PairEditorActivity extends SherlockActivity{
         Task inTask =  tasks.get(taskSpinnerIn.getSelectedItemPosition());
         
         DateTime date1 = new DateTime(
-                p1.getTime().getYear(),
-                p1.getTime().getMonthOfYear(),
-                p1.getTime().getDayOfMonth(),
+                date.getYear(),
+                date.getMonthOfYear(),
+                date.getDayOfMonth(),
                 hour,
                 min);
         p1.setTime(date1);
         p1.setTask(inTask);
         
         Chronos chrono = new Chronos(this);
+        Job thisJob = chrono.getAllJobs().get(0);
+
+        DateTime startOfPP = thisJob.getStartOfPayPeriod();
+        if(startOfPP.getSecondOfDay() > date1.getSecondOfDay()){
+            date1 = date1.plusDays(1);
+        }
+        
         chrono.updatePunch(p1);
         //int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour
 
@@ -203,11 +217,16 @@ public class PairEditorActivity extends SherlockActivity{
                     =  tasks.get(taskSpinnerOut.getSelectedItemPosition());
 
             DateTime date2 = new DateTime(
-                    p1.getTime().getYear(),
-                    p2.getTime().getMonthOfYear(),
-                    p2.getTime().getDayOfMonth(),
+                    date.getYear(),
+                    date.getMonthOfYear(),
+                    date.getDayOfMonth(),
                     hour,
                     min);
+
+            if(startOfPP.getSecondOfDay() > date2.getSecondOfDay()){
+                date2 = date2.plusDays(1);
+            }
+            
             p2.setTime(date2);
             p2.setTask(outTask);
             chrono.updatePunch(p2);

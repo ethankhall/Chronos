@@ -64,7 +64,11 @@ public class DateSelect extends DialogPreference implements DatePicker.OnDateCha
         Calendar calendar = getDate();
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH), this);
-        datePicker.setCalendarViewShown(false);
+        try{
+            datePicker.setCalendarViewShown(false);
+        } catch(NoSuchMethodError e){
+            //handel ics
+        }
         return datePicker;
     }
 

@@ -39,7 +39,7 @@ import com.kopysoft.chronos.enums.Defines;
 public class PreferencesActivity extends SherlockPreferenceActivity  {
 
     private static String TAG = Defines.TAG + " - PreferencesActivity";
-    private final boolean enableLog = true;
+    private final boolean enableLog = Defines.DEBUG_PRINT;
 
     private static final int BACKUP = 0;
     private static final int RESTORE = 1;

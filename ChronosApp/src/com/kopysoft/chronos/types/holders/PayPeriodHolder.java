@@ -24,7 +24,6 @@ package com.kopysoft.chronos.types.holders;
 
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
@@ -137,29 +136,18 @@ public class PayPeriodHolder implements Serializable {
                 break;
             case FULL_MONTH:
                 //in this case, endOfPP is equal to now
-                if(gJob.getStartOfPayPeriod().getDayOfMonth() > endOfPP.getDayOfMonth()){
-                    startOfPP = new DateTime();
-                    startOfPP = startOfPP.minusMonths(1);
-                    startOfPP = startOfPP.withDayOfMonth(gJob.getStartOfPayPeriod().getDayOfMonth());
-                } else {
-                    startOfPP = new DateTime();
-                    startOfPP = startOfPP.withDayOfMonth(gJob.getStartOfPayPeriod().getDayOfMonth());
-                }
+                startOfPP = gJob.getStartOfPayPeriod().withDayOfMonth(1);
+                endOfPP = startOfPP.plusMonths(1);
 
                 break;
             case FIRST_FIFTEENTH:
-                if(endOfPP.getDayOfMonth() >= 15){
-                    startOfPP = new DateMidnight().toDateTime();
-                    startOfPP.withDayOfMonth(15);
-                    endOfPP = new DateMidnight().toDateTime();
-                    endOfPP.withDayOfMonth(1);
-                    endOfPP.plusMonths(1);
-                    endOfPP.minusDays(1);
+                DateTime now = DateTime.now();
+                if(now.getDayOfMonth() >= 15){
+                    startOfPP = now.withDayOfMonth(15);
+                    endOfPP = startOfPP.plusDays(20).withDayOfMonth(1);
                 } else {
-                    startOfPP = new DateMidnight().toDateTime();
-                    startOfPP.withDayOfMonth(1);
-                    endOfPP = new DateMidnight().toDateTime();
-                    endOfPP.withDayOfMonth(14);
+                    startOfPP = now.withDayOfMonth(1);
+                    endOfPP = now.withDayOfMonth(15);
                 }
                 break;
             default:
@@ -171,12 +159,42 @@ public class PayPeriodHolder implements Serializable {
     }
 
     public void moveBackwards(){
-        gStartOfPP = gStartOfPP.minusDays(getDays());
-        gEndOfPP = gStartOfPP.plusDays(getDays()  - 1);
+        if(gJob.getDuration() == PayPeriodDuration.FIRST_FIFTEENTH){
+            if(gStartOfPP.getDayOfMonth() == 1){
+                gStartOfPP = gStartOfPP.minusMonths(1).withDayOfMonth(15);
+                gEndOfPP = gStartOfPP.withDayOfMonth(1).plusMonths(1);
+            } else {
+                gStartOfPP = gStartOfPP.withDayOfMonth(1);
+                gEndOfPP = gStartOfPP.withDayOfMonth(15);
+            }
+        } else if(gJob.getDuration() == PayPeriodDuration.FULL_MONTH){
+            gEndOfPP = gStartOfPP.minusDays(1);
+            gStartOfPP = gStartOfPP.withDayOfMonth(1).minusMonths(1);
+
+        } else {
+            gStartOfPP = gStartOfPP.minusDays(getDays());
+            gEndOfPP = gStartOfPP.plusDays(getDays()  - 1);
+        }
+        
+        System.out.println("start" + gStartOfPP);
+        System.out.println("end" + gEndOfPP);
     }
 
     public void moveForwards(){
-        gStartOfPP = gStartOfPP.plusDays(getDays());
-        gEndOfPP = gStartOfPP.plusDays(getDays());
+        if(gJob.getDuration() == PayPeriodDuration.FIRST_FIFTEENTH){
+            if(gStartOfPP.getDayOfMonth() == 1){
+                gStartOfPP = gStartOfPP.withDayOfMonth(15);
+                gEndOfPP = gStartOfPP.withDayOfMonth(1).plusMonths(1).minusDays(1);
+            } else {
+                gStartOfPP = gStartOfPP.withDayOfMonth(1).plusMonths(1);
+                gEndOfPP = gStartOfPP.withDayOfMonth(15);
+            }
+        } else if(gJob.getDuration() == PayPeriodDuration.FULL_MONTH){
+            gStartOfPP = gEndOfPP.plusDays(1);
+            gStartOfPP = gStartOfPP.plusMonths(1).minusMonths(1);
+        } else {
+            gStartOfPP = gStartOfPP.plusDays(getDays());
+            gEndOfPP = gStartOfPP.plusDays(getDays());
+        }
     }
 }

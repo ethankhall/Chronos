@@ -90,9 +90,7 @@ public class TaskList extends SherlockActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getSupportMenuInflater().inflate(R.menu.action_bar, menu);
-        menu.findItem(R.id.menu_options).setVisible(false);
-        menu.findItem(R.id.menu_navigate).setVisible(false);
+        getSupportMenuInflater().inflate(R.menu.action_bar_task_list, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

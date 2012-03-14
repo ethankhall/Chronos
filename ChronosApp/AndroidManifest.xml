@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.kopysoft.chronos"
-          android:versionCode="35"
+          android:versionCode="36"
           android:versionName="2.0">
     <application android:icon="@drawable/icon"
                  android:label="Chronos"
@@ -59,6 +59,10 @@
                   android:label="Note Editor"
                   android:uiOptions="splitActionBarWhenNarrow"
                   android:configChanges="orientation"/>
+
+        <activity android:name=".activities.QuickBreakActivity"
+                  android:label="Quick Break"
+                  android:uiOptions="splitActionBarWhenNarrow" />
 
         <activity android:name=".activities.ShowEULA"
                   android:label="EULA"/>

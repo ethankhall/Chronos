@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.activities.Editors;
+package com.kopysoft.chronos.activities;
 
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,10 +28,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -46,14 +44,13 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
-public class NewPunchActivity extends SherlockActivity{
+public class QuickBreakActivity extends SherlockActivity{
     //add the ability to move punches by date - Added on 3/5/12
 
-    private static String TAG = Defines.TAG + " - NewPunchActivity";
-    public static final int NEW_PUNCH = 2;
+    private static String TAG = Defines.TAG + " - QuickBreakActivity";
+    public static final int NEW_BREAK = 10;
 
     List<Task> tasks;
-    long jobID;
     DateTime date;
     private static final boolean enableLog = Defines.DEBUG_PRINT;
 
@@ -61,59 +58,45 @@ public class NewPunchActivity extends SherlockActivity{
     public void onCreate(Bundle savedInstanceState) {
         if(enableLog) Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.punch_pair_editor);
-
-        Spinner taskSpinnerIn = (Spinner)findViewById(R.id.taskSpinnerIn);
-        Spinner taskSpinnerOut = (Spinner)findViewById(R.id.taskSpinnerOut);
-        ((TextView)findViewById(R.id.punchTitleText)).setText("In/Out Time");
+        setContentView(R.layout.quick_break);
 
         if(savedInstanceState != null){
-            jobID = savedInstanceState.getLong("job");
             date = new DateTime(savedInstanceState.getLong("date"));
         } else {
-            jobID = getIntent().getExtras().getLong("job");
             date = new DateTime(getIntent().getExtras().getLong("date"));
         }
 
-        if(enableLog) Log.d(TAG, "JobID: " + jobID);
-        if(enableLog) Log.d(TAG, "DateTime: " + date);
+        @SuppressWarnings("unchecked")
+        ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource( this,
+                R.array.breaks, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+        
+        Spinner timeSpinner = (Spinner)findViewById(R.id.timeSpinner);
+        timeSpinner.setAdapter(spinnerAdapter);
 
         Chronos chron = new Chronos(this);
         tasks = chron.getAllTasks();
+        chron.close();
 
         @SuppressWarnings("unchecked")
-        ArrayAdapter spinnerAdapter = new ArrayAdapter(
+        ArrayAdapter taskSpinner = new ArrayAdapter(
                 this,
                 android.R.layout.simple_spinner_item,
                 tasks);
-        spinnerAdapter.setDropDownViewResource(
+        taskSpinner.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
 
-        taskSpinnerIn.setAdapter(spinnerAdapter);
-        taskSpinnerOut.setAdapter(spinnerAdapter);
+        Spinner spinner = (Spinner)findViewById(R.id.spinner);
+        spinner.setAdapter(taskSpinner);
         //end task
 
         //set for 24 or 12 hour time
         boolean twentyFourHourTime = DateFormat.is24HourFormat(this);
-        TimePicker inTime = (TimePicker)findViewById(R.id.TimePicker1);
-        inTime.setIs24HourView(twentyFourHourTime);
-        TimePicker outTime = (TimePicker)findViewById(R.id.TimePicker2);
-        outTime.setIs24HourView(twentyFourHourTime);
-
-        DateTime now = new DateTime();
-
-        if(enableLog) Log.d(TAG, "P1 Current Hour: " + now.getHourOfDay());
-        if(enableLog) Log.d(TAG, "P1 Current Minute: " + now.getMinuteOfHour());
-
-        inTime.setCurrentHour(now.getHourOfDay());
-        inTime.setCurrentMinute(now.getMinuteOfHour());
-        taskSpinnerIn.setSelection(0);
-
-        findViewById(R.id.outLayout).setVisibility(View.GONE);
-
-
-        //close chronos
-        chron.close();
+        TimePicker breakTime = (TimePicker)findViewById(R.id.timePicker);
+        breakTime.setIs24HourView(twentyFourHourTime);
+        breakTime.setCurrentMinute(DateTime.now().getMinuteOfHour());
+        breakTime.setCurrentHour(DateTime.now().getHourOfDay());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -143,13 +126,14 @@ public class NewPunchActivity extends SherlockActivity{
 
     private void updateDatabase(){
         int hour, min;
-        TimePicker inTime = (TimePicker)findViewById(R.id.TimePicker1);
-        Spinner taskSpinnerIn = (Spinner)findViewById(R.id.taskSpinnerIn);
+        TimePicker inTime = (TimePicker)findViewById(R.id.timePicker);
+        Spinner timeSpinner = (Spinner)findViewById(R.id.timeSpinner);
+        Spinner taskSpinner = (Spinner)findViewById(R.id.spinner);
         inTime.clearFocus();
         hour = inTime.getCurrentHour();
         min= inTime.getCurrentMinute();
         
-        Task inTask =  tasks.get(taskSpinnerIn.getSelectedItemPosition());
+        Task inTask =  tasks.get(taskSpinner.getSelectedItemPosition());
         
         DateTime date1 = new DateTime(
                 date.getYear(),
@@ -157,24 +141,47 @@ public class NewPunchActivity extends SherlockActivity{
                 date.getDayOfMonth(),
                 hour,
                 min);
-        
 
         Chronos chrono = new Chronos(this);
-        Job thisJob = null;
-        List<Job> jobs = chrono.getAllJobs();
-        for(Job job : jobs){
-            if(job.getID() == jobID)
-                thisJob = job;
-        }
-        
+        Job thisJob = chrono.getAllJobs().get(0);
+
         DateTime startOfPP = thisJob.getStartOfPayPeriod();
         if(startOfPP.getSecondOfDay() > date1.getSecondOfDay()){
             date1 = date1.plusDays(1);
         }
-        Punch newPunch = new Punch(thisJob, inTask, date1);
-        if(enableLog) Log.d(TAG, "Date Time: " + newPunch.getTime().getMillis());
+        Punch startPunch = new Punch(thisJob, inTask, date1);
+        
+        DateTime endDate;
+        switch (timeSpinner.getSelectedItemPosition()){
+            case(0):
+                endDate = date1.plusMinutes(5);
+                break;
+            case(1):
+                endDate = date1.plusMinutes(10);
+                break;
+            case(2):
+                endDate = date1.plusMinutes(15);
+                break;
+            case(3):
+                endDate = date1.plusMinutes(30);
+                break;
+            case(4):
+                endDate = date1.plusMinutes(45);
+                break;
+            case(5):
+                endDate = date1.plusMinutes(60);
+                break;
+            default:
+                endDate = date1.plusMinutes(1);
+        }
+        Punch endPunch = new Punch(thisJob, inTask, endDate);
+        if(enableLog) Log.d(TAG, "Date Time: " + startPunch.getTime().getMillis());
+        
+        Log.d(TAG, "Start Punch" + startPunch.getTime());
+        Log.d(TAG, "End Punch" + endPunch.getTime());
 
-        chrono.insertPunch(newPunch);
+        chrono.insertPunch(startPunch);
+        chrono.insertPunch(endPunch);
         chrono.close();
         //int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour
 
@@ -182,7 +189,7 @@ public class NewPunchActivity extends SherlockActivity{
 
     @Override
     protected void onSaveInstanceState (Bundle outState){
-        outState.putLong("job", jobID);
+        outState.putLong("date", date.getMillis());
         super.onSaveInstanceState(outState);
     }
 

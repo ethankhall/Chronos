@@ -33,12 +33,13 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
+import com.kopysoft.chronos.activities.QuickBreakActivity;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 
@@ -48,7 +49,7 @@ public class DateViewerActivity extends SherlockActivity{
     private long date;
     private long jobId;
     
-    private static final boolean enableLog = true;
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +59,12 @@ public class DateViewerActivity extends SherlockActivity{
         Chronos chronos = new Chronos(this);
         Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob.getID();
+        PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
         chronos.close();
-        setContentView(new DatePairView(this, new DateTime(date)) );
+
+        setContentView(new DatePairView(this,
+                localPunchTable.getPunchesByDay(new DateTime(date)),
+                new DateTime(date)) );
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -78,10 +83,9 @@ public class DateViewerActivity extends SherlockActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.action_bar, menu);
+        getSupportMenuInflater().inflate(R.menu.action_bar_date_viewer, menu);
 
-        menu.findItem(R.id.menu_navigate).setVisible(false);
-
+        //menu.findItem(R.id.menu_navigate).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -112,6 +116,14 @@ public class DateViewerActivity extends SherlockActivity{
                 setResult(RESULT_OK);
                 finish();
                 return true;
+            case R.id.menu_quick_note:
+                newIntent =
+                        new Intent().setClass(this,
+                                QuickBreakActivity.class);
+
+                newIntent.putExtra("date", date);
+                startActivityForResult(newIntent, QuickBreakActivity.NEW_BREAK);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -119,10 +131,17 @@ public class DateViewerActivity extends SherlockActivity{
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ClockActivity.FROM_CLOCK_ACTIVITY) {
-            setContentView(new DatePairView(this, new DateTime(date)) );
-        }   else if(requestCode == NewPunchActivity.NEW_PUNCH){
-          setContentView(new DatePairView(this, new DateTime(date)) );
+        if (requestCode == QuickBreakActivity.NEW_BREAK
+                || requestCode ==NewPunchActivity.NEW_PUNCH) {
+            Chronos chronos = new Chronos(this);
+            Job curJob = chronos.getAllJobs().get(0);
+            jobId = curJob.getID();
+            PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
+            chronos.close();
+
+            setContentView(new DatePairView(this,
+                    localPunchTable.getPunchesByDay(new DateTime(date)),
+                    new DateTime(date)) );
         }
     }
 }

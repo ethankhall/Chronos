@@ -43,6 +43,8 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
@@ -52,29 +54,16 @@ public class DatePairView extends LinearLayout {
     private final String TAG = Defines.TAG + " - DatePairView";
     private TodayAdapterPair adapter;
     public static final boolean enableLog = Defines.DEBUG_PRINT;
-
-    public DatePairView(SherlockActivity prnt, DateTime date){
-        super(prnt.getApplicationContext());
-        if(enableLog) Log.d(TAG, "Entry 1");
-
-        parent = prnt;
-
-        Chronos chrono = new Chronos(parent);
-        Job thisJob = chrono.getAllJobs().get(0);
-        adapter = new TodayAdapterPair( parent,
-                chrono.getPunchesByJobAndDate(thisJob, date ) );
-        chrono.close();
-
-        createUI(adapter, thisJob);
-    }
+    private DateTime gDate;
 
     public boolean showPay(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent);
         return pref.getBoolean("showPay", true);
     }
 
-    public DatePairView(SherlockActivity prnt, List<Punch> punches){
+    public DatePairView(SherlockActivity prnt, List<Punch> punches, DateTime date){
         super(prnt.getApplicationContext());
+        gDate = date;
 
         parent = prnt;
         if(enableLog) Log.d(TAG, "Entry 2");
@@ -100,6 +89,9 @@ public class DatePairView extends LinearLayout {
         //retView.setOnItemLongClickListener(LongClickListener);
 
         View header = View.inflate(getContext(), R.layout.header, null);
+        
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
+        ((TextView)header.findViewById(R.id.date)).setText(fmt.print(gDate));
 
         if(!showPay()){
             header.findViewById(R.id.moneyViewText).setVisibility(View.GONE);

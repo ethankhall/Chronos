@@ -79,6 +79,7 @@ public class PayPeriodSummaryView extends LinearLayout {
             header.findViewById(R.id.moneyViewTotal).setVisibility(View.GONE);
         }
 
+        header.findViewById(R.id.date).setVisibility(View.GONE);
         TextView timeView = (TextView)header.findViewById(R.id.timeViewTotal);
         TextView moneyView = (TextView)header.findViewById(R.id.moneyViewTotal);        
         TextView leftHeader = (TextView)header.findViewById(R.id.headerLeft);

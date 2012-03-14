@@ -168,6 +168,10 @@ public class Job implements Serializable{
         return payPeriodDuration;
     }
 
+    public void setDuration(PayPeriodDuration ppd){
+        payPeriodDuration = ppd;
+    }
+
 
     /**
      * Sets the default job in the preferences to this job

@@ -44,7 +44,7 @@ import com.kopysoft.chronos.types.Task;
 public class TaskEditor extends SherlockActivity {
 
     private static String TAG = Defines.TAG + " - TaskEditor";
-    private final boolean enableLog = true;
+    private final boolean enableLog = Defines.DEBUG_PRINT;
     private Task thisTask;
 
     @Override

@@ -406,8 +406,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Punch,String> punchDao = getPunchDao();
             punchDao.createOrUpdate(punch);
         } catch (SQLException e) {
-            if(enableLog) Log.e(TAG, "Insert Punch: " + e.getMessage());
-            e.getCause();
+            Log.e(TAG, "Insert Punch: " + e.getMessage());
         }
     }
 
@@ -670,7 +669,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
 
             punches = punchDao.query(preparedQuery);
-            Collections.sort(punches);
             if(enableLog) Log.d(TAG, "Punches for this day: " + punches.size());
             for(Punch work : punches){
                 taskDAO.refresh(work.getTask());
@@ -679,13 +677,14 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 //if(enableLog) Log.d(TAG, "in loop Pay Rate: " + work.getJob().getPayRate());
                 
             }
-
+            Collections.sort(punches);
 
         } catch (SQLException e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
         }
 
+        Log.d(TAG, "Number of punches: " + punches.size());
         return punches;
     }
 

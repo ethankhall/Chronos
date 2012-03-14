@@ -24,19 +24,6 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/menu_insert"
-          android:icon="@drawable/ic_menu_add"
-          android:title="@string/menu_insert"
-          android:text="@string/menu_insert"
-          android:showAsAction="ifRoom|withText"/>
-
-    <item
-            android:id="@+id/menu_note"
-            android:icon="@drawable/ic_menu_start_conversation"
-            android:text="@string/menu_note"
-            android:title="@string/menu_note"
-            android:showAsAction="ifRoom|withText"   />
-
     <item
         android:id="@+id/menu_navigate"
         android:icon="@drawable/ic_menu_goto"
@@ -66,13 +53,6 @@
     </item>
 
     <item
-            android:id="@+id/menu_quick_note"
-            android:icon="@drawable/ic_menu_recent_history"
-            android:text="@string/menu_quick_break"
-            android:title="@string/menu_quick_break"
-            android:showAsAction="ifRoom|withText"  />
-    
-    <item
             android:icon="@drawable/ic_menu_moreoverflow_holo_dark"
             android:title="Options"
             android:text="Options"
@@ -100,6 +80,5 @@
                   android:showAsAction="ifRoom|withText"/>
         </menu>
     </item>
-
 
 </menu>
