@@ -55,7 +55,7 @@ public class NewPunchActivity extends SherlockActivity{
     List<Task> tasks;
     long jobID;
     DateTime date;
-    private static final boolean enableLog = Defines.DEBUG_PRINT;
+    private static final boolean enableLog = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,11 @@ public class NewPunchActivity extends SherlockActivity{
 
         Spinner taskSpinnerIn = (Spinner)findViewById(R.id.taskSpinnerIn);
         Spinner taskSpinnerOut = (Spinner)findViewById(R.id.taskSpinnerOut);
-        ((TextView)findViewById(R.id.punchTitleText)).setText("In/Out Time");
+        try{
+            ((TextView)findViewById(R.id.punchTitleText)).setText("In/Out Time");
+        } catch (NullPointerException e){
+            Log.e(TAG, "Could not find punchTitleText");
+        }
 
         if(savedInstanceState != null){
             jobID = savedInstanceState.getLong("job");

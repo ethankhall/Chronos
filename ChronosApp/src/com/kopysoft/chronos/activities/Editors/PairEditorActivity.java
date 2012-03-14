@@ -191,17 +191,20 @@ public class PairEditorActivity extends SherlockActivity{
                 date.getDayOfMonth(),
                 hour,
                 min);
-        p1.setTime(date1);
-        p1.setTask(inTask);
-        
+	
         Chronos chrono = new Chronos(this);
         Job thisJob = chrono.getAllJobs().get(0);
-
-        DateTime startOfPP = thisJob.getStartOfPayPeriod();
+	
+	DateTime startOfPP = thisJob.getStartOfPayPeriod();
         if(startOfPP.getSecondOfDay() > date1.getSecondOfDay()){
             date1 = date1.plusDays(1);
+	    Log.d(TAG, "Moved Date1 foward one day");
         }
         
+        Log.d(TAG, "Date1: " + date1);
+        
+        p1.setTime(date1);
+        p1.setTask(inTask);
         chrono.updatePunch(p1);
         //int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour
 
@@ -225,7 +228,10 @@ public class PairEditorActivity extends SherlockActivity{
 
             if(startOfPP.getSecondOfDay() > date2.getSecondOfDay()){
                 date2 = date2.plusDays(1);
+		Log.d(TAG, "Moved Date2 foward one day");
             }
+            
+            Log.d(TAG, "Date2: " + date2);
             
             p2.setTime(date2);
             p2.setTask(outTask);
