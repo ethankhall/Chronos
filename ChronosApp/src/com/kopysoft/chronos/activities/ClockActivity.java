@@ -52,6 +52,7 @@ import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public class ClockActivity extends SherlockActivity implements ActionBar.TabListener{
     
@@ -206,7 +207,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                     Integer.parseInt(date[2]),
                     Integer.parseInt(time[0]),
                     Integer.parseInt(time[1])
-            ));
+            ).withZone(DateTimeZone.getDefault()));
             switch (Integer.parseInt(pref.getString("len_of_month", "2"))){
                 case 1:
                     thisJob.setDuration(PayPeriodDuration.ONE_WEEK);

@@ -53,6 +53,7 @@ public class DatePairView extends LinearLayout {
     private SherlockActivity parent;
     private final String TAG = Defines.TAG + " - DatePairView";
     private TodayAdapterPair adapter;
+    //public static final boolean enableLog = true;
     public static final boolean enableLog = Defines.DEBUG_PRINT;
     private DateTime gDate;
 
@@ -66,7 +67,15 @@ public class DatePairView extends LinearLayout {
         gDate = date;
 
         parent = prnt;
-        if(enableLog) Log.d(TAG, "Entry 2");
+        if(enableLog){
+
+            Log.d(TAG, "Entry 2");
+        
+            for(Punch p : punches){
+                Log.d(TAG, "init punch: " + p);
+            }
+            Log.d(TAG, "init date: " + date);
+        }
 
         Chronos chrono = new Chronos(parent);
         Job thisJob = chrono.getAllJobs().get(0);

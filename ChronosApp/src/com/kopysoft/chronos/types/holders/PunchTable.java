@@ -27,7 +27,8 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
+import org.joda.time.DurationFieldType;
+import org.joda.time.Period;
 
 import java.util.*;
 
@@ -55,6 +56,8 @@ public class PunchTable {
                 System.out.println(e.getMessage());
             }
         }
+        
+        if(enableLog) Log.d(TAG, "Start of table: " + start);
 
         createTable(inJob, days + 1, start);
     }
@@ -67,7 +70,7 @@ public class PunchTable {
 
         for(int i = 0; i < days; i++){
 
-            DateTime key = start.plusDays(i);
+            DateTime key = start.plusDays(i).withZone(gPayPeriod.getStartOfPayPeriod().getZone());
             LinkedList<Punch> list = new LinkedList<Punch>();
             gMap.put(key, list);
             listOfDays.add(key);
@@ -121,19 +124,16 @@ public class PunchTable {
         //Add key
         DateTime key = value.getTime();
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
-        Duration dur = new Duration(startOfTable, key);
-        /*if( key.getSecondOfDay() >= startOfTable.getSecondOfDay()){
-            //key is after start of day... set it to the start of the day
-            key = startOfTable.plusDays((int)dur.getStandardDays());
-            
-        } else {
-            //put it back a day
-            key = startOfTable.plusDays((int)dur.getStandardDays() - 1);
-        }*/
+        Period dur = new Period(startOfTable, key);
+        if(startOfTable.isBefore(key))
+            key = startOfTable.plusDays(dur.toStandardDays().get(DurationFieldType.days()));
+        else
+            key = startOfTable.minusDays(dur.toStandardDays().get(DurationFieldType.days()));
+        
+        //Log.d(TAG, "Insert Punch: " + value.getTime());
+        //Log.d(TAG, "Calculated Punch: " + key);
 
-        key = startOfTable.plusDays((int)dur.getStandardDays());
-
-        if(enableLog) Log.d(TAG, "insert Key: " + Long.toString(key.getMillis()) );
+        if(enableLog) Log.d(TAG, "Key: " + key + "\tvalue: " +value.getTime() );
         LinkedList<Punch> list = (LinkedList) gMap.get(key);
         if(list != null){
             list.add(value);
@@ -144,18 +144,14 @@ public class PunchTable {
     public List<Punch> getPunchesByDay(DateTime key){
 
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
-        Duration dur = new Duration(startOfTable, key);
-        /*if( key.getSecondOfDay() >= startOfTable.getSecondOfDay()){
-            //key is after start of day... set it to the start of the day
-            key = startOfTable.plusDays((int)dur.getStandardDays());
+        Period dur = new Period(startOfTable, key);
+        if(startOfTable.isBefore(key))
+            key = startOfTable.plusDays(dur.toStandardDays().get(DurationFieldType.days()));
+        else
+            key = startOfTable.minusDays(dur.toStandardDays().get(DurationFieldType.days()));
 
-        } else {
-            //put it back a day
-            key = startOfTable.plusDays((int)dur.getStandardDays() - 1);
-        }*/
-        key = startOfTable.plusDays((int)dur.getStandardDays());
         try{
-             if(enableLog) Log.d(TAG, "GetPunchesByDay: " + key.getMillis());
+             if(enableLog) Log.d(TAG, "GetPunchesByDay: " + key);
         } catch (Exception e){
 
         }

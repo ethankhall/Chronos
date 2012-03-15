@@ -73,7 +73,7 @@ public class PayPeriodHolderTest {
             fail("Start of jobs didn't match.. Fuck");
         }
 
-        DateTime endOfPP = startOfPPCalculated.plusDays(holder.getDays());
+        DateTime endOfPP = startOfPPCalculated.plusDays(13);
         if(holder.getEndOfPayPeriod().getMillis() != endOfPP.getMillis()){
             System.out.println("Calculated End: \t" + endOfPP);
             System.out.println("Found End: \t\t" + holder.getEndOfPayPeriod());

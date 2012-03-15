@@ -39,9 +39,11 @@ import com.kopysoft.chronos.activities.QuickBreakActivity;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.holders.PunchTable;
+import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 public class DateViewerActivity extends SherlockActivity{
     
@@ -59,12 +61,14 @@ public class DateViewerActivity extends SherlockActivity{
         Chronos chronos = new Chronos(this);
         Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob.getID();
-        PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
+        List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
         chronos.close();
 
+        Log.d(TAG, "date: " + new  DateTime(date)) ;
+        
         setContentView(new DatePairView(this,
-                localPunchTable.getPunchesByDay(new DateTime(date)),
-                new DateTime(date)) );
+                punches,
+                new DateTime(date)));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -131,17 +135,14 @@ public class DateViewerActivity extends SherlockActivity{
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == QuickBreakActivity.NEW_BREAK
-                || requestCode ==NewPunchActivity.NEW_PUNCH) {
-            Chronos chronos = new Chronos(this);
-            Job curJob = chronos.getAllJobs().get(0);
-            jobId = curJob.getID();
-            PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
-            chronos.close();
+        Chronos chronos = new Chronos(this);
+        Job curJob = chronos.getAllJobs().get(0);
+        jobId = curJob.getID();
+        List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
+        chronos.close();
 
-            setContentView(new DatePairView(this,
-                    localPunchTable.getPunchesByDay(new DateTime(date)),
-                    new DateTime(date)) );
-        }
+        setContentView(new DatePairView(this,
+                punches,
+                new DateTime(date)) );
     }
 }

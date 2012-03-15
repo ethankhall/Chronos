@@ -55,7 +55,7 @@ public class NewPunchActivity extends SherlockActivity{
     List<Task> tasks;
     long jobID;
     DateTime date;
-    private static final boolean enableLog = true;
+    private static final boolean enableLog = Defines.DEBUG_PRINT;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,9 +174,14 @@ public class NewPunchActivity extends SherlockActivity{
         DateTime startOfPP = thisJob.getStartOfPayPeriod();
         if(startOfPP.getSecondOfDay() > date1.getSecondOfDay()){
             date1 = date1.plusDays(1);
+            Log.d(TAG, "Pay Period start " + startOfPP );
+            Log.d(TAG, "insert date " + date1 );
+            Log.d(TAG, "Start Second of Day: " + startOfPP.getSecondOfDay());
+            Log.d(TAG, "This Second of Day: " + date1.getSecondOfDay());
         }
         Punch newPunch = new Punch(thisJob, inTask, date1);
         if(enableLog) Log.d(TAG, "Date Time: " + newPunch.getTime().getMillis());
+        Log.d(TAG, "Date Time: " + newPunch.getTime());
 
         chrono.insertPunch(newPunch);
         chrono.close();

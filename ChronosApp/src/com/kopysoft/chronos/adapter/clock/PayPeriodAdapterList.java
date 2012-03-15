@@ -86,7 +86,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
     public DateTime getDate(int i){
         if(i > gPunchesByDay.getDays().size())
             return null;
-        return gPunchesByDay.getDays().get(i).toDateTime();
+        return gPunchesByDay.getDays().get(i);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
         Duration dur = getTime(getItem(i));
 
-        Log.d(TAG, "Dur Total: " + dur.getMillis());
+        if(enableLog) Log.d(TAG, "Dur Total: " + dur.getMillis());
 
         DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
         String time = fmt.print(gPunchesByDay.getDays().get(i));

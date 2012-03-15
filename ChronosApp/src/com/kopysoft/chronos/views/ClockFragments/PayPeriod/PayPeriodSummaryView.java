@@ -40,6 +40,7 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PunchTable;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 
 public class PayPeriodSummaryView extends LinearLayout {
@@ -93,6 +94,9 @@ public class PayPeriodSummaryView extends LinearLayout {
         String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
         timeView.setText(output);
         Job thisJob = chrono.getAllJobs().get(0);
+
+        if(enableLog) Log.d(TAG, "Start of pay period: " + thisJob.getStartOfPayPeriod());
+        if(enableLog) Log.d(TAG, "Start of pay period: " + DateTimeZone.getDefault());
 
         if(enableLog) Log.d(TAG, "job: " + thisJob);
         if(enableLog) Log.d(TAG, "seconds: " + seconds);

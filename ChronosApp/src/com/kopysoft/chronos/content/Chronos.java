@@ -44,8 +44,7 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
-import org.joda.time.DateTime;
-import org.joda.time.Period;
+import org.joda.time.*;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -73,6 +72,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     Dao<Job, String>    gJobDoa = null;
     Dao<Note, String>    gNoteDoa = null;
 
+    //public static final boolean enableLog = Defines.DEBUG_PRINT;
     public static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public Chronos(Context context) {
@@ -101,9 +101,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Job,String> jobDAO = getJobDao();
 
             //Create 1 Job
-            DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
+            DateTime jobMidnight = new DateMidnight().toDateTime().minusWeeks(1).withZone(DateTimeZone.getDefault());
+            Log.d(TAG, "start of time:" + jobMidnight);
+            Log.d(TAG, "time zone:" + DateTimeZone.getDefault() );
             Job currentJob = new Job("", 7.25f,
-                    jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
+                    jobMidnight, PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);
             currentJob.setOvertimeThreshold(40);
             currentJob.setOvertimeEnabled(true);
@@ -180,58 +182,61 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     " ( _id LONG PRIMARY KEY, note_string TEXT NOT NULL, time LONG NOT NULL )");
             */
 
-           
-            DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
-            Job currentJob = new Job("", 10,
-                    jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
-
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(gContext);
-            currentJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
-            currentJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
-            currentJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
-            currentJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
-            SharedPreferences.Editor edit = pref.edit();
-            edit.remove("8_or_40_hours");   //Moved from string to boolean
-            edit.commit();
-            String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
-            jobMidnight = new DateTime(Integer.parseInt(date[0]),
-                    Integer.parseInt(date[1]),
-                    Integer.parseInt(date[2]),
-                    0,
-                    0);
-
-            currentJob.setStartOfPayPeriod(jobMidnight);
-
-
-            List<Punch> punches = new LinkedList<Punch>();
-            List<Task> tasks = new LinkedList<Task>();
-            List<Note> notes = new LinkedList<Note>();
-
-            Task newTask;   //Basic element
-            newTask = new Task(currentJob, 0 , "Regular");
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 1 , "Lunch Break");
-            newTask.setEnablePayOverride(true);
-            newTask.setPayOverride(-7.25f);
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 2 , "Other Break");
-            newTask.setEnablePayOverride(true);
-            newTask.setPayOverride(-7.25f);
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 3 , "Travel");
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 4 , "Admin");
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 5 , "Sick Leave");
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 6 , "Personal Time");
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 7 , "Other");
-            tasks.add(newTask);
-            newTask = new Task(currentJob, 8 , "Holiday Pay");
-            tasks.add(newTask);
 
             if(oldVersion < 15){
+
+
+                DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1)
+                        .toDateMidnight().toDateTime().withZone(DateTimeZone.getDefault());
+                Job currentJob = new Job("", 10,
+                        jobMidnight, PayPeriodDuration.TWO_WEEKS);
+
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(gContext);
+                currentJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
+                currentJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
+                currentJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
+                currentJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+                SharedPreferences.Editor edit = pref.edit();
+                edit.remove("8_or_40_hours");   //Moved from string to boolean
+                edit.commit();
+                String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
+                jobMidnight = new DateTime(Integer.parseInt(date[0]),
+                        Integer.parseInt(date[1]),
+                        Integer.parseInt(date[2]),
+                        0,
+                        0);
+
+                currentJob.setStartOfPayPeriod(jobMidnight.withZone(DateTimeZone.getDefault()));
+
+
+                List<Punch> punches = new LinkedList<Punch>();
+                List<Task> tasks = new LinkedList<Task>();
+                List<Note> notes = new LinkedList<Note>();
+
+                Task newTask;   //Basic element
+                newTask = new Task(currentJob, 0 , "Regular");
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 1 , "Lunch Break");
+                newTask.setEnablePayOverride(true);
+                newTask.setPayOverride(-7.25f);
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 2 , "Other Break");
+                newTask.setEnablePayOverride(true);
+                newTask.setPayOverride(-7.25f);
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 3 , "Travel");
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 4 , "Admin");
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 5 , "Sick Leave");
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 6 , "Personal Time");
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 7 , "Other");
+                tasks.add(newTask);
+                newTask = new Task(currentJob, 8 , "Holiday Pay");
+                tasks.add(newTask);
+
                 Cursor cursor = db.query("clockactions", null,
                         null, null, null, null, "_id desc");
                 
@@ -319,6 +324,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 //create
                 TableUtils.createTable(connectionSource, Task.class); //Task - Create Table
                 Dao<Task,String> taskDAO = getTaskDao();
+                List<Task> tasks = taskDAO.queryForAll();
 
                 for(Task t: tasks){
                     taskDAO.create(t);
@@ -554,10 +560,13 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Note,String> noteDAO = getNoteDao();
             Dao<Job,String> jobDAO = getJobDao();
             Job thisJob = getAllJobs().get(0);
-            
+
+            DateTime newDate;
             Period prd = new Period(thisJob.getStartOfPayPeriod(), date);
-            int displacementInDays = prd.getDays();
-            DateTime newDate = thisJob.getStartOfPayPeriod().plusDays(displacementInDays);
+            if(thisJob.getStartOfPayPeriod().isBefore(date))
+                newDate = thisJob.getStartOfPayPeriod().plusDays(prd.toStandardDays().get(DurationFieldType.days()));
+            else
+                newDate = thisJob.getStartOfPayPeriod().minusDays(prd.toStandardDays().get(DurationFieldType.days()));
 
             QueryBuilder<Note, String> queryBuilder = noteDAO.queryBuilder();
             queryBuilder.where().eq(Note.DATE_FIELD, newDate.getMillis());
@@ -653,9 +662,14 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     startOfPP.getMinuteOfHour());
                     */
 
-            Period prd = new Period(jobId.getStartOfPayPeriod(), date);
-            int displacementInDays = prd.getDays();
-            DateTime startOfDay = jobId.getStartOfPayPeriod().plusDays(displacementInDays);
+            //Period prd = new Period(jobId.getStartOfPayPeriod(), date);
+            //Duration dur = new Duration(jobId.getStartOfPayPeriod(), date);
+            DateTime startOfDay = date;
+            //if(jobId.getStartOfPayPeriod().isBefore(date))
+            //    startOfDay = jobId.getStartOfPayPeriod().plusDays(prd.toStandardDays().get(DurationFieldType.days()));
+            //else
+            //    startOfDay = jobId.getStartOfPayPeriod().minusDays(prd.toStandardDays().get(DurationFieldType.days()));
+            //DateTime startOfDay = jobId.getStartOfPayPeriod().plusDays(displacementInDays);
 
             DateTime endOfDay = startOfDay.plusDays(1);
 
@@ -684,7 +698,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Log.e(TAG, e.getMessage());
         }
 
-        Log.d(TAG, "Number of punches: " + punches.size());
+        //Log.d(TAG, "Number of punches: " + punches.size());
         return punches;
     }
 
@@ -692,11 +706,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         //Get the start and end of pay period
         PayPeriodHolder pph = new PayPeriodHolder(jobId);
-        DateTime startOfPP = pph.getStartOfPayPeriod().toDateTime();
-        DateTime endOfPP = pph.getEndOfPayPeriod().toDateTime();
+        DateTime startOfPP = pph.getStartOfPayPeriod();
+        DateTime endOfPP = pph.getEndOfPayPeriod();
     
-        Log.d(TAG, "start of pp: " + startOfPP);
-        Log.d(TAG, "end of pp: " + endOfPP);
+        if(enableLog) Log.d(TAG, "start of pp: " + startOfPP);
+        if(enableLog) Log.d(TAG, "end of pp: " + endOfPP);
 
         return getAllPunchesForPayPeriodByJob(jobId, startOfPP, endOfPP);
     }
@@ -821,6 +835,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         Chronos chron = new Chronos(context);
         List<Punch> punches = chron.getAllPunches();
         chron.close();
+        Log.d(TAG, "Backup Size: " + punches.size());
 
         try{
             br = new BufferedWriter( new FileWriter(backup));
@@ -848,9 +863,10 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         }
 
         //Create 1 Job
-        DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime();
+        DateTime jobMidnight = DateTime.now().withDayOfWeek(7).minusWeeks(1)
+                .toDateMidnight().toDateTime().withZone(DateTimeZone.getDefault());
         Job currentJob = new Job("", 10,
-                jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
         currentJob.setDoubletimeThreshold(60);
         currentJob.setOvertimeThreshold(40);
         currentJob.setOvertimeEnabled(true);
