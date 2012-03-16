@@ -49,8 +49,8 @@ import org.joda.time.Duration;
  */
 public class EnableWidget extends AppWidgetProvider {
 
-    private static String SEND_CLOCK = "com.kopysoft.chronos.service.EnableWidget.CLOCK";
-    public static String UPDATE_FROM_APP = "com.kopysoft.chronos.service.EnableWidget.UPDATE";
+    public static String SEND_CLOCK = "com.kopysoft.chronos.content.EnableWidget.CLOCK";
+    public static String UPDATE_FROM_APP = "com.kopysoft.chronos.content.EnableWidget.UPDATE";
     private static String TAG = Defines.TAG + " - Widget";
     private static final boolean printDebugMessages = Defines.DEBUG_PRINT;
 
@@ -135,7 +135,7 @@ public class EnableWidget extends AppWidgetProvider {
 
         if (intent.getAction().compareTo(SEND_CLOCK) == 0) {
 
-            if ( dur.getMillis() < 0) {
+            if ( dur.getMillis() >= 0) {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_enabled);
             } else {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_disabled);
@@ -157,7 +157,7 @@ public class EnableWidget extends AppWidgetProvider {
             //End intent
 
         } else if (intent.getAction().compareTo(UPDATE_FROM_APP) == 0) {
-            if (dur.getMillis() > 0) {
+            if (dur.getMillis() < 0) {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_disabled);
             } else {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_enabled);

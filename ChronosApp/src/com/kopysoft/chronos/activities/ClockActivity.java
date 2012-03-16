@@ -45,6 +45,7 @@ import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.Email;
+import com.kopysoft.chronos.content.EnableWidget;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
@@ -382,6 +383,16 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         emailIntent.setType("message/rfc822");
         startActivity(emailIntent);
 
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        /*
+        Intent runIntent = new Intent(this, com.kopysoft.chronos.content.EnableWidget.class);
+        runIntent.setAction(EnableWidget.UPDATE_FROM_APP);
+        this.sendBroadcast(runIntent);
+        */
     }
 
     @Override

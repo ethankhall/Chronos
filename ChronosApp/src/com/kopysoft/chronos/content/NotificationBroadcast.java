@@ -77,7 +77,7 @@ public class NotificationBroadcast extends BroadcastReceiver {
     private void runUpdate(long timeToday, Context context){
         if ( DEBUG_PRINT ) Log.d(TAG, "Temp: " + timeToday);
 
-        if(timeToday > 0 )	{
+        if(timeToday >= 0 )	{
             removeTimeNotification();
 
         } else {
