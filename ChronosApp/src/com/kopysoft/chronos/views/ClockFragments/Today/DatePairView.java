@@ -24,6 +24,7 @@ package com.kopysoft.chronos.views.ClockFragments.Today;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +42,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.holders.PunchPair;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
@@ -56,6 +58,8 @@ public class DatePairView extends LinearLayout {
     //public static final boolean enableLog = true;
     public static final boolean enableLog = Defines.DEBUG_PRINT;
     private DateTime gDate;
+    private View header;
+    private Handler mHandler = new Handler();
 
     public boolean showPay(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent);
@@ -83,6 +87,12 @@ public class DatePairView extends LinearLayout {
         chrono.close();
 
         adapter = new TodayAdapterPair( parent, punches );
+
+        if(adapter.getTime(true).getMillis() < 0 && date.toDateMidnight().isEqual(new DateMidnight()) ){
+            mHandler.postDelayed(mUpdateTimeTask, 100);
+        }   else {
+            mHandler.removeCallbacks(mUpdateTimeTask);
+        }
         createUI(adapter, thisJob);
     }
 
@@ -97,7 +107,7 @@ public class DatePairView extends LinearLayout {
         retView.setOnItemClickListener(listener);
         //retView.setOnItemLongClickListener(LongClickListener);
 
-        View header = View.inflate(getContext(), R.layout.header, null);
+        header = View.inflate(getContext(), R.layout.header, null);
         
         DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
         ((TextView)header.findViewById(R.id.date)).setText(fmt.print(gDate));
@@ -108,22 +118,25 @@ public class DatePairView extends LinearLayout {
         }
 
         TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
-        Duration dur = adapter.getTime();
-        if(dur.getMillis() < 0){
+        Duration dur = adapter.getTime(true);
+        if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
             dur = dur.plus(DateTime.now().getMillis());
         }
         int seconds = (int)dur.getStandardSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);
         String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
-        tx.setText(output);
+        if(dur.getMillis() >= 0)
+            tx.setText(output);
+        else
+            tx.setText("--:--:--");
         
         if(enableLog) Log.d(TAG, "job: " + thisJob);
         if(enableLog) Log.d(TAG, "seconds: " + seconds);
         if(enableLog) Log.d(TAG, "dur: " + dur.toString());
         if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
-        double money = adapter.getPayableTime();
+        double money = adapter.getPayableTime(true);
         output = String.format("$ %.2f", money);
         tx = (TextView)header.findViewById(R.id.moneyViewTotal);
         tx.setText(output);
@@ -137,6 +150,25 @@ public class DatePairView extends LinearLayout {
         retView.setAdapter( adpter );
         retView.setSelection( 0 );
 
+    }
+    
+    private void updateTime(){
+        TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
+        Duration dur = adapter.getTime(true);
+        if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
+            dur = dur.plus(DateTime.now().getMillis());
+        }
+        int seconds = (int)dur.getStandardSeconds();
+        int minutes = (seconds / 60) % 60;
+        int hours = (seconds / 60 / 60);
+        String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
+        tx.setText(output);
+
+        double money = adapter.getPayableTime(true);
+        output = String.format("$ %.2f", money);
+        tx = (TextView)header.findViewById(R.id.moneyViewTotal);
+        tx.setText(output);
+        if(enableLog) Log.d(TAG, "pay amount: " + output);
     }
 
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
@@ -157,4 +189,18 @@ public class DatePairView extends LinearLayout {
             parent.startActivityForResult(newIntent, ClockActivity.FROM_CLOCK_ACTIVITY);
         }
     };
+
+    private Runnable mUpdateTimeTask = new Runnable(){
+        public void run(){
+            mHandler.removeCallbacks(mUpdateTimeTask);
+
+
+            if(adapter.getTime(true).getMillis() < 0){
+                updateTime();
+            }
+
+            mHandler.postDelayed(mUpdateTimeTask, 1000);
+        }
+    };
+
 }

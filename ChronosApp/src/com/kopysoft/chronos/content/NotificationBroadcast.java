@@ -53,7 +53,7 @@ public class NotificationBroadcast extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if ( DEBUG_PRINT ) Log.d(TAG, "Notification Revieved");
-        long timeToday = intent.getLongExtra("timeToday", 0);
+        long timeToday = intent.getExtras().getLong("timeToday", 0);
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean notificationEnabled = pref.getBoolean("NotificationsEnabled", true);

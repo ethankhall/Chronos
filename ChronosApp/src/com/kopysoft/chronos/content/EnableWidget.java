@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2011-2012 Ethan Hall
  *
@@ -74,6 +75,7 @@ public class EnableWidget extends AppWidgetProvider {
             chron.close();
 
             Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+            Log.d(TAG, "Time: " + dur.getMillis());
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             if (dur.getMillis() < 0) {
@@ -99,6 +101,7 @@ public class EnableWidget extends AppWidgetProvider {
         chron.close();
 
         Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+        Log.d(TAG, "Time: " + dur.getMillis());
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         if (dur.getMillis() < 0) {
@@ -119,6 +122,7 @@ public class EnableWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onRecieve");
+        super.onReceive(context, intent);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
@@ -132,10 +136,11 @@ public class EnableWidget extends AppWidgetProvider {
         Task defaultTask = chron.getAllTasks().get(0);
 
         Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+        Log.d(TAG, "Time: " + dur.getMillis());
 
         if (intent.getAction().compareTo(SEND_CLOCK) == 0) {
 
-            if ( dur.getMillis() >= 0) {
+            if ( dur.getMillis() < 0) {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_enabled);
             } else {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_disabled);
@@ -144,26 +149,19 @@ public class EnableWidget extends AppWidgetProvider {
             Punch newPunch = new Punch(currentJob, defaultTask, DateTime.now());
             chron.insertPunch(newPunch);
 
-            punchTable = chron.getAllPunchesForThisPayPeriodByJob(currentJob);
-            defaultTask = chron.getAllTasks().get(0);
+            punchTable.insert(newPunch);
 
-            dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()));
-
-            //Send intent for the notification bar
-            Intent runIntent = new Intent().setClass(context,
-                    com.kopysoft.chronos.content.NotificationBroadcast.class);
-            runIntent.putExtra("timeToday", dur.getMillis());
-            context.sendBroadcast(runIntent);
-            //End intent
+            dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
 
         } else if (intent.getAction().compareTo(UPDATE_FROM_APP) == 0) {
-            if (dur.getMillis() < 0) {
-                views.setImageViewResource(R.id.imageButton, R.drawable.widget_disabled);
-            } else {
+            if ( dur.getMillis() < 0) {
                 views.setImageViewResource(R.id.imageButton, R.drawable.widget_enabled);
+            } else {
+                views.setImageViewResource(R.id.imageButton, R.drawable.widget_disabled);
             }
+
         } else {
-            super.onReceive(context, intent);
+            //super.onReceive(context, intent);
             return;
         }
 

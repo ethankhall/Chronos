@@ -29,12 +29,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import com.kopysoft.chronos.types.holders.TaskTable;
 import com.kopysoft.chronos.views.helpers.RowElement;
+import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -52,7 +55,7 @@ public class TodayAdapterPair extends BaseAdapter {
     List<PunchPair> listOfPunchPairs = new LinkedList<PunchPair>();
     //public static final boolean enableLog = Defines.DEBUG_PRINT;
     public static final boolean enableLog = Defines.DEBUG_PRINT;
-
+    
     public TodayAdapterPair(Context context, List<Punch> listOfPunches){
         gContext = context;
 
@@ -139,9 +142,14 @@ public class TodayAdapterPair extends BaseAdapter {
     public long getItemId(int i) {
         return i;
     }
-    
+
     public Duration getTime(){
+        return getTime(false);
+    }
+    
+    public Duration getTime(boolean allowNegative){
         Duration dur = new Duration(0);
+
         for(PunchPair pp : listOfPunchPairs){
             if(enableLog) Log.d(TAG, "Punch Size: " + pp.getDuration());
             if(!pp.getInPunch().getTask().getEnablePayOverride())
@@ -152,23 +160,40 @@ public class TodayAdapterPair extends BaseAdapter {
                 dur = dur.minus(pp.getDuration());
         }
 
+        if(dur.getMillis() < 0 && !allowNegative)
+            dur = new Duration(0);
+
         return dur;
     }
 
     public float getPayableTime(){
+        return getPayableTime(false);
+    }
+    public float getPayableTime(boolean handleNegative){
         float totalPay = 0.0f;
         if(listOfPunchPairs.size()!= 0)
             if(enableLog) Log.d(TAG, "Pay Rate: " + listOfPunchPairs.get(0).getInPunch().getJob().getPayRate());
 
-        for(PunchPair pp : listOfPunchPairs){
-            //Log.d(TAG, "Punch Size: " + pp.getDuration().toDurationMillis());
-            long mili = pp.getDuration();
-            if(pp.getTask().getEnablePayOverride()) {
-                if(enableLog) Log.d(TAG, "Pay Rate Task: " + pp.getTask().getPayOverride() );
-                totalPay += pp.getInPunch().getTask().getPayOverride()/1000/60/60 * mili;
-            } else {
-                totalPay += pp.getInPunch().getJob().getPayRate()/1000/60/60 * mili;
-            }
+        Chronos chron = new Chronos(gContext);
+        Job thisJob = chron.getAllJobs().get(0);
+        chron.close();
+        totalPay = getTime(true).getMillis();
+        if( totalPay < 0 && handleNegative){
+            totalPay += DateTime.now().getMillis();
+        }
+
+        if(totalPay > thisJob.getDoubleTime() * 60 * 60 * 1000){
+            totalPay = (totalPay - thisJob.getDoubleTime() * 60 * 60 * 1000)
+                    * 2 * (thisJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += ((thisJob.getDoubleTime() - thisJob.getOvertime()) * 1.5 )
+                    * (thisJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime();
+        } else if(totalPay > thisJob.getOvertime() * 60 * 60 * 1000){
+            totalPay = (float)((totalPay - thisJob.getOvertime()) * 1.5 )
+                    * (thisJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime();
+        } else {
+            totalPay = thisJob.getPayRate() / 60 / 60 / 1000 * totalPay;
         }
 
         if(totalPay < 0)
