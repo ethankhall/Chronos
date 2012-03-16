@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ethan Hall
+ * Copyright (c) 2011-2012 Ethan Hall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),

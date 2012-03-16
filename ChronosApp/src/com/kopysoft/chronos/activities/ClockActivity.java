@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ethan Hall
+ * Copyright (c) 2011-2012 Ethan Hall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -45,7 +45,6 @@ import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.Email;
-import com.kopysoft.chronos.content.EnableWidget;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
