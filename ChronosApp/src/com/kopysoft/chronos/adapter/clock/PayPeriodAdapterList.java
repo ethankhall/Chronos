@@ -142,15 +142,24 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
         for(DateTime date : gPunchesByDay.getDays()){
 
-            for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
-                long mili = pp.getDuration();
-                if(pp.getTask().getEnablePayOverride()) {
-                    if(enableLog) Log.d(TAG, "Pay Rate Task: " + pp.getTask().getPayOverride() );
-                    totalPay += pp.getInPunch().getTask().getPayOverride()/1000/60/60 * mili;
-                } else {
-                    totalPay += pp.getInPunch().getJob().getPayRate()/1000/60/60 * mili;
-                }
+            float tempTotalPay = getTime(gPunchesByDay.getPunchPair(date), false).getMillis();
+
+            if(tempTotalPay > thisJob.getDoubleTime() * 60 * 60 * 1000 ){
+                tempTotalPay = (tempTotalPay - thisJob.getDoubleTime() * 60 * 60 * 1000)
+                        * 2 * (thisJob.getPayRate() / 60 / 60 / 1000);
+                tempTotalPay += ((thisJob.getDoubleTime() - thisJob.getOvertime()) * 60 * 60 * 1000 * 1.5 )
+                        * (thisJob.getPayRate() / 60 / 60 / 1000);
+                tempTotalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime() * 60 * 60 * 1000;
+            } else if(tempTotalPay > thisJob.getOvertime() * 60 * 60 * 1000 ){
+                tempTotalPay = (float)((tempTotalPay - thisJob.getOvertime()* 60 * 60 * 1000) * 1.5 )
+                        * (thisJob.getPayRate() / 60 / 60 / 1000);
+                tempTotalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime() * 60 * 60 * 1000;
+            } else {
+                tempTotalPay = thisJob.getPayRate() / 60 / 60 / 1000 * tempTotalPay;
             }
+
+            totalPay += tempTotalPay;
+            //Log.d(TAG, "pay: " + totalPay);;
         }
 
         if(totalPay < 0)

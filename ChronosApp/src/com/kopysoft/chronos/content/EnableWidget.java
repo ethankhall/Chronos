@@ -58,7 +58,7 @@ public class EnableWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
-        Log.d(TAG, "onUpdate");
+        if(printDebugMessages) Log.d(TAG, "onUpdate");
         final int N = appWidgetIds.length;
 
         // Perform this loop procedure for each App Widget that belongs to this provider
@@ -75,7 +75,7 @@ public class EnableWidget extends AppWidgetProvider {
             chron.close();
 
             Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
-            Log.d(TAG, "Time: " + dur.getMillis());
+            if(printDebugMessages) Log.d(TAG, "Time: " + dur.getMillis());
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             if (dur.getMillis() < 0) {
@@ -93,7 +93,7 @@ public class EnableWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
-        Log.d(TAG, "onEnable");
+        if(printDebugMessages) Log.d(TAG, "onEnable");
 
         Chronos chron = new Chronos(context);
         Job currentJob = chron.getAllJobs().get(0);
@@ -101,7 +101,7 @@ public class EnableWidget extends AppWidgetProvider {
         chron.close();
 
         Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
-        Log.d(TAG, "Time: " + dur.getMillis());
+        if(printDebugMessages) Log.d(TAG, "Time: " + dur.getMillis());
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         if (dur.getMillis() < 0) {
@@ -121,7 +121,7 @@ public class EnableWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onRecieve");
+        if(printDebugMessages) Log.d(TAG, "onRecieve");
         super.onReceive(context, intent);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
@@ -136,7 +136,7 @@ public class EnableWidget extends AppWidgetProvider {
         Task defaultTask = chron.getAllTasks().get(0);
 
         Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
-        Log.d(TAG, "Time: " + dur.getMillis());
+        if(printDebugMessages) Log.d(TAG, "Time: " + dur.getMillis());
 
         if (intent.getAction().compareTo(SEND_CLOCK) == 0) {
 

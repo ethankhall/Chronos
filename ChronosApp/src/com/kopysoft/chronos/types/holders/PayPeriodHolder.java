@@ -173,7 +173,7 @@ public class PayPeriodHolder implements Serializable {
 
         } else {
             gEndOfPP = gStartOfPP.minusDays(1);
-            gStartOfPP = gStartOfPP.minusDays(getDays());
+            gStartOfPP = gEndOfPP.minusDays(getDays());
             //gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
         }
     }
