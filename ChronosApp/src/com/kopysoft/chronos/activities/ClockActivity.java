@@ -42,6 +42,7 @@ import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.Editors.TaskList;
+import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.content.Email;
 import com.kopysoft.chronos.enums.Defines;
@@ -53,6 +54,7 @@ import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 
 public class ClockActivity extends SherlockActivity implements ActionBar.TabListener{
     
@@ -115,6 +117,12 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         edit.putBoolean("enable_overtime", curJob.isOverTimeEnabled());
         edit.remove("8_or_40_hours");
         edit.commit();
+
+        Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
+        Intent runIntent = new Intent().setClass(this,
+                com.kopysoft.chronos.content.NotificationBroadcast.class);
+        runIntent.putExtra("timeToday", dur.getMillis());
+        this.sendBroadcast(runIntent);
     }
 
     @Override
@@ -245,6 +253,13 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
             chronos.close();
         }
+
+        //Send intent to create notification
+        Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
+        Intent runIntent = new Intent().setClass(this,
+                com.kopysoft.chronos.content.NotificationBroadcast.class);
+        runIntent.putExtra("timeToday", dur.getMillis());
+        this.sendBroadcast(runIntent);
 
         if(getSupportActionBar().getSelectedNavigationIndex() == 0){
             setContentView(new DatePairView(this,

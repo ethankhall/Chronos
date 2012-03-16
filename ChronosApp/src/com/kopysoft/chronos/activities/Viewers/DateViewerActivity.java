@@ -36,12 +36,15 @@ import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.QuickBreakActivity;
+import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
+import com.kopysoft.chronos.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import java.util.List;
 
@@ -138,11 +141,19 @@ public class DateViewerActivity extends SherlockActivity{
         Chronos chronos = new Chronos(this);
         Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob.getID();
-        List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
+        PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
+        //List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
+
         chronos.close();
 
+        Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
+        Intent runIntent = new Intent().setClass(this,
+                com.kopysoft.chronos.content.NotificationBroadcast.class);
+        runIntent.putExtra("timeToday", dur.getMillis());
+        this.sendBroadcast(runIntent);
+
         setContentView(new DatePairView(this,
-                punches,
+                localPunchTable.getPunchesByDay(new DateTime(date)),
                 new DateTime(date)) );
     }
 }

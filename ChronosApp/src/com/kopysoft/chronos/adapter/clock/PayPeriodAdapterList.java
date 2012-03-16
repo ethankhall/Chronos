@@ -110,20 +110,24 @@ public class PayPeriodAdapterList extends BaseAdapter {
         return dur;
     }
 
-    public static Duration getTime(List<PunchPair> punches ){
+    public static Duration getTime(List<PunchPair> punches){
+        return getTime(punches, false);
+    }
+
+    public static Duration getTime(List<PunchPair> punches, boolean allowNegative){
         Duration dur = new Duration(0);
 
         for(PunchPair pp : punches){
-            if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+            if(enableLog) Log.d(TAG, "Punch Size: " + pp.getDuration());
             if(!pp.getInPunch().getTask().getEnablePayOverride())
-                dur = dur.plus(pp.getInterval().toDuration());
+                dur = dur.plus(pp.getDuration());
             else if(pp.getInPunch().getTask().getPayOverride() > 0)
-                dur = dur.plus(pp.getInterval().toDuration());
+                dur = dur.plus(pp.getDuration());
             else
-                dur = dur.minus(pp.getInterval().toDuration());
+                dur = dur.minus(pp.getDuration());
         }
 
-        if(dur.getMillis() < 0)
+        if(dur.getMillis() < 0 && !allowNegative)
             dur = new Duration(0);
 
         return dur;
@@ -139,7 +143,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
         for(DateTime date : gPunchesByDay.getDays()){
 
             for(PunchPair pp : gPunchesByDay.getPunchPair(date)){
-                long mili = pp.getInterval().toDurationMillis();
+                long mili = pp.getDuration();
                 if(pp.getTask().getEnablePayOverride()) {
                     if(enableLog) Log.d(TAG, "Pay Rate Task: " + pp.getTask().getPayOverride() );
                     totalPay += pp.getInPunch().getTask().getPayOverride()/1000/60/60 * mili;
@@ -167,7 +171,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
         center.setText("");
         left.setText("");
 
-        Duration dur = getTime(getItem(i));
+        Duration dur = getTime(getItem(i), true);
 
         if(enableLog) Log.d(TAG, "Dur Total: " + dur.getMillis());
 
@@ -178,8 +182,14 @@ public class PayPeriodAdapterList extends BaseAdapter {
         //center.setTypeface(null, Typeface.ITALIC);
 
 
-        time = String.format("%02d:%02d ", dur.toPeriod().getHours(), dur.toPeriod().getMinutes());
-        right.setText(time);
+
+
+        if(dur.getMillis() >= 0)   {
+            time = String.format("%02d:%02d ", dur.toPeriod().getHours(), dur.toPeriod().getMinutes());
+            right.setText(time);
+        } else {
+            right.setText("--:-- ");
+    }
 
         return curr;
     }

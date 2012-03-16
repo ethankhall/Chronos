@@ -109,6 +109,9 @@ public class DatePairView extends LinearLayout {
 
         TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
         Duration dur = adapter.getTime();
+        if(dur.getMillis() < 0){
+            dur = dur.plus(DateTime.now().getMillis());
+        }
         int seconds = (int)dur.getStandardSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);

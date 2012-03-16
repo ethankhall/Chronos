@@ -143,17 +143,14 @@ public class TodayAdapterPair extends BaseAdapter {
     public Duration getTime(){
         Duration dur = new Duration(0);
         for(PunchPair pp : listOfPunchPairs){
-            if(enableLog) Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
+            if(enableLog) Log.d(TAG, "Punch Size: " + pp.getDuration());
             if(!pp.getInPunch().getTask().getEnablePayOverride())
-                dur = dur.plus(pp.getInterval().toDuration());
+                dur = dur.plus(pp.getDuration());
             else if(pp.getInPunch().getTask().getPayOverride() > 0)
-                dur = dur.plus(pp.getInterval().toDuration());
+                dur = dur.plus(pp.getDuration());
             else
-                dur = dur.minus(pp.getInterval().toDuration());
+                dur = dur.minus(pp.getDuration());
         }
-
-        if(dur.getMillis() < 0)
-            dur = new Duration(0);
 
         return dur;
     }
@@ -164,8 +161,8 @@ public class TodayAdapterPair extends BaseAdapter {
             if(enableLog) Log.d(TAG, "Pay Rate: " + listOfPunchPairs.get(0).getInPunch().getJob().getPayRate());
 
         for(PunchPair pp : listOfPunchPairs){
-            //Log.d(TAG, "Punch Size: " + pp.getInterval().toDurationMillis());
-            long mili = pp.getInterval().toDurationMillis();
+            //Log.d(TAG, "Punch Size: " + pp.getDuration().toDurationMillis());
+            long mili = pp.getDuration();
             if(pp.getTask().getEnablePayOverride()) {
                 if(enableLog) Log.d(TAG, "Pay Rate Task: " + pp.getTask().getPayOverride() );
                 totalPay += pp.getInPunch().getTask().getPayOverride()/1000/60/60 * mili;

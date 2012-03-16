@@ -26,7 +26,7 @@
         <CheckBoxPreference android:title="Enable Notification"
                             android:key="NotificationsEnabled"
                             android:summary="Show a notification when clocked in. Will come soon"
-                            android:enabled="false"
+                            android:enabled="true"
                             android:defaultValue="true" />
 
         <CheckBoxPreference android:key="showPay"
