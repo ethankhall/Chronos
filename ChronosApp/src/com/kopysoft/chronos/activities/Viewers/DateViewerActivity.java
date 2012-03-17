@@ -143,6 +143,7 @@ public class DateViewerActivity extends SherlockActivity{
         jobId = curJob.getID();
         PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
         //List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
+        List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
 
         chronos.close();
 
@@ -153,7 +154,7 @@ public class DateViewerActivity extends SherlockActivity{
         this.sendBroadcast(runIntent);
 
         setContentView(new DatePairView(this,
-                localPunchTable.getPunchesByDay(new DateTime(date)),
+                punches,
                 new DateTime(date)) );
     }
 }

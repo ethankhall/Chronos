@@ -27,6 +27,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.DurationFieldType;
 import org.joda.time.Period;
 
@@ -144,11 +145,11 @@ public class PunchTable {
     public List<Punch> getPunchesByDay(DateTime key){
 
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
-        Period dur = new Period(startOfTable, key);
+        Duration dur = new Duration(startOfTable, key);
         if(startOfTable.isBefore(key))
-            key = startOfTable.plusDays(dur.toStandardDays().get(DurationFieldType.days()));
+            key = startOfTable.plusDays((int)dur.getStandardDays() );
         else
-            key = startOfTable.minusDays(dur.toStandardDays().get(DurationFieldType.days()));
+            key = startOfTable.minusDays((int)dur.getStandardDays());
 
         try{
              if(enableLog) Log.d(TAG, "GetPunchesByDay: " + key);
