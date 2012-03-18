@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ethan Hall 
+ * Copyright (c) 2011 Ethan Hall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a 
  * copy of this software and associated documentation files (the "Software"),
@@ -24,18 +24,12 @@ package com.kopysoft.chronos.types.holders;
 
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ethan
- * Date: 3/6/12
- * Time: 9:22 PM
- * To change this template use File | Settings | File Templates.
- */
 public class PayPeriodHolderTest {
     @Test
     public void testGenerate() throws Exception {
@@ -73,7 +67,7 @@ public class PayPeriodHolderTest {
             fail("Start of jobs didn't match.. Fuck");
         }
 
-        DateTime endOfPP = startOfPPCalculated.plusDays(13);
+        DateTime endOfPP = startOfPPCalculated.plusDays(holder.getDays());
         if(holder.getEndOfPayPeriod().getMillis() != endOfPP.getMillis()){
             System.out.println("Calculated End: \t" + endOfPP);
             System.out.println("Found End: \t\t" + holder.getEndOfPayPeriod());
@@ -107,7 +101,50 @@ public class PayPeriodHolderTest {
             System.out.println("Found End: \t\t" + holder.getEndOfPayPeriod());
             fail("End of jobs didn't match.. Fuck");
         }
+    }
+    
+    @Test
+    public void testMoveForwardsAndBack(){
+        DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+        moveXTimes(1, holder);
+    }
+    
+    public void moveXTimes(int moveTimes, PayPeriodHolder holder){
+        DateTime initialStartOfPP = holder.getStartOfPayPeriod();
+        DateTime initialEndOfPP = holder.getEndOfPayPeriod();
 
+        for(int i = 0; i < moveTimes; i++){
+            holder.moveForwards();
+        }
 
+        for(int i = 0; i < moveTimes; i++){
+            holder.moveBackwards();
+        }
+
+        if(! initialStartOfPP.isEqual(holder.getStartOfPayPeriod()) ){
+            System.out.println("initial value: " + initialStartOfPP);
+            System.out.println("moved value: " + holder.getStartOfPayPeriod() );
+            fail("Moving forwards and backwards didn't match the original value, start");
+        }
+
+        if(! initialEndOfPP.isEqual(holder.getEndOfPayPeriod()) ) {
+            System.out.println("initial value" + initialEndOfPP);
+            System.out.println("moved value" + holder.getEndOfPayPeriod() );
+            fail("Moving forwards and backwards didn't match the original value, end");
+        }
+    }
+    
+    @Test
+    public void runMultipleTestsForSameValueAtEnd(){
+        DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+        for(int i = 1; i < 100; i++){
+            moveXTimes(i, holder);
+        }
     }
 }
