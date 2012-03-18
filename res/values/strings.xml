@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, mainUI!</string>
-    <string name="app_name">Chronos</string>
+    <string name="app_name">Chronos Legacy</string>
 	<string name="spinnerprompt">Punch Type</string>
 	<string name="add_punch">If you are on the \'Today\' tab, just click Clock In/Out. If you are on the edit day window click add punch.</string>
 	<string name="remove_punch">Long click on the punch and click \'Remove\'. If you are in the edit day window make sure to click Ok!</string>

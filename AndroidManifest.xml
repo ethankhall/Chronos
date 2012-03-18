@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.kopysoft.chronos" android:versionCode="34" android:versionName="1.5"
-          android:installLocation="auto">
+          package="com.kopysoft.chronos.old" 
+          android:versionCode="34" 
+          android:versionName="1.5">
+          
+    <uses-sdk android:minSdkVersion="4"/>
+    <uses-sdk android:targetSdkVersion="13"/>
 
     <application android:icon="@drawable/icon" android:label="@string/app_name"
-                 android:allowBackup="true" android:name="com.kopysoft.chronos.types.AppContext"
-                 android:debuggable="false">
-        <activity android:name=".mainUI" android:label="@string/app_name"
+                 android:allowBackup="true" android:name=".types.AppContext" 
+                  android:screenOrientation="portrait">
+                  
+         <activity android:name=".mainUI" android:label="@string/app_name"
                   android:launchMode="singleTop" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -48,10 +53,10 @@
                   android:screenOrientation="portrait"/>
 
         <activity android:name=".subActivites.HelpActivity"/>
-
+        
         <receiver android:name=".service.BackgroundUpdate" android:enabled="true"/>
 
-        <receiver android:name=".service.NotificationBroadcast" android:enabled="true"/>
+        <receiver android:name=".service.NotificationBroadcast" android:enabled="true"/>        
 
         <receiver android:name=".service.MidnightBroadcast" android:enabled="true"/>
 
@@ -67,8 +72,6 @@
         </receiver>
 
     </application>
-
-    <uses-sdk android:minSdkVersion="4"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <meta-data android:name="com.google.android.backup.api_key"
