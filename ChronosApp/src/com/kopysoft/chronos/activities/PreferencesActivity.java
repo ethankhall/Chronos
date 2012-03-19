@@ -75,7 +75,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         });
 
         Preference BackupLegacyDB = (Preference) findPreference("BackupLegacyDB");
-        restoreDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        BackupLegacyDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
                 showDialog(BACKUP_LEGACY);
@@ -84,7 +84,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         });
 
         Preference restoreLegacyDB = (Preference) findPreference("restoreLegacyDB");
-        restoreDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        restoreLegacyDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
                 showDialog(RESTORE_LEGACY);

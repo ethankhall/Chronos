@@ -44,7 +44,9 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
-import org.joda.time.*;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -868,7 +870,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return true;
     }
 
-    static public boolean getDataOnSDCard(Context context, boolean  oldFormat){
+    static public boolean getDataOnSDCard(Context context, boolean  oldFormat) {
         if(getCardReadStatus() == false){
 
             CharSequence text = "Could not read to SD Card!.";
@@ -890,6 +892,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         List<Punch> punches = new LinkedList<Punch>();
         List<Task> tasks = new LinkedList<Task>();
+        List<Note> notes = new LinkedList<Note>();
 
         Task newTask;   //Basic element
         newTask = new Task(currentJob, 0 , "Regular");
@@ -929,6 +932,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             BufferedReader br = new BufferedReader( new FileReader(backup));
             String strLine = br.readLine();
 
+
             //id,date,name,task name, date in ms, job num, task num
             //1,Sun Mar 11 2012 15:46,null,Regular,1331498803269,1,1
             while( strLine != null){
@@ -942,17 +946,22 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     task = Integer.parseInt(parcedString[6]);
                 } else {
                     time = Long.parseLong(parcedString[1]);
-                    task = Integer.parseInt(parcedString[2]);
+                    task = Integer.parseInt(parcedString[2]) + 1;
+                    if(!parcedString[4].equalsIgnoreCase("")){
+                        Note note = new Note(Chronos.getDateFromStartOfPayPeriod(currentJob, new DateTime(time)),
+                                currentJob, parcedString[4]);
+                        notes.add(note);
+                    }
                 }
-                Log.d(TAG, "task: " + task);
-                Log.d(TAG, "time: " + time);
-                
+
                 //Job iJob, Task iPunchTask, DateTime iTime
                 punches.add(new Punch(currentJob, tasks.get(task - 1), new DateTime(time)));
                 strLine = br.readLine();
             }
         } catch (Exception e){
-            Log.e(TAG, e.getMessage());
+            if(e != null && e.getCause() != null){
+                Log.e(TAG, e.getCause().toString());
+            }
             return false;
         }
 
@@ -973,6 +982,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Task,String> taskDAO = chronos.getTaskDao();
             Dao<Job,String> jobDAO = chronos.getJobDao();
             Dao<Punch,String> punchDOA = chronos.getPunchDao();
+            Dao<Note,String> noteDOA = chronos.getNoteDao();
 
             jobDAO.create(currentJob);
 
@@ -982,6 +992,10 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
             for(Punch p: punches){
                 punchDOA.create(p);
+            }
+
+            for(Note n: notes){
+                noteDOA.create(n);
             }
 
             chronos.close();
