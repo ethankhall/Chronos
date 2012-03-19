@@ -42,7 +42,6 @@ import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
 
 import java.util.List;
 
@@ -129,11 +128,14 @@ public class PairEditorActivity extends SherlockActivity{
         p2 = chron.getPunchById(punch2);
 
         Job tempJob = chron.getAllJobs().get(0);
+        date = Chronos.getDateFromStartOfPayPeriod(tempJob, p1.getTime());
+        /*
         Duration prd = new Duration(tempJob.getStartOfPayPeriod(), p1.getTime());
         if(tempJob.getStartOfPayPeriod().isBefore(p1.getTime()))
             date = tempJob.getStartOfPayPeriod().plusDays((int)prd.getStandardDays() );
         else
             date = tempJob.getStartOfPayPeriod().minusDays((int)prd.getStandardDays());
+        */
 
         if(enableLog) Log.d(TAG, "P1 Current Hour: " + p1.getTime().getHourOfDay());
         if(enableLog) Log.d(TAG, "P1 Current Minute: " + p1.getTime().getMinuteOfHour());

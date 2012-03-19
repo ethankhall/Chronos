@@ -23,13 +23,11 @@
 package com.kopysoft.chronos.types.holders;
 
 import android.util.Log;
+import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.DurationFieldType;
-import org.joda.time.Period;
 
 import java.util.*;
 
@@ -71,7 +69,7 @@ public class PunchTable {
 
         for(int i = 0; i < days; i++){
 
-            DateTime key = start.plusDays(i).withZone(gPayPeriod.getStartOfPayPeriod().getZone());
+            DateTime key = start.plusDays(i);
             LinkedList<Punch> list = new LinkedList<Punch>();
             gMap.put(key, list);
             listOfDays.add(key);
@@ -121,15 +119,11 @@ public class PunchTable {
         return gPayPeriod;
     }
 
-    public void insert( Punch value){
+    public DateTime insert( Punch value){
         //Add key
         DateTime key = value.getTime();
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
-        Period dur = new Period(startOfTable, key);
-        if(startOfTable.isBefore(key))
-            key = startOfTable.plusDays(dur.toStandardDays().get(DurationFieldType.days()));
-        else
-            key = startOfTable.minusDays(dur.toStandardDays().get(DurationFieldType.days()));
+        key = Chronos.getDateFromStartOfPayPeriod(startOfTable, key);
         
         //Log.d(TAG, "Insert Punch: " + value.getTime());
         //Log.d(TAG, "Calculated Punch: " + key);
@@ -140,16 +134,22 @@ public class PunchTable {
             list.add(value);
             Collections.sort(list);
         }
+
+        return key;
     }
     
     public List<Punch> getPunchesByDay(DateTime key){
 
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
+        /*
         Duration dur = new Duration(startOfTable, key);
         if(startOfTable.isBefore(key))
             key = startOfTable.plusDays((int)dur.getStandardDays() );
         else
             key = startOfTable.minusDays((int)dur.getStandardDays());
+            */
+
+        key = Chronos.getDateFromStartOfPayPeriod(startOfTable, key);
 
         try{
              if(enableLog) Log.d(TAG, "GetPunchesByDay: " + key);

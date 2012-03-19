@@ -46,6 +46,8 @@ public class Job implements Serializable{
     float payRate;
     @DatabaseField
     boolean overTimeEnabled = true; //Should overtime be used for this job
+    @DatabaseField
+    boolean fourtyHourWeek = true; //do overtime by 40 hour week or by 8 hour day
     @DatabaseField(defaultValue = "40")
     float overTime;    //Start overtime at...
     @DatabaseField(defaultValue = "60")
@@ -187,6 +189,14 @@ public class Job implements Serializable{
     
     public String getName(){
         return jobName;
+    }
+
+    public boolean isFortyHourWeek(){
+        return fourtyHourWeek;
+    }
+
+    public void setFortyHourWeek(boolean setFortyHourWeek){
+        fourtyHourWeek = setFortyHourWeek;
     }
 
 }

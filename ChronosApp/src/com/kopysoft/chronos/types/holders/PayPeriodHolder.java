@@ -159,6 +159,8 @@ public class PayPeriodHolder implements Serializable {
     }
 
     public void moveBackwards(){
+        if(gEndOfPP == null || gStartOfPP == null){ generate(); }
+
         if(gJob.getDuration() == PayPeriodDuration.FIRST_FIFTEENTH){
             if(gStartOfPP.getDayOfMonth() == 1){
                 gStartOfPP = gStartOfPP.minusMonths(1).withDayOfMonth(15);
@@ -172,13 +174,16 @@ public class PayPeriodHolder implements Serializable {
             gStartOfPP = gStartOfPP.withDayOfMonth(1).minusMonths(1);
 
         } else {
-            gEndOfPP = gStartOfPP.minusDays(1);
             gStartOfPP = gStartOfPP.minusDays(getDays());
+            gEndOfPP = gStartOfPP.plusDays(getDays());
+
             //gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
         }
     }
 
     public void moveForwards(){
+        if(gEndOfPP == null || gStartOfPP == null){ generate(); }
+
         if(gJob.getDuration() == PayPeriodDuration.FIRST_FIFTEENTH){
             if(gStartOfPP.getDayOfMonth() == 1){
                 gStartOfPP = gStartOfPP.withDayOfMonth(15);
@@ -192,7 +197,7 @@ public class PayPeriodHolder implements Serializable {
             gStartOfPP = gStartOfPP.plusMonths(1).minusMonths(1);
         } else {
             gStartOfPP = gStartOfPP.plusDays(getDays());
-            gEndOfPP = gStartOfPP.plusDays(getDays() -1);
+            gEndOfPP = gStartOfPP.plusDays(getDays());
         }
     }
 }

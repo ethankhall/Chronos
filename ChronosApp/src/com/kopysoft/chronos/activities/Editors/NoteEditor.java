@@ -73,6 +73,7 @@ public class NoteEditor extends SherlockActivity {
             editText.setText(gNote.getNote());
         }
 
+        //tv.setText(fmt.print(new DateTime(date)));
         tv.setText(fmt.print(gNote.getTime()));
         
         Log.d(TAG, "Note Editor with Date: " + date);

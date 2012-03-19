@@ -26,6 +26,7 @@ import android.content.Context;
 import android.text.format.DateFormat;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.kopysoft.chronos.types.Job;
+import com.kopysoft.chronos.types.Note;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import com.kopysoft.chronos.types.holders.PunchTable;
@@ -56,6 +57,8 @@ public class Email {
     public String getBriefView(){
         String retString = "";
         List<DateTime> dates = punchTable.getDays();
+        Chronos chron = new Chronos(gContext);
+
         for(DateTime date : dates){
             DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
             String time = fmt.print(date);
@@ -63,9 +66,16 @@ public class Email {
             Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(date));
             retString += time +  String.format(" - %02d:%02d\n",
                     dur.toPeriod().getHours(), dur.toPeriod().getMinutes());
+
+            Note note = chron.getNoteByDay(date);
+
+            if(! note.getNote().equalsIgnoreCase("")){
+                retString += "\tNote: " + note.getNote() + "\n";
+            }
         }
-        
-    return retString;
+
+        chron.close();
+        return retString;
     }
 
     public String getExpandedView(){
@@ -78,6 +88,8 @@ public class Email {
             fmt = DateTimeFormat.forPattern("h:mm a");
         else
             fmt = DateTimeFormat.forPattern("HH:mm");
+
+        Chronos chron = new Chronos(gContext);
         
         for(DateTime date : dates){
             if( punchTable.getPunchPair(date).size() > 0)
@@ -94,7 +106,13 @@ public class Email {
 
             }
 
+            Note note = chron.getNoteByDay(date);
+
+            if(! note.getNote().equalsIgnoreCase("")){
+                retString += "\tNote: " + note.getNote() + "\n";
+            }
         }
+        chron.close();
         return retString;
     }
 }

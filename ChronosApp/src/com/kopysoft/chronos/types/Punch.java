@@ -152,4 +152,20 @@ public class Punch implements Comparable<Punch> {
                 getTask().getID() );
     }
 
+    public String toCVSLegacy(Context context){
+        //id,date,name,task name, date in ms, job num, task num
+        /*
+        returnValue += String.valueOf(id) + ",";
+        returnValue += String.valueOf(time) + ",";
+        returnValue += String.valueOf(type) + ",";
+        returnValue += String.valueOf(actionReason) + ",";
+        returnValue += note + "\n";
+        */
+        return String.format("%d,%d,%d,%d\n",
+                getID(),
+                getTime().getMillis(),
+                getJob().getID(),
+                getTask().getID() );
+    }
+
 }

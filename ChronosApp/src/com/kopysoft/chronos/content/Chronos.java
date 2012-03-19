@@ -63,7 +63,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //1.2.0	= 11
     //2.0.0RC1 = 15
 
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
     public static final String DATABASE_NAME = "Chronos";
     private Context gContext;
 
@@ -340,6 +340,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
                 //create
                 TableUtils.createTable(connectionSource, Note.class); //Task - Create Table
+            } else if(oldVersion == 17) {
+
+                //update db from old version
+                Dao<Job, String> dao = getJobDao();
+                dao.executeRaw("ALTER TABLE `jobs` ADD COLUMN fourtyHourWeek BOOLEAN DEFAULT 1;");
             }
 
         } catch (SQLException e) {
@@ -552,6 +557,30 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return retValue;
     }
 
+    public static DateTime getDateFromStartOfPayPeriod(DateTime StartOfPP, DateTime date){
+
+        DateTime newDate;
+        DateTimeZone startZone = StartOfPP.getZone();
+        DateTimeZone endZone = date.getZone();
+        long dateTime = date.getMillis() - StartOfPP.getMillis();
+        
+        long offset = endZone.getOffset(date) - startZone.getOffset(StartOfPP);
+        //System.out.println("offset: " + offset);
+        dateTime += offset;
+        
+        //System.out.println("millis diff: " + (dateTime) );
+        int days = (int)(dateTime / 1000 / 60 / 60 / 24);
+        newDate = StartOfPP.plusDays(days);
+        //System.out.println("Days to add: " + days);
+
+        return newDate;
+    }
+
+    public static DateTime getDateFromStartOfPayPeriod(Job thisJob, DateTime date){
+
+        return getDateFromStartOfPayPeriod(thisJob.getStartOfPayPeriod(), date);
+    }
+    
     public Note getNoteByDay(DateTime date){
 
         Note retValue = new Note();
@@ -561,12 +590,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Job,String> jobDAO = getJobDao();
             Job thisJob = getAllJobs().get(0);
 
-            DateTime newDate;
-            Period prd = new Period(thisJob.getStartOfPayPeriod(), date);
-            if(thisJob.getStartOfPayPeriod().isBefore(date))
-                newDate = thisJob.getStartOfPayPeriod().plusDays(prd.toStandardDays().get(DurationFieldType.days()));
-            else
-                newDate = thisJob.getStartOfPayPeriod().minusDays(prd.toStandardDays().get(DurationFieldType.days()));
+            DateTime newDate = getDateFromStartOfPayPeriod(thisJob, date);
 
             QueryBuilder<Note, String> queryBuilder = noteDAO.queryBuilder();
             queryBuilder.where().eq(Note.DATE_FIELD, newDate.getMillis());
@@ -651,16 +675,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             Dao<Punch,String> punchDao = getPunchDao();
             Dao<Task,String> taskDAO = getTaskDao();
             Dao<Job,String> jobDAO = getJobDao();
-
-            /*
-            DateTime startOfPP = jobId.getStartOfPayPeriod();
-            DateTime startOfDay = new DateTime(
-                    date.getYear(),
-                    date.getMonthOfYear(),
-                    date.getDayOfMonth(),
-                    startOfPP.getHourOfDay(),
-                    startOfPP.getMinuteOfHour());
-                    */
 
             //Period prd = new Period(jobId.getStartOfPayPeriod(), date);
             //Duration dur = new Duration(jobId.getStartOfPayPeriod(), date);
@@ -816,7 +830,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         }
     }
     
-    static public boolean putDataOnSDCard(Context context){
+    static public boolean putDataOnSDCard(Context context, boolean oldFormat){
 
         if(getCardWriteStatus() == false){
 
@@ -841,7 +855,10 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             br = new BufferedWriter( new FileWriter(backup));
 
             for(Punch p : punches){
-                br.write(p.toCVS(context));
+                if(!oldFormat)
+                    br.write(p.toCVS(context));
+                else
+                    br.write(p.toCVSLegacy(context));
             }
             br.close();
         } catch (IOException e){
@@ -851,7 +868,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         return true;
     }
 
-    static public boolean getDataOnSDCard(Context context){
+    static public boolean getDataOnSDCard(Context context, boolean  oldFormat){
         if(getCardReadStatus() == false){
 
             CharSequence text = "Could not read to SD Card!.";
@@ -900,7 +917,11 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         try{
             File directory =  Environment.getExternalStorageDirectory();
-            File backup = new File(directory, "Chronos_Backup.csv");
+            File backup;
+            if(!oldFormat)
+                backup = new File(directory, "Chronos_Backup.csv");
+            else
+                backup = new File(directory, "Chronos_Backup.cvs");
             if(!backup.exists()){
                 return false;
             }
@@ -912,9 +933,17 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             //1,Sun Mar 11 2012 15:46,null,Regular,1331498803269,1,1
             while( strLine != null){
                 Log.d(TAG, strLine);
-                String[] parcedString = strLine.split(",");   
-                long time = Long.parseLong(parcedString[4]);
-                int task = Integer.parseInt(parcedString[6]);
+                String[] parcedString = strLine.split(",");
+                long time;
+                int task;
+
+                if(!oldFormat){
+                    time = Long.parseLong(parcedString[4]);
+                    task = Integer.parseInt(parcedString[6]);
+                } else {
+                    time = Long.parseLong(parcedString[1]);
+                    task = Integer.parseInt(parcedString[2]);
+                }
                 Log.d(TAG, "task: " + task);
                 Log.d(TAG, "time: " + time);
                 

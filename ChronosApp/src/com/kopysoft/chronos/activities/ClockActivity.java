@@ -109,15 +109,6 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("position"));
         }
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putString("normal_pay", Float.toString(curJob.getPayRate()) );
-        edit.putString("over_time_threshold", Float.toString(curJob.getOvertime()) );
-        edit.putString("double_time_threshold", Float.toString(curJob.getDoubleTime()) );
-        edit.putBoolean("enable_overtime", curJob.isOverTimeEnabled());
-        edit.remove("8_or_40_hours");
-        edit.commit();
-
         Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
         Intent runIntent = new Intent().setClass(this,
                 com.kopysoft.chronos.content.NotificationBroadcast.class);
@@ -208,6 +199,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
             thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
             thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+            thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
             String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
             String time[] = pref.getString("time", "00:00").split("\\p{Punct}");
             thisJob.setStartOfPayPeriod(new DateTime(Integer.parseInt(date[0]),

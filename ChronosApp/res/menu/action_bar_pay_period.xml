@@ -25,39 +25,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_navigate"
-        android:icon="@drawable/ic_menu_goto"
-        android:title="Go To"
-        android:text="Go To"
-        android:showAsAction="ifRoom|withText">
-        <menu>
-            <item 
-                android:id="@+id/menu_navigate_forward"
-                android:icon="@drawable/ic_menu_forward"
-                android:text="Forward"
-                android:title="Forward"
-                android:showAsAction="always|withText"/>
-            <item
-                    android:id="@+id/menu_navigate_today"
-                    android:icon="@drawable/ic_menu_today"
-                    android:text="Today"
-                    android:title="Today"
-                    android:showAsAction="always|withText"/>
-            <item
-                    android:id="@+id/menu_navigate_back"
-                    android:icon="@drawable/ic_menu_back"
-                    android:text="Back"
-                    android:title="Back"
-                    android:showAsAction="always|withText"/>
-        </menu>
-    </item>
+            android:id="@+id/menu_navigate_back"
+            android:icon="@drawable/ic_menu_back"
+            android:text="Back"
+            android:title="Back"
+            android:showAsAction="always|withText"/>
+
+    <item
+            android:id="@+id/menu_navigate_today"
+            android:icon="@drawable/ic_menu_today"
+            android:text="Today"
+            android:title="Today"
+            android:showAsAction="always|withText"/>
+
+    <item
+            android:id="@+id/menu_navigate_forward"
+            android:icon="@drawable/ic_menu_forward"
+            android:text="Forward"
+            android:title="Forward"
+            android:showAsAction="always|withText"/>
+
 
     <item
             android:icon="@drawable/ic_menu_moreoverflow_holo_dark"
             android:title="Options"
             android:text="Options"
             android:id="@+id/menu_options"
-            android:showAsAction="ifRoom|withText">
+            android:showAsAction="always|collapseActionView">
         <menu>
             <item android:id="@+id/menu_preferences"
                   android:title="@string/menu_preferences"

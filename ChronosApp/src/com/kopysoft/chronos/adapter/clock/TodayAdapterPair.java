@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
@@ -55,9 +54,11 @@ public class TodayAdapterPair extends BaseAdapter {
     List<PunchPair> listOfPunchPairs = new LinkedList<PunchPair>();
     //public static final boolean enableLog = Defines.DEBUG_PRINT;
     public static final boolean enableLog = Defines.DEBUG_PRINT;
+    private Job thisJob;
     
-    public TodayAdapterPair(Context context, List<Punch> listOfPunches){
+    public TodayAdapterPair(Context context, List<Punch> listOfPunches, Job job){
         gContext = context;
+        thisJob = job;
 
         if(enableLog)
             for(Punch p : listOfPunches){
@@ -144,13 +145,17 @@ public class TodayAdapterPair extends BaseAdapter {
     }
 
     public Duration getTime(){
-        return getTime(false);
+        return getTime(listOfPunchPairs, false);
+    }
+
+    public Duration getTime(boolean enabled){
+        return getTime(listOfPunchPairs, enabled);
     }
     
-    public Duration getTime(boolean allowNegative){
+    public static Duration getTime(List<PunchPair> punches, boolean allowNegative){
         Duration dur = new Duration(0);
 
-        for(PunchPair pp : listOfPunchPairs){
+        for(PunchPair pp : punches){
             if(enableLog) Log.d(TAG, "Punch Size: " + pp.getDuration());
             if(!pp.getInPunch().getTask().getEnablePayOverride())
                 dur = dur.plus(pp.getDuration());
@@ -167,34 +172,27 @@ public class TodayAdapterPair extends BaseAdapter {
     }
 
     public float getPayableTime(){
-        return getPayableTime(false);
+        return getPayableTime(listOfPunchPairs, thisJob ,false);
     }
-    public float getPayableTime(boolean handleNegative){
-        float totalPay = 0.0f;
-        if(listOfPunchPairs.size()!= 0)
-            if(enableLog) Log.d(TAG, "Pay Rate: " + listOfPunchPairs.get(0).getInPunch().getJob().getPayRate());
 
-        Chronos chron = new Chronos(gContext);
-        Job thisJob = chron.getAllJobs().get(0);
-        chron.close();
-        totalPay = getTime(true).getMillis();
+    public float getPayableTime(boolean enabled){
+        return getPayableTime(listOfPunchPairs, thisJob ,enabled);
+    }
+
+    public static float getPayableTime(List<PunchPair> punches, Job curJob, boolean handleNegative){
+        float totalPay;
+        if(punches.size()!= 0)
+            if(enableLog) Log.d(TAG, "Pay Rate: " + curJob.getPayRate());
+
+        totalPay = getTime(punches, true).getMillis();
         if( totalPay < 0 && handleNegative){
             totalPay += DateTime.now().getMillis();
         }
 
-        if(totalPay > thisJob.getDoubleTime() * 60 * 60 * 1000){
-            totalPay = (totalPay - thisJob.getDoubleTime() * 60 * 60 * 1000)
-                    * 2 * (thisJob.getPayRate() / 60 / 60 / 1000);
-            totalPay += ((thisJob.getDoubleTime() - thisJob.getOvertime()) * 1.5 )
-                    * (thisJob.getPayRate() / 60 / 60 / 1000);
-            totalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime();
-        } else if(totalPay > thisJob.getOvertime() * 60 * 60 * 1000){
-            totalPay = (float)((totalPay - thisJob.getOvertime()) * 1.5 )
-                    * (thisJob.getPayRate() / 60 / 60 / 1000);
-            totalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime();
-        } else {
-            totalPay = thisJob.getPayRate() / 60 / 60 / 1000 * totalPay;
-        }
+        if(curJob.isOverTimeEnabled() && !curJob.isFortyHourWeek())
+            totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
+        else
+            totalPay = getPay((long)totalPay, curJob.getPayRate(), 10000, 10000);
 
         if(totalPay < 0)
             totalPay = 0;
@@ -202,6 +200,27 @@ public class TodayAdapterPair extends BaseAdapter {
         return totalPay;
     }
 
+    private static float hoursToMilli(float hours){
+        return hours * 60 * 60 * 1000;
+    }
+
+    private static float getPay(long inputTime, float payRate, float overTimeValue, float doubleTimeValue){
+        float totalPay;
+        if(inputTime > hoursToMilli(doubleTimeValue)){
+            totalPay = (inputTime - hoursToMilli(doubleTimeValue))
+                    * 2 * (payRate / 60 / 60 / 1000);
+            totalPay += (hoursToMilli(doubleTimeValue - overTimeValue) * 1.5 )
+                    * (payRate / 60 / 60 / 1000);
+            totalPay += payRate * overTimeValue;
+        } else if(inputTime > hoursToMilli(overTimeValue)){
+            totalPay = (float)((inputTime - hoursToMilli(overTimeValue)) * 1.5 )
+                    * (payRate / 60 / 60 / 1000);
+            totalPay += payRate * overTimeValue ;
+        } else {
+            totalPay = payRate / 60 / 60 / 1000 * inputTime;
+        }
+        return totalPay;
+    }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {

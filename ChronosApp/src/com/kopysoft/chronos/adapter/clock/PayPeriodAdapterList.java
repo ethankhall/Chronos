@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.holders.PunchPair;
@@ -47,20 +46,12 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
     private Context gContext;
     private PunchTable gPunchesByDay;
+    private Job thisJob;
     private static final boolean enableLog = Defines.DEBUG_PRINT;
 
-    public PayPeriodAdapterList(Context context, Job inJob){
+    public PayPeriodAdapterList(Context context, PunchTable punchTable, Job inJob){
         gContext = context;
-        Chronos chrono = new Chronos(gContext);
-
-        gPunchesByDay = chrono.getAllPunchesForThisPayPeriodByJob(inJob);
-        chrono.close();
-        //gPayPeriod = new PayPeriodHolder(inJob);
-        if(enableLog) Log.d(TAG, "Size of Punches: " + gPunchesByDay.getDays().size());
-    }
-
-    public PayPeriodAdapterList(Context context, PunchTable punchTable){
-        gContext = context;
+        thisJob = inJob;
 
         gPunchesByDay = punchTable;
         //gPayPeriod = new PayPeriodHolder(inJob);
@@ -110,6 +101,17 @@ public class PayPeriodAdapterList extends BaseAdapter {
         return dur;
     }
 
+    public static Duration getTime(PunchTable table){
+        Duration dur = new Duration(0);
+
+        for(DateTime date : table.getDays()){
+            dur = dur.plus(getTime(table.getPunchPair(date)));
+        }
+        if(enableLog) Log.d(TAG, "Duration: " + dur);
+
+        return dur;
+    }
+
     public static Duration getTime(List<PunchPair> punches){
         return getTime(punches, false);
     }
@@ -134,37 +136,54 @@ public class PayPeriodAdapterList extends BaseAdapter {
     }
 
     public float getPayableTime(){
+        return getPayableTime(gPunchesByDay, thisJob);
+    }
+
+    public static float getPayableTime(PunchTable punchTable, Job curJob){
         float totalPay = 0.0f;
-        
-        Chronos chron = new Chronos(gContext);
-        Job thisJob = chron.getAllJobs().get(0);
-        chron.close();
 
-        for(DateTime date : gPunchesByDay.getDays()){
+        for(DateTime date : punchTable.getDays()){
 
-            float tempTotalPay = getTime(gPunchesByDay.getPunchPair(date), false).getMillis();
-
-            if(tempTotalPay > thisJob.getDoubleTime() * 60 * 60 * 1000 ){
-                tempTotalPay = (tempTotalPay - thisJob.getDoubleTime() * 60 * 60 * 1000)
-                        * 2 * (thisJob.getPayRate() / 60 / 60 / 1000);
-                tempTotalPay += ((thisJob.getDoubleTime() - thisJob.getOvertime()) * 60 * 60 * 1000 * 1.5 )
-                        * (thisJob.getPayRate() / 60 / 60 / 1000);
-                tempTotalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime() * 60 * 60 * 1000;
-            } else if(tempTotalPay > thisJob.getOvertime() * 60 * 60 * 1000 ){
-                tempTotalPay = (float)((tempTotalPay - thisJob.getOvertime()* 60 * 60 * 1000) * 1.5 )
-                        * (thisJob.getPayRate() / 60 / 60 / 1000);
-                tempTotalPay += thisJob.getPayRate() / 60 / 60 / 1000 * thisJob.getOvertime() * 60 * 60 * 1000;
+            if(curJob.isFortyHourWeek()){
+                totalPay += getTime(punchTable.getPunchPair(date), false).getMillis();
             } else {
-                tempTotalPay = thisJob.getPayRate() / 60 / 60 / 1000 * tempTotalPay;
+                //totalPay += getPay(getTime(punchTable.getPunchPair(date), false).getMillis(),
+                //        curJob.getPayRate(), 8, 10);
+                totalPay += getPay(getTime(punchTable.getPunchPair(date), false).getMillis(),
+                        curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
             }
-
-            totalPay += tempTotalPay;
             //Log.d(TAG, "pay: " + totalPay);;
+        }
+
+        if(curJob.isFortyHourWeek()){
+            totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
         }
 
         if(totalPay < 0)
             totalPay = 0;
 
+        return totalPay;
+    }
+
+    private static float hoursToMilli(float hours){
+        return hours * 60 * 60 * 1000;
+    }
+
+    private static float getPay(long inputTime, float payRate, float overTimeValue, float doubleTimeValue){
+        float totalPay;
+        if(inputTime > hoursToMilli(doubleTimeValue)){
+            totalPay = (inputTime - hoursToMilli(doubleTimeValue))
+                    * 2 * (payRate / 60 / 60 / 1000);
+            totalPay += (hoursToMilli(doubleTimeValue - overTimeValue) * 1.5 )
+                    * (payRate / 60 / 60 / 1000);
+            totalPay += payRate * overTimeValue;
+        } else if(inputTime > hoursToMilli(overTimeValue)){
+            totalPay = (float)((inputTime - hoursToMilli(overTimeValue)) * 1.5 )
+                    * (payRate / 60 / 60 / 1000);
+            totalPay += payRate * overTimeValue ;
+        } else {
+            totalPay = payRate / 60 / 60 / 1000 * inputTime;
+        }
         return totalPay;
     }
 

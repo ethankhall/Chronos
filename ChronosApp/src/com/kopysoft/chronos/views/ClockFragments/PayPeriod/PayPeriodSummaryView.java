@@ -67,7 +67,10 @@ public class PayPeriodSummaryView extends LinearLayout {
         ListView retView = new ListView( parent );
         retView.setOnItemClickListener(listener);
 
-        adapter = new PayPeriodAdapterList(parent, table);
+        Job thisJob = chrono.getAllJobs().get(0);
+        chrono.close();
+
+        adapter = new PayPeriodAdapterList(parent, table, thisJob);
         retView.setAdapter( adapter );
         retView.setSelection( position );
         //registerForContextMenu(retView);
@@ -93,7 +96,6 @@ public class PayPeriodSummaryView extends LinearLayout {
         int hours = (seconds / 60 / 60);
         String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
         timeView.setText(output);
-        Job thisJob = chrono.getAllJobs().get(0);
 
         if(enableLog) Log.d(TAG, "Start of pay period: " + thisJob.getStartOfPayPeriod());
         if(enableLog) Log.d(TAG, "Start of pay period: " + DateTimeZone.getDefault());
@@ -115,8 +117,6 @@ public class PayPeriodSummaryView extends LinearLayout {
 
         addView(header);
         addView(retView);
-
-        chrono.close();
     }
 
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {

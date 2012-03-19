@@ -28,10 +28,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
@@ -86,7 +83,7 @@ public class DatePairView extends LinearLayout {
         if(enableLog) Log.d(TAG, "Entry 2 Pay: " + thisJob.getPayRate());
         chrono.close();
 
-        adapter = new TodayAdapterPair( parent, punches );
+        adapter = new TodayAdapterPair( parent, punches, thisJob);
 
         if(adapter.getTime(true).getMillis() < 0 && date.toDateMidnight().isEqual(new DateMidnight()) ){
             mHandler.postDelayed(mUpdateTimeTask, 100);
@@ -121,11 +118,14 @@ public class DatePairView extends LinearLayout {
         Duration dur = adapter.getTime(true);
         if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
             dur = dur.plus(DateTime.now().getMillis());
+            Log.d(TAG, "Add Time");
         }
+
         int seconds = (int)dur.getStandardSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);
         String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
+
         if(dur.getMillis() >= 0)
             tx.setText(output);
         else
@@ -136,12 +136,11 @@ public class DatePairView extends LinearLayout {
         if(enableLog) Log.d(TAG, "dur: " + dur.toString());
         if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
-        double money = adapter.getPayableTime(true);
+        double money = adapter.getPayableTime(gDate.toDateMidnight().isEqual(new DateMidnight()));
         output = String.format("$ %.2f", money);
         tx = (TextView)header.findViewById(R.id.moneyViewTotal);
         tx.setText(output);
         if(enableLog) Log.d(TAG, "pay amount: " + output);
-
 
         //header to the row
         addView(header);

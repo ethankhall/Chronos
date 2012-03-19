@@ -96,6 +96,7 @@
             <artifactId>plugin-support-lib</artifactId>
             <version>4.0.0-RC1</version>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
 
         <!-- TEST scope -->

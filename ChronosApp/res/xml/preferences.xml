@@ -43,10 +43,14 @@
                         android:defaultValue="1" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Backup and Restore">
-        <Preference android:title="Backup Times" android:summary="Creates an CVS file of punches"
+        <Preference android:title="Backup Times" android:summary="Creates an CSV file of punches"
                     android:key="backupDB" />
-        <Preference android:title="Restore Times" android:summary="Restores punches from CVS file"
+        <Preference android:title="Restore Times" android:summary="Restores punches from CSV file"
                     android:key="restoreDB" />
+        <Preference android:title="Restore from Legacy" android:summary="Restores punches from old version of Chronos"
+                    android:key="restoreLegacyDB" />
+        <Preference android:title="Backup to Legacy Format" android:summary="Creates a file that is able to be read by the Chronos Legacy"
+                    android:key="BackupLegacyDB" />
 
     </PreferenceCategory>
     <Preference android:title="Read EULA" android:summary="Read the End User License Agreement"

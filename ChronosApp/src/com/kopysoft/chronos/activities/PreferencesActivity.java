@@ -43,6 +43,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
     private static final int BACKUP = 0;
     private static final int RESTORE = 1;
+    private static final int BACKUP_LEGACY = 2;
+    private static final int RESTORE_LEGACY = 3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,24 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
             public boolean onPreferenceClick(Preference preference) {
                 showDialog(RESTORE);
+                return true;
+            }
+        });
+
+        Preference BackupLegacyDB = (Preference) findPreference("BackupLegacyDB");
+        restoreDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                showDialog(BACKUP_LEGACY);
+                return true;
+            }
+        });
+
+        Preference restoreLegacyDB = (Preference) findPreference("restoreLegacyDB");
+        restoreDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                showDialog(RESTORE_LEGACY);
                 return true;
             }
         });
@@ -107,9 +127,9 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
-                                if (Chronos.putDataOnSDCard(getApplicationContext() )) {
+                                if (Chronos.putDataOnSDCard(getApplicationContext(), false)) {
                                     Toast.makeText(getApplicationContext(), "Backup Successful!",
-                                            Toast.LENGTH_SHORT).show();;
+                                            Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(getApplicationContext(),
                                             "Backup Failed! Contact developer.", Toast.LENGTH_LONG).show();
@@ -128,9 +148,50 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setMessage("This will replace all your punches. You will loose everything!")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if (Chronos.getDataOnSDCard(getApplicationContext())) {
+                                if (Chronos.getDataOnSDCard(getApplicationContext(), false)) {
                                     Toast.makeText(getApplicationContext(), "Restore Successful!",
-                                            Toast.LENGTH_SHORT).show();;
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Restore Failed! Contact developer.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .create();
+            case BACKUP_LEGACY:
+                return new AlertDialog.Builder(PreferencesActivity.this)
+                    .setTitle("Are you sure?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            if (Chronos.putDataOnSDCard(getApplicationContext(), true )) {
+                                Toast.makeText(getApplicationContext(), "Backup Successful!",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Backup Failed! Contact developer.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            /* User clicked Cancel so do some stuff */
+                        }
+                    })
+                    .create();
+            case RESTORE_LEGACY:
+                return new AlertDialog.Builder(PreferencesActivity.this)
+                        .setTitle("Are you sure?")
+                        .setMessage("This will replace all your punches. You will loose everything!")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                if (Chronos.getDataOnSDCard(getApplicationContext(), true)) {
+                                    Toast.makeText(getApplicationContext(), "Restore Successful!",
+                                            Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(getApplicationContext(),
                                             "Restore Failed! Contact developer.", Toast.LENGTH_LONG).show();
