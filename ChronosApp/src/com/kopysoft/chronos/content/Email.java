@@ -102,8 +102,6 @@ public class Email {
                     retString += "\t" + fmt.print(pp.getOutPunch().getTime()) + " - \tOUT - "
                             + pp.getOutPunch().getTask().getName() + "\n";
                 }
-
-
             }
 
             Note note = chron.getNoteByDay(date);
