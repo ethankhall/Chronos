@@ -38,6 +38,7 @@ import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
+import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PunchPair;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -57,6 +58,7 @@ public class DatePairView extends LinearLayout {
     private DateTime gDate;
     private View header;
     private Handler mHandler = new Handler();
+    Job thisJob;
 
     public boolean showPay(){
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent);
@@ -79,7 +81,7 @@ public class DatePairView extends LinearLayout {
         }
 
         Chronos chrono = new Chronos(parent);
-        Job thisJob = chrono.getAllJobs().get(0);
+        thisJob = chrono.getAllJobs().get(0);
         if(enableLog) Log.d(TAG, "Entry 2 Pay: " + thisJob.getPayRate());
         chrono.close();
 
@@ -99,12 +101,9 @@ public class DatePairView extends LinearLayout {
         //if(enableLog) Log.d(TAG, "Position: " + position);
         setOrientation(LinearLayout.VERTICAL);
 
-        ListView retView = new ListView( parent );
-
-        retView.setOnItemClickListener(listener);
         //retView.setOnItemLongClickListener(LongClickListener);
 
-        header = View.inflate(getContext(), R.layout.header, null);
+        header = View.inflate(getContext(), R.layout.today_view, null);
         
         DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
         ((TextView)header.findViewById(R.id.date)).setText(fmt.print(gDate));
@@ -114,11 +113,14 @@ public class DatePairView extends LinearLayout {
             header.findViewById(R.id.moneyViewTotal).setVisibility(View.GONE);
         }
 
+        ListView retView = (ListView)header.findViewById(R.id.listView);
+        retView.setOnItemClickListener(listener);
+
         TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
         Duration dur = adapter.getTime(true);
         if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
             dur = dur.plus(DateTime.now().getMillis());
-            Log.d(TAG, "Add Time");
+            //Log.d(TAG, "Add Time");
         }
 
         int seconds = (int)dur.getStandardSeconds();
@@ -144,10 +146,22 @@ public class DatePairView extends LinearLayout {
 
         //header to the row
         addView(header);
-        addView(retView);
 
         retView.setAdapter( adpter );
         retView.setSelection( 0 );
+
+
+        //show button
+        if(! gDate.toDateMidnight().isEqual(new DateMidnight())){
+            header.findViewById(R.id.clockInAndOutButton).setVisibility(View.GONE);
+        } else {
+            (header.findViewById(R.id.clockInAndOutButton)).setOnClickListener(buttonListener);
+            if(dur.getMillis() < 0){
+                ((Button)header.findViewById(R.id.clockInAndOutButton)).setText("Clock Out");
+            } else {
+                ((Button)header.findViewById(R.id.clockInAndOutButton)).setText("Clock In");
+            }
+        }
 
     }
     
@@ -169,6 +183,38 @@ public class DatePairView extends LinearLayout {
         tx.setText(output);
         if(enableLog) Log.d(TAG, "pay amount: " + output);
     }
+    
+    OnClickListener buttonListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Chronos chron = new Chronos(getContext());
+            Task newTask = chron.getAllTasks().get(0);
+            Punch newPunch = new Punch(thisJob, newTask, new DateTime());
+            chron.insertPunch(newPunch);
+            chron.close();
+            adapter.addPunch(newPunch);
+            adapter.notifyDataSetChanged();
+            updateTime();
+
+            Duration dur = adapter.getTime(true);
+            Intent runIntent = new Intent().setClass(parent,
+                    com.kopysoft.chronos.content.NotificationBroadcast.class);
+            runIntent.putExtra("timeToday", dur.getMillis());
+            parent.sendBroadcast(runIntent);
+            
+            if(dur.getMillis() < 0){
+                ((Button)view).setText("Clock Out");
+            } else {
+                ((Button)view).setText("Clock In");
+            }
+
+            if(adapter.getTime(true).getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight()) ){
+                mHandler.postDelayed(mUpdateTimeTask, 100);
+            }   else {
+                mHandler.removeCallbacks(mUpdateTimeTask);
+            }
+        }
+    };
 
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
         @Override
