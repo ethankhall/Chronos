@@ -44,6 +44,7 @@ import com.kopysoft.chronos.types.Punch;
 import com.kopysoft.chronos.types.Task;
 import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import com.kopysoft.chronos.types.holders.PunchTable;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -51,10 +52,7 @@ import org.joda.time.DateTimeZone;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Chronos extends OrmLiteSqliteOpenHelper {
 
@@ -845,7 +843,12 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         }
 
         File directory =  Environment.getExternalStorageDirectory();
-        File backup = new File(directory, "Chronos_Backup.csv");
+        //File backup = new File(directory, "Chronos_Backup.csv");
+        File backup;
+        if(!oldFormat)
+            backup = new File(directory, "Chronos_Backup.csv");
+        else
+            backup = new File(directory, "Chronos_Backup.cvs");
         BufferedWriter br;
 
         Chronos chron = new Chronos(context);
@@ -936,7 +939,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             //id,date,name,task name, date in ms, job num, task num
             //1,Sun Mar 11 2012 15:46,null,Regular,1331498803269,1,1
             while( strLine != null){
-                Log.d(TAG, strLine);
+                //Log.d(TAG, strLine);
                 String[] parcedString = strLine.split(",");
                 long time;
                 int task;
@@ -947,9 +950,12 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 } else {
                     time = Long.parseLong(parcedString[1]);
                     task = Integer.parseInt(parcedString[2]) + 1;
-                    if(!parcedString[4].equalsIgnoreCase("")){
+                    System.out.println(parcedString.length);
+
+                    if(parcedString.length > 4 && StringUtils.isNotBlank(parcedString[4])){
+                        String noteContent = parcedString[4];
                         Note note = new Note(Chronos.getDateFromStartOfPayPeriod(currentJob, new DateTime(time)),
-                                currentJob, parcedString[4]);
+                                currentJob, noteContent);
                         notes.add(note);
                     }
                 }
@@ -959,6 +965,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 strLine = br.readLine();
             }
         } catch (Exception e){
+            
+            e.printStackTrace();
             if(e != null && e.getCause() != null){
                 Log.e(TAG, e.getCause().toString());
             }
@@ -994,8 +1002,13 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 punchDOA.create(p);
             }
 
+            HashMap<DateTime, Note> merger= new HashMap<DateTime, Note>();
             for(Note n: notes){
-                noteDOA.create(n);
+                merger.put(n.getTime(), n);
+            }
+
+            for(DateTime dt : merger.keySet()){
+                noteDOA.create(merger.get(dt));
             }
 
             chronos.close();
