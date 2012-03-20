@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.util.Log;
@@ -114,6 +115,18 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         ShowEULA.class);
                 startActivity(intent);
 
+                return true;
+            }
+        });
+
+        Preference donate = findPreference("donate");
+        donate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+
+                Intent viewIntent = new Intent("android.intent.action.VIEW",
+                        Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UEUZCB4KAUW5J"));
+                startActivity(viewIntent);
                 return true;
             }
         });

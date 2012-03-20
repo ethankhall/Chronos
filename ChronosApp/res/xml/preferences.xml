@@ -56,4 +56,7 @@
     <Preference android:title="Read EULA" android:summary="Read the End User License Agreement"
                 android:key="readULA" />
 
+    <Preference android:title="Donate!" android:summary="Donate to Chronos if you like!"
+                android:key="donate" />
+
 </PreferenceScreen>
