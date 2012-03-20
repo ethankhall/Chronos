@@ -108,6 +108,22 @@ public class PunchTableTest {
             }
             fail("Times didn't match up");
         }
+    }
+
+    @Test
+    public void CrossTimeZone(){
+
+        DateTime startDate = DateTime.now().toDateMidnight().toDateTime().minusDays(7);
+        Job thisJob = new Job("", 10, startDate, PayPeriodDuration.TWO_WEEKS);
+        Task newTask = new Task(thisJob, 0, " ");
+        
+        DateTime setTime = new DateTime(2012, 2, 27, 0, 0);
+        PunchTable table = new PunchTable(setTime, setTime.plusWeeks(2), thisJob);
+
+        if(table.getDays().size() != 14){
+            System.out.println("Days in PP: " + table.getDays().size() );
+            fail("Not 14 days in a PP");
+        }
 
     }
 }

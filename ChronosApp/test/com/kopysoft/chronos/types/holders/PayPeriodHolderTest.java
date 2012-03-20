@@ -24,7 +24,6 @@ package com.kopysoft.chronos.types.holders;
 
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.holders.PayPeriodHolder;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -35,11 +34,13 @@ public class PayPeriodHolderTest {
     public void testGenerate() throws Exception {
         DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
         Job currentJob = new Job("My First Job", 10,
-                jobMidnight.toDateTime(), PayPeriodDuration.TWO_WEEKS);
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
         PayPeriodHolder holder = new PayPeriodHolder(currentJob);
 
         DateTime startOfPPCalculated = jobMidnight.plusWeeks(2);
         if(holder.getStartOfPayPeriod().getMillis() != startOfPPCalculated.getMillis()){
+            System.out.println("Calculated: " + startOfPPCalculated);
+            System.out.println("Worked out: " + holder.getStartOfPayPeriod());
             fail("Start of jobs didn't match.. Fuck");
         }
 
@@ -134,6 +135,12 @@ public class PayPeriodHolderTest {
             System.out.println("initial value" + initialEndOfPP);
             System.out.println("moved value" + holder.getEndOfPayPeriod() );
             fail("Moving forwards and backwards didn't match the original value, end");
+        }
+        
+        if((holder.getEndOfPayPeriod().getMillis() - holder.getStartOfPayPeriod().getMillis())
+                != holder.getDays()*24*60*60*1000 ){
+
+            fail("Number of days didn't match what it was supposed to.");
         }
     }
     

@@ -25,7 +25,8 @@ package com.kopysoft.chronos.types.holders;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 
 import java.io.Serializable;
 
@@ -107,12 +108,18 @@ public class PayPeriodHolder implements Serializable {
         gDuration = gJob.getDuration();
         DateTime endOfPP = new DateTime(); //Today
 
-        Interval interval;
+        Duration interval;
         if(startOfPP.isBefore(endOfPP))
-            interval =  new Interval(startOfPP, endOfPP);
+            interval =  new Duration(startOfPP, endOfPP);
         else
-            interval =  new Interval(endOfPP, startOfPP);
-        int days = (int)interval.toDuration().getStandardDays();
+            interval =  new Duration(endOfPP, startOfPP);
+
+        DateTimeZone startZone = startOfPP.getZone();
+        DateTimeZone endZone = endOfPP.getZone();
+
+        long offset = endZone.getOffset(endOfPP) - startZone.getOffset(startOfPP);
+        int days = (int)(interval.getMillis() + offset) / 1000 / 60 / 60 / 24;
+
         switch (gDuration){
             case ONE_WEEK:
                 days = days / 7;
@@ -176,8 +183,6 @@ public class PayPeriodHolder implements Serializable {
         } else {
             gStartOfPP = gStartOfPP.minusDays(getDays());
             gEndOfPP = gStartOfPP.plusDays(getDays());
-
-            //gEndOfPP = gStartOfPP.plusDays(getDays() - 1);
         }
     }
 

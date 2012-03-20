@@ -28,6 +28,7 @@ import com.kopysoft.chronos.enums.Defines;
 import com.kopysoft.chronos.types.Job;
 import com.kopysoft.chronos.types.Punch;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.util.*;
 
@@ -41,7 +42,12 @@ public class PunchTable {
     private static final boolean enableLog = Defines.DEBUG_PRINT;
 
     public PunchTable(DateTime start, DateTime end, Job inJob){
-        int days = (int)(end.getMillis() - start.getMillis())/1000/60/60/24;
+        DateTimeZone startZone = start.getZone();
+        DateTimeZone endZone = end.getZone();
+        long offset = endZone.getOffset(end) - startZone.getOffset(start);
+
+        int days = (int)(end.getMillis() - start.getMillis() + offset)/1000/60/60/24;
+
         startOfTable = start;
 
         try{
@@ -58,7 +64,7 @@ public class PunchTable {
         
         if(enableLog) Log.d(TAG, "Start of table: " + start);
 
-        createTable(inJob, days + 1, start);
+        createTable(inJob, days, start);
     }
     
     private void createTable(Job inJob, int days, DateTime start){
@@ -124,12 +130,9 @@ public class PunchTable {
         DateTime key = value.getTime();
         //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour)
         key = Chronos.getDateFromStartOfPayPeriod(startOfTable, key);
-        
-        //Log.d(TAG, "Insert Punch: " + value.getTime());
-        //Log.d(TAG, "Calculated Punch: " + key);
 
         if(enableLog) Log.d(TAG, "Key: " + key + "\tvalue: " +value.getTime() );
-        LinkedList<Punch> list = (LinkedList) gMap.get(key);
+        List<Punch> list = (LinkedList) gMap.get(key);
         if(list != null){
             list.add(value);
             Collections.sort(list);
