@@ -63,7 +63,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //1.2.0	= 11
     //2.0.0RC1 = 15
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
     public static final String DATABASE_NAME = "Chronos";
     private Context gContext;
 
@@ -319,12 +319,13 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 //TableUtils.dropTable(connectionSource, Task.class, true); //Task - Drop all
                 //TableUtils.dropTable(connectionSource, Job.class, true); //Job - Drop all
                 //TableUtils.dropTable(connectionSource, Note.class, true); //Note - Drop all
+                Dao<Task,String> taskDAO = getTaskDao();
+                List<Task> tasks = taskDAO.queryForAll();
+
                 db.execSQL("DROP TABLE IF EXISTS tasks");
 
                 //create
                 TableUtils.createTable(connectionSource, Task.class); //Task - Create Table
-                Dao<Task,String> taskDAO = getTaskDao();
-                List<Task> tasks = taskDAO.queryForAll();
 
                 for(Task t: tasks){
                     taskDAO.create(t);
@@ -340,11 +341,49 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
                 //create
                 TableUtils.createTable(connectionSource, Note.class); //Task - Create Table
+
             } else if(oldVersion == 17) {
 
                 //update db from old version
                 Dao<Job, String> dao = getJobDao();
                 dao.executeRaw("ALTER TABLE `jobs` ADD COLUMN fourtyHourWeek BOOLEAN DEFAULT 1;");
+
+            } else if(oldVersion == 18){
+
+
+                Dao<Task,String> taskDAO = getTaskDao();
+                List<Task> tasks = taskDAO.queryForAll();
+                Job currentJob = getAllJobs().get(0);
+                if(tasks.size() == 0){
+    
+                    Task newTask;   //Basic element
+                    newTask = new Task(currentJob, 0 , "Regular");
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 1 , "Lunch Break");
+                    newTask.setEnablePayOverride(true);
+                    newTask.setPayOverride(-7.25f);
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 2 , "Other Break");
+                    newTask.setEnablePayOverride(true);
+                    newTask.setPayOverride(-7.25f);
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 3 , "Travel");
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 4 , "Admin");
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 5 , "Sick Leave");
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 6 , "Personal Time");
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 7 , "Other");
+                    tasks.add(newTask);
+                    newTask = new Task(currentJob, 8 , "Holiday Pay");
+                    tasks.add(newTask);
+                    
+                    for(Task t : tasks){
+                        taskDAO.createOrUpdate(t);
+                    }
+                }
             }
 
         } catch (SQLException e) {
@@ -583,7 +622,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     
     public Note getNoteByDay(DateTime date){
 
-        Note retValue = new Note();
+        Note retValue = new Note(date, null,  "");
         try{
             // instantiate the DAO to handle Account with String id
             Dao<Note,String> noteDAO = getNoteDao();

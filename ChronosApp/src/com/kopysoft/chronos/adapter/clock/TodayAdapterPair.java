@@ -181,14 +181,20 @@ public class TodayAdapterPair extends BaseAdapter {
 
     public static float getPayableTime(List<PunchPair> punches, Job curJob, boolean handleNegative){
         float totalPay;
-        if(punches.size()!= 0)
-            if(enableLog) Log.d(TAG, "Pay Rate: " + curJob.getPayRate());
+        if(enableLog && punches.size()!= 0)
+            Log.d(TAG, "Pay Rate: " + curJob.getPayRate());
 
         totalPay = getTime(punches, true).getMillis();
         if( totalPay < 0 && handleNegative){
             totalPay += DateTime.now().getMillis();
         }
 
+        /*
+        System.out.println("Time: " + totalPay);
+        System.out.println("overtime: " + curJob.isOverTimeEnabled());
+        System.out.println("40 h week: " + curJob.isFortyHourWeek());
+        System.out.println("overtime: " + curJob.getOvertime());
+        System.out.println("doubletime: " + curJob.getDoubleTime());*/
         if(curJob.isOverTimeEnabled() && !curJob.isFortyHourWeek())
             totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
         else

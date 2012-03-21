@@ -49,7 +49,7 @@
                             android:key="enable_overtime" />
 
         <EditTextPreference
-                android:title="Hours per week"
+                android:title="Overtime threshold"
                 android:summary="Hours when over time starts."
                 android:defaultValue="40"
                 android:inputType="number"
@@ -57,7 +57,7 @@
                 android:dependency="enable_overtime" />
 
         <EditTextPreference
-                android:title="Double time threshold "
+                android:title="Doubletime threshold "
                 android:summary="Hours when it double time starts"
                 android:defaultValue="60"
                 android:inputType="number"
@@ -67,7 +67,8 @@
         <CheckBoxPreference android:title="40 Hour Week"
                         android:summary="Select if overtime is done on a weekly basis"
                         android:key="8_or_40_hours"
-                        android:dependency="enable_overtime" />
+                        android:dependency="enable_overtime"
+                        android:defaultValue="true"/>
 
     </PreferenceCategory>
 

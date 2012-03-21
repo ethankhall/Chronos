@@ -175,6 +175,7 @@ public class TodayAdapterPairTest {
         thisJob.setFortyHourWeek(false);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
+        thisJob.setPayRate(30);
 
         DateTime workFrom = DateMidnight.now().toDateTime();
         List<Punch> punches = new LinkedList<Punch>();
@@ -184,7 +185,7 @@ public class TodayAdapterPairTest {
         temp = new Punch(thisJob, newTask, tempDate);
         punches.add(temp);
 
-        tempDate = workFrom.plusHours(13);
+        tempDate = workFrom.plusHours(12);
         temp = new Punch(thisJob, newTask, tempDate);
         punches.add(temp);
 
@@ -195,13 +196,13 @@ public class TodayAdapterPairTest {
         }
 
         Duration dur = TodayAdapterPair.getTime(table.getPunchPair(workFrom), true);
-        if( dur.getStandardHours() != 10){
+        if( dur.getStandardHours() != 9){
             System.out.println("Time returned:" + dur.getStandardHours());
             fail("Times didn't match up");
         }
 
         float payableTime = TodayAdapterPair.getPayableTime(table.getPunchPair(workFrom), thisJob, true);
-        float payForDoubleTime = (float)(2 * thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 8);
+        float payForDoubleTime = (float)(thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 8);
         if (Math.abs(payableTime - payForDoubleTime) > .001){
             System.out.println("Pay Amount: " + payableTime);
             System.out.println("Calculated Pay Amount: " + payForDoubleTime);

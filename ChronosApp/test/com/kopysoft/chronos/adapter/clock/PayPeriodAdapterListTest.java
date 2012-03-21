@@ -323,4 +323,46 @@ public class PayPeriodAdapterListTest {
             fail("Pay didn't match");
         }
     }
+
+    @Test
+    public void testGetPayableTimeDoubleTimeHourly2() throws Exception {
+        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertime(8);
+        thisJob.setDoubletimeThreshold(10);
+        thisJob.setPayRate(30);
+        DateTime workFrom = startDate.plusDays(5);
+        List<Punch> punches = new LinkedList<Punch>();
+        Punch temp;
+
+        //make 2 punches adding up to 20 hours.
+        for(int j = 0; j < 5; j++){
+            DateTime workingDay = workFrom.plusDays(j);
+            DateTime tempDate = workingDay.plusHours(10);
+            temp = new Punch(thisJob, newTask, tempDate);
+            punches.add(temp);
+
+            tempDate = workingDay.plusHours(19);
+            temp = new Punch(thisJob, newTask, tempDate);
+            punches.add(temp);
+        }
+
+        for(Punch p : punches){
+            //System.out.println("Inserting: " + p.getTime());
+            table.insert(p);
+        }
+
+        Duration dur = PayPeriodAdapterList.getTime(table);
+        if( dur.getStandardHours() != 45){
+            System.out.println("Time returned:" + dur.getStandardHours());
+            fail("Times didn't match up");
+        }
+
+        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payForDoubleTime = (float)(5 * thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 8 * 5);
+        if (Math.abs(payableTime - payForDoubleTime) > .001){
+            System.out.println("Pay Rate: " + payableTime);
+            System.out.println("Calculated Pay Rate: " + payForDoubleTime);
+            fail("Pay didn't match");
+        }
+    }
 }

@@ -26,7 +26,6 @@ import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
 
 import java.io.Serializable;
 
@@ -106,39 +105,43 @@ public class PayPeriodHolder implements Serializable {
         //Get the start and end of pay period
         DateTime startOfPP = gJob.getStartOfPayPeriod();
         gDuration = gJob.getDuration();
-        DateTime endOfPP = new DateTime(); //Today
+        DateTime endOfPP = DateTime.now(); //Today
 
-        Duration interval;
-        if(startOfPP.isBefore(endOfPP))
-            interval =  new Duration(startOfPP, endOfPP);
-        else
-            interval =  new Duration(endOfPP, startOfPP);
+        long duration = endOfPP.getMillis() - startOfPP.getMillis();
 
         DateTimeZone startZone = startOfPP.getZone();
         DateTimeZone endZone = endOfPP.getZone();
 
         long offset = endZone.getOffset(endOfPP) - startZone.getOffset(startOfPP);
-        int days = (int)(interval.getMillis() + offset) / 1000 / 60 / 60 / 24;
+
+        int weeks = (int)((duration + offset) / 1000 / 60 / 60 / 24 / 7);
+
+        /*
+        System.out.println("end of pp: " + endOfPP);
+        System.out.println("start of pp: " + startOfPP);
+        System.out.println("dur: " + duration);
+        System.out.println("weeks diff: " + weeks);
+        */
 
         switch (gDuration){
             case ONE_WEEK:
-                days = days / 7;
-                startOfPP = startOfPP.plusWeeks(days);
+                //weeks = weeks;
+                startOfPP = startOfPP.plusWeeks(weeks);
                 endOfPP = startOfPP.plusWeeks(1);
                 break;
             case TWO_WEEKS:
-                days = days / (7 * 2);
-                startOfPP = startOfPP.plusWeeks(days * 2);
+                weeks = weeks / 2;
+                startOfPP = startOfPP.plusWeeks(weeks * 2);
                 endOfPP = startOfPP.plusWeeks(2);
                 break;
             case THREE_WEEKS:
-                days = days / ( 7 * 3);
-                startOfPP = startOfPP.plusWeeks(days * 3);
+                weeks = weeks / 3;
+                startOfPP = startOfPP.plusWeeks(weeks * 3);
                 endOfPP = startOfPP.plusWeeks(3);
                 break;
             case FOUR_WEEKS:
-                days = days / ( 7 * 4);
-                startOfPP= startOfPP.plusWeeks(days * 4);
+                weeks = weeks / 4;
+                startOfPP= startOfPP.plusWeeks(weeks * 4);
                 endOfPP = startOfPP.plusWeeks(4);
                 break;
             case FULL_MONTH:
@@ -159,6 +162,11 @@ public class PayPeriodHolder implements Serializable {
                 break;
             default:
                 break;
+        }
+
+        if (startOfPP.isAfter(DateTime.now())){
+            startOfPP = startOfPP.minusWeeks(getDays()/7);
+            endOfPP = endOfPP.minusWeeks(getDays()/7);
         }
 
         gStartOfPP = startOfPP;

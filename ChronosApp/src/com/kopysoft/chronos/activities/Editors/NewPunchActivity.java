@@ -56,6 +56,7 @@ public class NewPunchActivity extends SherlockActivity{
     long jobID;
     DateTime date;
     private static final boolean enableLog = Defines.DEBUG_PRINT;
+    //private static final boolean enableLog = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

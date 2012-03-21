@@ -120,7 +120,6 @@ public class DatePairView extends LinearLayout {
         Duration dur = adapter.getTime(true);
         if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
             dur = dur.plus(DateTime.now().getMillis());
-            //Log.d(TAG, "Add Time");
         }
 
         int seconds = (int)dur.getStandardSeconds();
@@ -132,7 +131,7 @@ public class DatePairView extends LinearLayout {
             tx.setText(output);
         else
             tx.setText("--:--:--");
-        
+
         if(enableLog) Log.d(TAG, "job: " + thisJob);
         if(enableLog) Log.d(TAG, "seconds: " + seconds);
         if(enableLog) Log.d(TAG, "dur: " + dur.toString());
@@ -171,6 +170,7 @@ public class DatePairView extends LinearLayout {
         if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
             dur = dur.plus(DateTime.now().getMillis());
         }
+
         int seconds = (int)dur.getStandardSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);

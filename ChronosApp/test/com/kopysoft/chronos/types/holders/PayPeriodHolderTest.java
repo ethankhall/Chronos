@@ -154,4 +154,64 @@ public class PayPeriodHolderTest {
             moveXTimes(i, holder);
         }
     }
+
+    @Test
+    public void runTestGenerate(){
+        DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+
+        DateTime initialStartOfPP = holder.getStartOfPayPeriod();
+
+        for(int i = 0; i < 1; i++){
+            holder.moveForwards();
+        }
+        holder.generate();
+
+        if(! initialStartOfPP.isEqual(holder.getStartOfPayPeriod()) ){
+            System.out.println("initial value: " + initialStartOfPP);
+            System.out.println("moved value: " + holder.getStartOfPayPeriod() );
+            fail("Moving forwards and backwards didn't match the original value, start");
+        }
+    }
+
+    @Test
+    public void runTestWithStartOfPPAfterToday(){
+        DateTime jobMidnight = new DateTime(2013, 3, 14, 0, 0);
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+        DateTime startOfPP = holder.getStartOfPayPeriod();
+
+        System.out.println(jobMidnight);
+        System.out.println(startOfPP);
+        System.out.println(DateTime.now());
+        long daysInPP = Math.abs((startOfPP.getMillis() - DateTime.now().getMillis()) / 1000 / 60 / 60 / 24);
+        if(daysInPP > 14 )
+            fail("Start days greater then 2 weeks");
+        
+        if(startOfPP.isAfter(DateTime.now())){
+            fail("The date should be before today");
+        }
+    }
+
+    @Test
+    public void runTestWithStartOfPPBeforeToday(){
+        DateTime jobMidnight = new DateTime(2011, 1, 14, 0, 0);
+        //System.out.println("midnight: " +jobMidnight );
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+        DateTime startOfPP = holder.getStartOfPayPeriod();
+
+        long daysInPP = (DateTime.now().getMillis() - startOfPP.getMillis())
+                / 1000 / 60 / 60 / 24 / 7;
+
+        //System.out.println("-----" + daysInPP);
+        //System.out.println("-----" + startOfPP);
+
+        if(Math.abs(daysInPP) > 2 )
+            fail("Start days greater then 2 weeks");
+    }
 }
