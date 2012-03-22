@@ -25,6 +25,7 @@ package com.kopysoft.chronos.types.holders;
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
@@ -128,18 +129,28 @@ public class PayPeriodHolderTest {
         if(! initialStartOfPP.isEqual(holder.getStartOfPayPeriod()) ){
             System.out.println("initial value: " + initialStartOfPP);
             System.out.println("moved value: " + holder.getStartOfPayPeriod() );
+            System.out.println("Days in PP: " + holder.getDays());
             fail("Moving forwards and backwards didn't match the original value, start");
         }
 
         if(! initialEndOfPP.isEqual(holder.getEndOfPayPeriod()) ) {
             System.out.println("initial value" + initialEndOfPP);
             System.out.println("moved value" + holder.getEndOfPayPeriod() );
+            System.out.println("Days in PP: " + holder.getDays());
             fail("Moving forwards and backwards didn't match the original value, end");
         }
-        
-        if((holder.getEndOfPayPeriod().getMillis() - holder.getStartOfPayPeriod().getMillis())
-                != holder.getDays()*24*60*60*1000 ){
 
+        DateTimeZone startZone = holder.getEndOfPayPeriod().getZone();
+        DateTimeZone endZone = holder.getStartOfPayPeriod().getZone();
+
+        long offset = endZone.getOffset(holder.getEndOfPayPeriod()) - startZone.getOffset(holder.getStartOfPayPeriod());
+        long duration = holder.getEndOfPayPeriod().getMillis() - holder.getStartOfPayPeriod().getMillis();
+        int time = (int)((duration + offset) );
+        
+        if( time != holder.getDays()*24*60*60*1000 ){
+            System.out.println("start of pp" + holder.getStartOfPayPeriod());
+            System.out.println("end of pp: " + holder.getEndOfPayPeriod() );
+            System.out.println("Days in PP: " + holder.getDays());
             fail("Number of days didn't match what it was supposed to.");
         }
     }
@@ -148,11 +159,48 @@ public class PayPeriodHolderTest {
     public void runMultipleTestsForSameValueAtEnd(){
         DateTime jobMidnight = DateTime.now().withDayOfWeek(1).minusWeeks(2);
         Job currentJob = new Job("My First Job", 10,
-                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+                jobMidnight, PayPeriodDuration.ONE_WEEK);
         PayPeriodHolder holder = new PayPeriodHolder(currentJob);
         for(int i = 1; i < 100; i++){
             moveXTimes(i, holder);
         }
+
+        currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.TWO_WEEKS);
+        holder = new PayPeriodHolder(currentJob);
+        for(int i = 1; i < 100; i++){
+            moveXTimes(i, holder);
+        }
+
+        currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.THREE_WEEKS);
+        holder = new PayPeriodHolder(currentJob);
+        for(int i = 1; i < 100; i++){
+            moveXTimes(i, holder);
+        }
+
+        currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.FOUR_WEEKS);
+        holder = new PayPeriodHolder(currentJob);
+        for(int i = 1; i < 100; i++){
+            moveXTimes(i, holder);
+        }
+
+        currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.FIRST_FIFTEENTH);
+        holder = new PayPeriodHolder(currentJob);
+        for(int i = 1; i < 100; i++){
+            moveXTimes(i, holder);
+        }
+
+        currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.FULL_MONTH);
+        holder = new PayPeriodHolder(currentJob);
+        for(int i = 1; i < 100; i++){
+            moveXTimes(i, holder);
+        }
+
+
     }
 
     @Test
@@ -184,9 +232,9 @@ public class PayPeriodHolderTest {
         PayPeriodHolder holder = new PayPeriodHolder(currentJob);
         DateTime startOfPP = holder.getStartOfPayPeriod();
 
-        System.out.println(jobMidnight);
+        /*System.out.println(jobMidnight);
         System.out.println(startOfPP);
-        System.out.println(DateTime.now());
+        System.out.println(DateTime.now());*/
         long daysInPP = Math.abs((startOfPP.getMillis() - DateTime.now().getMillis()) / 1000 / 60 / 60 / 24);
         if(daysInPP > 14 )
             fail("Start days greater then 2 weeks");
@@ -213,5 +261,54 @@ public class PayPeriodHolderTest {
 
         if(Math.abs(daysInPP) > 2 )
             fail("Start days greater then 2 weeks");
+    }
+
+    @Test
+    public void runTestWithLengthOfPayPeriodFourWeeks(){
+        DateTime jobMidnight = new DateTime(2012, 3, 11, 0, 0);
+        //System.out.println("midnight: " +jobMidnight );
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.FOUR_WEEKS);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+        holder.moveForwards();
+        DateTime startOfPP = holder.getStartOfPayPeriod();
+
+        DateTime nextMonth = jobMidnight.plusWeeks(4);
+
+        //System.out.println("-----" + daysInPP);
+        //System.out.println("-----" + startOfPP);
+
+        if(!startOfPP.isEqual(nextMonth)){
+            System.out.println("Start of PP: " + startOfPP);
+            System.out.println("Calculated: " + nextMonth);
+            fail("Days didn't match up.");
+        }
+    }
+
+    @Test
+    public void runTestWithLengthOfPayPeriodFullMonth(){
+        DateTime jobMidnight = new DateTime(2012, 3, 11, 0, 0);
+        //System.out.println("midnight: " +jobMidnight );
+        Job currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.FULL_MONTH);
+        PayPeriodHolder holder = new PayPeriodHolder(currentJob);
+        DateTime startOfPP = holder.getStartOfPayPeriod();
+        
+        if(!startOfPP.isEqual(new DateTime(2012, 3, 1, 0, 0)))  {
+            System.out.println(startOfPP);
+            fail("Start of month didn't match");
+        }
+
+        jobMidnight = new DateTime(2014, 3, 11, 0, 0);
+        //System.out.println("midnight: " +jobMidnight );
+        currentJob = new Job("My First Job", 10,
+                jobMidnight, PayPeriodDuration.FULL_MONTH);
+        holder = new PayPeriodHolder(currentJob);
+        startOfPP = holder.getStartOfPayPeriod();
+
+        if(!startOfPP.isEqual(new DateTime(2012, 3, 1, 0, 0)))
+            fail("Start of month didn't match");
+
+
     }
 }

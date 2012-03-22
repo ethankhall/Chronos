@@ -111,6 +111,48 @@ public class PunchTableTest {
     }
 
     @Test
+    public void LookupTestFourWeeks(){
+        DateTime startDate = DateTime.now().toDateMidnight().toDateTime().minusDays(7);
+        Job thisJob = new Job("", 10, startDate, PayPeriodDuration.FOUR_WEEKS);
+        Task newTask = new Task(thisJob, 0, " ");
+        PayPeriodHolder holder = new PayPeriodHolder(thisJob);
+        PunchTable table = new PunchTable(holder.getStartOfPayPeriod(), holder.getEndOfPayPeriod(), thisJob);
+
+        DateTime workFrom = startDate.plusDays(5);
+        List<Punch> punches = new LinkedList<Punch>();
+        Punch temp;
+
+
+        //System.out.println("Start Date: " + startDate);
+        //make 10 punches adding up to 5 hours.
+        for(int i = 0; i < 10; i++){
+            DateTime tempDate = workFrom.plusHours(i);
+            temp = new Punch(thisJob, newTask, tempDate);
+            punches.add(temp);
+        }
+
+        for(Punch p : punches){
+            table.insert(p);
+        }
+
+        Duration dur = PayPeriodAdapterList.getTime(table.getPunchPair(workFrom));
+        if( dur.getStandardHours() != 5){
+            //System.out.println("Hours: " + dur.getStandardHours());
+            //System.out.println("Work From Date: " + workFrom);
+
+            //System.out.println("Punches: " + table.getPunchPair(workFrom).size());
+
+            for(DateTime time : table.getDays()){
+                System.out.println("Date: " + time);
+                for(Punch p : table.getPunchesByDay(time)){
+                    System.out.println("\tTime: " + p.getTime());
+                }
+            }
+            fail("Times didn't match up");
+        }
+    }
+
+    @Test
     public void CrossTimeZone(){
 
         DateTime startDate = DateTime.now().toDateMidnight().toDateTime().minusDays(7);

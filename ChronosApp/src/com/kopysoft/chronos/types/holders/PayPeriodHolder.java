@@ -24,6 +24,7 @@ package com.kopysoft.chronos.types.holders;
 
 import com.kopysoft.chronos.enums.PayPeriodDuration;
 import com.kopysoft.chronos.types.Job;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -54,6 +55,7 @@ public class PayPeriodHolder implements Serializable {
      * @return int of the day's in the the pay period
      */
     public int getDays(){
+
         switch (gJob.getDuration()){
             case ONE_WEEK:
                 return 7;
@@ -64,12 +66,16 @@ public class PayPeriodHolder implements Serializable {
             case FOUR_WEEKS:
                 return 7 * 4;
             case FULL_MONTH:
+                if(gStartOfPP == null)
+                    gStartOfPP = DateTime.now();
                 return gStartOfPP.dayOfMonth().getMaximumValue();
             case FIRST_FIFTEENTH:
-                if(gStartOfPP.getDayOfMonth() <= 15)
+                if(gStartOfPP == null)
+                    gStartOfPP = DateTime.now();
+                if(gStartOfPP.getDayOfMonth() < 15)
                     return 15;
                 else
-                    return gStartOfPP.dayOfMonth().getMaximumValue() - 15;
+                    return gStartOfPP.dayOfMonth().getMaximumValue() - 14;
         }
         return 0;
     }
@@ -146,7 +152,7 @@ public class PayPeriodHolder implements Serializable {
                 break;
             case FULL_MONTH:
                 //in this case, endOfPP is equal to now
-                startOfPP = gJob.getStartOfPayPeriod().withDayOfMonth(1);
+                startOfPP = DateMidnight.now().toDateTime().withDayOfMonth(1);
                 endOfPP = startOfPP.plusMonths(1);
 
                 break;
@@ -185,8 +191,8 @@ public class PayPeriodHolder implements Serializable {
                 gEndOfPP = gStartOfPP.withDayOfMonth(15);
             }
         } else if(gJob.getDuration() == PayPeriodDuration.FULL_MONTH){
-            gEndOfPP = gStartOfPP.minusDays(1);
-            gStartOfPP = gStartOfPP.withDayOfMonth(1).minusMonths(1);
+            gStartOfPP = gStartOfPP.minusDays(1).withDayOfMonth(1);
+            gEndOfPP = gStartOfPP.plusMonths(1).withDayOfMonth(1);
 
         } else {
             gStartOfPP = gStartOfPP.minusDays(getDays());
@@ -206,8 +212,8 @@ public class PayPeriodHolder implements Serializable {
                 gEndOfPP = gStartOfPP.withDayOfMonth(15);
             }
         } else if(gJob.getDuration() == PayPeriodDuration.FULL_MONTH){
-            gStartOfPP = gEndOfPP.plusDays(1);
-            gStartOfPP = gStartOfPP.plusMonths(1).minusMonths(1);
+            gStartOfPP = gStartOfPP.plusMonths(1).withDayOfMonth(1);
+            gEndOfPP = gStartOfPP.plusMonths(1).withDayOfMonth(1);
         } else {
             gStartOfPP = gStartOfPP.plusDays(getDays());
             gEndOfPP = gStartOfPP.plusDays(getDays());

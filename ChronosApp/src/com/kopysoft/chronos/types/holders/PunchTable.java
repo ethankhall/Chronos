@@ -46,7 +46,7 @@ public class PunchTable {
         DateTimeZone endZone = end.getZone();
         long offset = endZone.getOffset(end) - startZone.getOffset(start);
 
-        int days = (int)(end.getMillis() - start.getMillis() + offset)/1000/60/60/24;
+        int days = (int)((end.getMillis() - start.getMillis() + offset)/1000/60/60/24);
 
         startOfTable = start;
 
