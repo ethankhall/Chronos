@@ -125,7 +125,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
             public boolean onPreferenceClick(Preference preference) {
 
                 Intent viewIntent = new Intent("android.intent.action.VIEW",
-                        Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UEUZCB4KAUW5J"));
+                        Uri.parse("http://ethankhall.com/app/chronos/support.html"));
                 startActivity(viewIntent);
                 return true;
             }
