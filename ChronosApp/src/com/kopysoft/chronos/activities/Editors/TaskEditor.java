@@ -161,9 +161,8 @@ public class TaskEditor extends SherlockActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getSupportMenuInflater().inflate(R.menu.save_cancel_menu, menu);
-        menu.findItem(R.id.menuDelete).setVisible(true);
+        menu.findItem(R.id.menuDelete).setVisible(false);
         menu.findItem(R.id.RemoveMenu).setVisible(false);
-
 
         return super.onCreateOptionsMenu(menu);
     }

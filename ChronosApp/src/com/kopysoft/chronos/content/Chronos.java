@@ -988,8 +988,8 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     task = Integer.parseInt(parcedString[6]);
                 } else {
                     time = Long.parseLong(parcedString[1]);
-                    task = Integer.parseInt(parcedString[2]) + 1;
-                    System.out.println(parcedString.length);
+                    task = Integer.parseInt(parcedString[2]);
+                    //System.out.println(parcedString.length);
 
                     if(parcedString.length > 4 && StringUtils.isNotBlank(parcedString[4])){
                         String noteContent = parcedString[4];
@@ -1012,6 +1012,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             return false;
         }
 
+        //Log.d(TAG, "Number of punches: " + punches.size());
         try{
             Chronos chronos = new Chronos(context);
             TableUtils.dropTable(chronos.getConnectionSource(), Punch.class, true); //Punch - Drop all

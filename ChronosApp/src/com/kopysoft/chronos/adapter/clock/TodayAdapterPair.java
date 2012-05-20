@@ -194,11 +194,12 @@ public class TodayAdapterPair extends BaseAdapter {
         System.out.println("overtime: " + curJob.isOverTimeEnabled());
         System.out.println("40 h week: " + curJob.isFortyHourWeek());
         System.out.println("overtime: " + curJob.getOvertime());
-        System.out.println("doubletime: " + curJob.getDoubleTime());*/
+        System.out.println("doubletime: " + curJob.getDoubleTime());
+        */
         if(curJob.isOverTimeEnabled() && !curJob.isFortyHourWeek())
             totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
         else
-            totalPay = getPay((long)totalPay, curJob.getPayRate(), 10000, 10000);
+            totalPay = getPay((long)totalPay, curJob.getPayRate(), 1000, 1000);
 
         if(totalPay < 0)
             totalPay = 0;

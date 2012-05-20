@@ -144,19 +144,20 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
         for(DateTime date : punchTable.getDays()){
 
-            if(curJob.isFortyHourWeek()){
-                totalPay += getTime(punchTable.getPunchPair(date), false).getMillis();
-            } else {
-                //totalPay += getPay(getTime(punchTable.getPunchPair(date), false).getMillis(),
-                //        curJob.getPayRate(), 8, 10);
+            if(curJob.isOverTimeEnabled() && !curJob.isFortyHourWeek()){
                 totalPay += getPay(getTime(punchTable.getPunchPair(date), false).getMillis(),
                         curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
+
+            } else {
+                totalPay += getTime(punchTable.getPunchPair(date), false).getMillis();
             }
             //Log.d(TAG, "pay: " + totalPay);;
         }
 
-        if(curJob.isFortyHourWeek()){
+        if(curJob.isOverTimeEnabled() &&  curJob.isFortyHourWeek()){
             totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
+        }  else if(!curJob.isOverTimeEnabled()){
+            totalPay = getPay((long)totalPay, curJob.getPayRate(), 1000, 1000);
         }
 
         if(totalPay < 0)

@@ -72,8 +72,9 @@ public class PayPeriodHolder implements Serializable {
             case FIRST_FIFTEENTH:
                 if(gStartOfPP == null)
                     gStartOfPP = DateTime.now();
+
                 if(gStartOfPP.getDayOfMonth() < 15)
-                    return 15;
+                    return 14;
                 else
                     return gStartOfPP.dayOfMonth().getMaximumValue() - 14;
         }
