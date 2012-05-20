@@ -46,7 +46,9 @@ import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 public class DatePairView extends LinearLayout {
 
@@ -138,7 +140,9 @@ public class DatePairView extends LinearLayout {
         if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
         double money = adapter.getPayableTime(gDate.toDateMidnight().isEqual(new DateMidnight()));
-        output = String.format("$ %.2f", money);
+
+        Currency moneyCurrency = Currency.getInstance(Locale.getDefault());
+        output = String.format("%s %.2f", moneyCurrency.getSymbol(), money);
         tx = (TextView)header.findViewById(R.id.moneyViewTotal);
         tx.setText(output);
         if(enableLog) Log.d(TAG, "pay amount: " + output);
@@ -178,7 +182,10 @@ public class DatePairView extends LinearLayout {
         tx.setText(output);
 
         double money = adapter.getPayableTime(true);
-        output = String.format("$ %.2f", money);
+
+        Currency moneyCurrency = Currency.getInstance(Locale.getDefault());
+        output = String.format("%s %.2f", moneyCurrency.getSymbol(), money);
+
         tx = (TextView)header.findViewById(R.id.moneyViewTotal);
         tx.setText(output);
         if(enableLog) Log.d(TAG, "pay amount: " + output);

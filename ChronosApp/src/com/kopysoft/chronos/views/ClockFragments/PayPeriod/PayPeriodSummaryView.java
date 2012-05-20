@@ -43,6 +43,9 @@ import com.kopysoft.chronos.types.holders.PunchTable;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 
+import java.util.Currency;
+import java.util.Locale;
+
 public class PayPeriodSummaryView extends LinearLayout {
 
     PayPeriodAdapterList adapter;
@@ -106,7 +109,8 @@ public class PayPeriodSummaryView extends LinearLayout {
         if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
         double money = adapter.getPayableTime();
-        output = String.format("$ %.2f", money);
+        Currency moneyCurrency = Currency.getInstance(Locale.getDefault());
+        output = String.format("%s %.2f", moneyCurrency.getSymbol(), money);
 
         moneyView.setText(output);
         if(enableLog) Log.d(TAG, "pay amount: " + output);
