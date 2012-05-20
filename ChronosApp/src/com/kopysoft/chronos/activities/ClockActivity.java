@@ -194,11 +194,41 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             Chronos chron = new Chronos(this);
             Job thisJob = chron.getAllJobs().get(0);
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            try{
             thisJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
-            thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
-            thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
-            thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
-            thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
+            } catch (NumberFormatException e){
+                thisJob.setPayRate(7.25f);
+                Log.d(TAG, e.getMessage());
+            }
+
+            try{
+                thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
+            } catch (NumberFormatException e){
+                thisJob.setOvertimeEnabled(true);
+                Log.d(TAG, e.getMessage());
+            }
+
+            try{
+                thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
+            } catch (NumberFormatException e){
+                thisJob.setOvertime(40f);
+                Log.d(TAG, e.getMessage());
+            }
+
+            try{
+                thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+            } catch (NumberFormatException e){
+                thisJob.setDoubletimeThreshold( 60f );
+                Log.d(TAG, e.getMessage());
+            }
+
+            try{
+                thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
+            } catch (NumberFormatException e){
+                thisJob.setFortyHourWeek(true);
+                Log.d(TAG, e.getMessage());
+            }
+
             String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
             String time[] = pref.getString("time", "00:00").split("\\p{Punct}");
             thisJob.setStartOfPayPeriod(new DateTime(Integer.parseInt(date[0]),
