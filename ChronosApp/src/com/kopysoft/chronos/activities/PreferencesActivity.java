@@ -99,7 +99,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
             public boolean onPreferenceClick(Preference preference) {
                 Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
                 emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
-                        new String[] { "ethan@kopysoft.com" });
+                        new String[] { "ethan@ehdev.io" });
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Chronos");
                 emailIntent.setType("message/rfc822");
                 startActivity(emailIntent);
