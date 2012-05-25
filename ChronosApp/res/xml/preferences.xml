@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright (c) 2011 Ethan Hall
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a
+  ~ copy of this software and associated documentation files (the "Software"),
+  ~  to deal in the Software without restriction, including without limitation
+  ~ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  ~ and/or sell copies of the Software, and to permit persons to whom the
+  ~ Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included
+  ~ in all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+  ~ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  ~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  ~ DEALINGS IN THE SOFTWARE.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Display Settings">
+        <CheckBoxPreference android:title="Enable Notification"
+                            android:key="NotificationsEnabled"
+                            android:summary="Show a notification when clocked in. Will come soon"
+                            android:enabled="true"
+                            android:defaultValue="true" />
+
+        <CheckBoxPreference android:key="showPay"
+                            android:title="Display Pay for a Day" android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="E-mail Setings">
+        <Preference android:title="Send e-mail to developer"
+                    android:key="emailDev" />
+
+        <ListPreference android:title="Report Level"
+                        android:key="reportLevel" android:entries="@array/VerbosLevel"
+                        android:entryValues="@array/NumOneToTwo" android:summary="Set the format for E-Mails"
+                        android:defaultValue="1" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Backup and Restore">
+        <Preference android:title="Backup Times" android:summary="Creates an CSV file of punches"
+                    android:key="backupDB" />
+        <Preference android:title="Restore Times" android:summary="Restores punches from CSV file"
+                    android:key="restoreDB" />
+        <Preference android:title="Restore from Legacy" android:summary="Restores punches from old version of Chronos"
+                    android:key="restoreLegacyDB" />
+        <Preference android:title="Backup to Legacy Format" android:summary="Creates a file that is able to be read by the Chronos Legacy"
+                    android:key="BackupLegacyDB" />
+
+    </PreferenceCategory>
+    <Preference android:title="Read EULA" android:summary="Read the End User License Agreement"
+                android:key="readULA" />
+
+    <Preference android:title="Support!" android:summary="Support Chronos if you like!"
+                android:key="donate" />
+
+</PreferenceScreen>

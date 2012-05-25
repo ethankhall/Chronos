@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+        <groupId>com.kopysoft</groupId>
+        <artifactId>Chronos</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+
+
+    <groupId>com.kopysoft</groupId>
+    <artifactId>Chronos.test</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <packaging>apk</packaging>
+    <name>Chronos Apk Tests</name>
+
+    <developers>
+        <developer>
+            <name>Ethan Hall</name>
+            <email>ethan@kopysoft.com</email>
+            <id>ethankhall</id>
+            <url>http://ethankhall.com</url>
+            <timezone>-5</timezone>
+            <roles>
+                <role>developer</role>
+                <role>manager</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>1.6_r2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android-test</artifactId>
+            <version>1.6_r2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <!-- the target apk, which we will test. will automatically be deployed to device in pre-integration-test
+            phase. -->
+            <groupId>com.kopysoft</groupId>
+            <artifactId>Chronos.app</artifactId>
+            <version>${project.version}</version>
+            <type>apk</type>
+        </dependency>
+
+        <dependency>
+            <!-- optional: compile time dependency, in this case so that we can read from the R.java for example. -->
+            <groupId>com.kopysoft</groupId>
+            <artifactId>Chronos.app</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright (c) 2011 Ethan Hall
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a
+  ~ copy of this software and associated documentation files (the "Software"),
+  ~  to deal in the Software without restriction, including without limitation
+  ~ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  ~ and/or sell copies of the Software, and to permit persons to whom the
+  ~ Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included
+  ~ in all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+  ~ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  ~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  ~ DEALINGS IN THE SOFTWARE.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_insert"
+          android:icon="@drawable/ic_menu_add"
+          android:title="@string/menu_insert"
+          android:text="@string/menu_insert"
+          android:showAsAction="ifRoom|withText"/>
+
+    <item
+            android:id="@+id/menu_note"
+            android:icon="@drawable/ic_menu_start_conversation"
+            android:text="@string/menu_note"
+            android:title="@string/menu_note"
+            android:showAsAction="ifRoom|withText"   />
+
+    <item
+        android:id="@+id/menu_navigate"
+        android:icon="@drawable/ic_menu_goto"
+        android:title="Go To"
+        android:text="Go To"
+        android:showAsAction="ifRoom|withText">
+        <menu>
+            <item 
+                android:id="@+id/menu_navigate_forward"
+                android:icon="@drawable/ic_menu_forward"
+                android:text="Forward"
+                android:title="Forward"
+                android:showAsAction="always|withText"/>
+            <item
+                    android:id="@+id/menu_navigate_today"
+                    android:icon="@drawable/ic_menu_today"
+                    android:text="Today"
+                    android:title="Today"
+                    android:showAsAction="always|withText"/>
+            <item
+                    android:id="@+id/menu_navigate_back"
+                    android:icon="@drawable/ic_menu_back"
+                    android:text="Back"
+                    android:title="Back"
+                    android:showAsAction="always|withText"/>
+        </menu>
+    </item>
+
+    <item
+            android:id="@+id/menu_quick_note"
+            android:icon="@drawable/ic_menu_recent_history"
+            android:text="@string/menu_quick_break"
+            android:title="@string/menu_quick_break"
+            android:showAsAction="ifRoom|withText"  />
+    
+    <item
+            android:icon="@drawable/ic_menu_moreoverflow_holo_dark"
+            android:title="Options"
+            android:text="Options"
+            android:id="@+id/menu_options"
+            android:showAsAction="ifRoom|withText">
+        <menu>
+            <item android:id="@+id/menu_preferences"
+                  android:title="@string/menu_preferences"
+                  android:text="@string/menu_preferences"
+                  android:showAsAction="ifRoom|withText"/>
+
+            <item android:id="@+id/menu_configure_job"
+                  android:title="@string/menu_configure_job"
+                  android:text="@string/menu_configure_job"
+                  android:showAsAction="ifRoom|withText"/>
+
+            <item android:id="@+id/menu_configure_task"
+                  android:title="@string/menu_configure_tasks"
+                  android:text="@string/menu_configure_tasks"
+                  android:showAsAction="ifRoom|withText"/>
+
+            <item android:id="@+id/menu_email"
+                  android:title="@string/menu_email"
+                  android:text="@string/menu_email"
+                  android:showAsAction="ifRoom|withText"/>
+        </menu>
+    </item>
+
+
+</menu>

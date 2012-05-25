@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.kopysoft.chronos"
+          android:versionCode="43"
+          android:versionName="2.0.8">
+    <application android:icon="@drawable/icon"
+                 android:label="Chronos"
+                 android:allowBackup="true"
+                 android:debuggable="false"
+                 android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
+
+        <activity android:name=".activities.ClockActivity"
+                  android:label="Chronos"
+                  android:launchMode="singleTop"
+                  android:uiOptions="splitActionBarWhenNarrow">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.Editors.PairEditorActivity"
+                  android:label="Edit Punches"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.Viewers.DateViewerActivity"
+                  android:label="Date Viewer"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.Editors.NewPunchActivity"
+                  android:label="New Punch"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.Editors.JobEditor"
+                  android:label="Job Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.PreferencesActivity"
+                  android:label="Preferences"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"
+                  android:theme="@style/Theme.Sherlock"/>
+
+        <activity android:name=".activities.Editors.TaskEditor"
+                  android:label="Task Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.Editors.TaskList"
+                  android:label="Task List"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.Editors.NoteEditor"
+                  android:label="Note Editor"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"/>
+
+        <activity android:name=".activities.QuickBreakActivity"
+                  android:label="Quick Break"
+                  android:uiOptions="splitActionBarWhenNarrow" />
+
+        <activity android:name=".activities.ShowEULA"
+                  android:label="EULA"/>
+
+        <receiver android:name=".content.NotificationBroadcast" android:enabled="true"/>
+
+        <receiver android:name=".content.EnableWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="com.kopysoft.chronos.content.EnableWidget.CLOCK"/>
+                <action android:name="com.kopysoft.chronos.content.EnableWidget.UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/enable_widget"/>
+        </receiver>
+
+    </application>
+
+    <uses-sdk android:minSdkVersion="7"
+              android:targetSdkVersion="11" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+</manifest> 

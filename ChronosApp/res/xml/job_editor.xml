@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright (c) 2011 Ethan Hall
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a
+  ~ copy of this software and associated documentation files (the "Software"),
+  ~  to deal in the Software without restriction, including without limitation
+  ~ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  ~ and/or sell copies of the Software, and to permit persons to whom the
+  ~ Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included
+  ~ in all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+  ~ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  ~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  ~ DEALINGS IN THE SOFTWARE.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Pay Rate">
+
+        <EditTextPreference
+                android:title="Normal Pay "
+                android:summary="The amount you make normally. This can be overridden by Tasks."
+                android:defaultValue="7.25"
+                android:inputType="numberDecimal"
+                android:key="normal_pay"  />
+
+        <com.kopysoft.chronos.views.DateSelect
+                android:key="date" android:title="Start of PayPeriod"
+                android:defaultValue="2011.1.17" />
+
+        <com.kopysoft.chronos.views.TimeSelect
+                android:key="time" android:title="Start of Day"
+                android:summary="Normally midnight. This field is in 24 hours time."
+                android:defaultValue="00:00" />
+
+        <ListPreference android:title="Length of Month"
+                        android:key="len_of_month" android:entries="@array/periodTimes"
+                        android:entryValues="@array/NumOneToSix" android:summary="Length of a Pay Period"
+                        android:defaultValue="2" />
+
+        <CheckBoxPreference android:title="Enable Overtime"
+                            android:key="enable_overtime" />
+
+        <EditTextPreference
+                android:title="Overtime threshold"
+                android:summary="Hours when over time starts."
+                android:defaultValue="40"
+                android:inputType="number"
+                android:key="over_time_threshold"
+                android:dependency="enable_overtime" />
+
+        <EditTextPreference
+                android:title="Doubletime threshold "
+                android:summary="Hours when it double time starts"
+                android:defaultValue="60"
+                android:inputType="number"
+                android:key="double_time_threshold"
+                android:dependency="enable_overtime" />
+
+        <CheckBoxPreference android:title="40 Hour Week"
+                        android:summary="Select if overtime is done on a weekly basis"
+                        android:key="8_or_40_hours"
+                        android:dependency="enable_overtime"
+                        android:defaultValue="true"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
