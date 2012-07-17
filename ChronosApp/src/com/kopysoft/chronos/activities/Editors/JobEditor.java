@@ -22,12 +22,18 @@
 
 package com.kopysoft.chronos.activities.Editors;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.content.Chronos;
 import com.kopysoft.chronos.enums.Defines;
+import com.kopysoft.chronos.enums.PayPeriodDuration;
+import com.kopysoft.chronos.types.Job;
+import org.joda.time.DateTime;
 
 public class JobEditor extends SherlockPreferenceActivity  {
 
@@ -42,6 +48,84 @@ public class JobEditor extends SherlockPreferenceActivity  {
         addPreferencesFromResource(R.xml.job_editor);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    //set the settings into the DB
+    @Override
+    public void onPause(){
+
+        Chronos chron = new Chronos(this);
+        Job thisJob = chron.getAllJobs().get(0);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        try{
+            thisJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
+        } catch (NumberFormatException e){
+            thisJob.setPayRate(7.25f);
+            Log.d(TAG, e.getMessage());
+        }
+
+        try{
+            thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
+        } catch (NumberFormatException e){
+            thisJob.setOvertimeEnabled(true);
+            Log.d(TAG, e.getMessage());
+        }
+
+        try{
+            thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
+        } catch (NumberFormatException e){
+            thisJob.setOvertime(40f);
+            Log.d(TAG, e.getMessage());
+        }
+
+        try{
+            thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+        } catch (NumberFormatException e){
+            thisJob.setDoubletimeThreshold( 60f );
+            Log.d(TAG, e.getMessage());
+        }
+
+        try{
+            thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
+        } catch (NumberFormatException e){
+            thisJob.setFortyHourWeek(true);
+            Log.d(TAG, e.getMessage());
+        }
+
+        String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
+        String time[] = pref.getString("time", "00:00").split("\\p{Punct}");
+        thisJob.setStartOfPayPeriod(new DateTime(Integer.parseInt(date[0]),
+                Integer.parseInt(date[1]),
+                Integer.parseInt(date[2]),
+                Integer.parseInt(time[0]),
+                Integer.parseInt(time[1])
+        ));
+        switch (Integer.parseInt(pref.getString("len_of_month", "2"))){
+            case 1:
+                thisJob.setDuration(PayPeriodDuration.ONE_WEEK);
+                break;
+            case 2:
+                thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
+                break;
+            case 3:
+                thisJob.setDuration(PayPeriodDuration.THREE_WEEKS);
+                break;
+            case 4:
+                thisJob.setDuration(PayPeriodDuration.FOUR_WEEKS);
+                break;
+            case 5:
+                thisJob.setDuration(PayPeriodDuration.FULL_MONTH);
+                break;
+            case 6:
+                thisJob.setDuration(PayPeriodDuration.FIRST_FIFTEENTH);
+                break;
+            default:
+                thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
+                break;
+        }
+        chron.updateJob(thisJob);
+        chron.close();
+
     }
 
     @Override

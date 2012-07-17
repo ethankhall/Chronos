@@ -46,7 +46,8 @@
                         android:defaultValue="2" />
 
         <CheckBoxPreference android:title="Enable Overtime"
-                            android:key="enable_overtime" />
+                            android:key="enable_overtime"
+                            android:defaultValue="true"/>
 
         <EditTextPreference
                 android:title="Overtime threshold"

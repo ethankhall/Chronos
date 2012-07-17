@@ -6,7 +6,6 @@
     <application android:icon="@drawable/icon"
                  android:label="Chronos"
                  android:allowBackup="true"
-                 android:debuggable="false"
                  android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
 
         <activity android:name=".activities.ClockActivity"
