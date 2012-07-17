@@ -28,11 +28,11 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.enums.PayPeriodDuration;
-import com.kopysoft.chronos.types.Job;
+import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.enums.PayPeriodDuration;
+import com.ehdev.chronos.types.Job;
 import org.joda.time.DateTime;
 
 public class JobEditor extends SherlockPreferenceActivity  {

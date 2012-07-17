@@ -32,14 +32,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Viewers.DateViewerActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.types.Job;
+import com.ehdev.chronos.types.holders.PunchTable;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 

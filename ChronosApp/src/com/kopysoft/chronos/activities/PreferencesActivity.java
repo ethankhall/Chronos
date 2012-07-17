@@ -34,8 +34,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
+import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.lib.Chronos;
 
 public class PreferencesActivity extends SherlockPreferenceActivity  {
 

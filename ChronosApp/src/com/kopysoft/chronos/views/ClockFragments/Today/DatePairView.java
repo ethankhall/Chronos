@@ -30,16 +30,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.Punch;
-import com.kopysoft.chronos.types.Task;
-import com.kopysoft.chronos.types.holders.PunchPair;
+import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.types.Job;
+import com.ehdev.chronos.types.Punch;
+import com.ehdev.chronos.types.Task;
+import com.ehdev.chronos.types.holders.PunchPair;
+import com.kopysoft.chronos.lib.NotificationBroadcast;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -205,7 +206,7 @@ public class DatePairView extends LinearLayout {
 
             Duration dur = adapter.getTime(true);
             Intent runIntent = new Intent().setClass(parent,
-                    com.kopysoft.chronos.content.NotificationBroadcast.class);
+                    NotificationBroadcast.class);
             runIntent.putExtra("timeToday", dur.getMillis());
             parent.sendBroadcast(runIntent);
             

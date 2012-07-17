@@ -35,11 +35,11 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.Task;
+import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.types.Job;
+import com.ehdev.chronos.types.Task;
 
 public class TaskEditor extends SherlockActivity {
 
