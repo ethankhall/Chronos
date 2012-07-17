@@ -22,7 +22,7 @@
 
 package com.ehdev.chronos.types.holders;
 
-import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
+import android.util.Log;
 import com.ehdev.chronos.enums.PayPeriodDuration;
 import com.ehdev.chronos.types.Job;
 import com.ehdev.chronos.types.Punch;
@@ -93,7 +93,7 @@ public class PunchTableTest {
             table.insert(p);
         }
 
-        Duration dur = PayPeriodAdapterList.getTime(table.getPunchPair(workFrom));
+        Duration dur = getTime(table.getPunchPair(workFrom));
         if( dur.getStandardHours() != 5){
             //System.out.println("Hours: " + dur.getStandardHours());
             //System.out.println("Work From Date: " + workFrom);
@@ -135,7 +135,7 @@ public class PunchTableTest {
             table.insert(p);
         }
 
-        Duration dur = PayPeriodAdapterList.getTime(table.getPunchPair(workFrom));
+        Duration dur = getTime(table.getPunchPair(workFrom));
         if( dur.getStandardHours() != 5){
             //System.out.println("Hours: " + dur.getStandardHours());
             //System.out.println("Work From Date: " + workFrom);
@@ -150,6 +150,28 @@ public class PunchTableTest {
             }
             fail("Times didn't match up");
         }
+    }
+
+    public static Duration getTime(List<PunchPair> punches){
+        return getTime(punches, false);
+    }
+
+    public static Duration getTime(List<PunchPair> punches, boolean allowNegative){
+        Duration dur = new Duration(0);
+
+        for(PunchPair pp : punches){
+            if(!pp.getInPunch().getTask().getEnablePayOverride())
+                dur = dur.plus(pp.getDuration());
+            else if(pp.getInPunch().getTask().getPayOverride() > 0)
+                dur = dur.plus(pp.getDuration());
+            else
+                dur = dur.minus(pp.getDuration());
+        }
+
+        if(dur.getMillis() < 0 && !allowNegative)
+            dur = new Duration(0);
+
+        return dur;
     }
 
     @Test
