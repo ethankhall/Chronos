@@ -66,9 +66,9 @@
         <activity android:name=".activities.ShowEULA"
                   android:label="EULA"/>
 
-        <receiver android:name=".content.NotificationBroadcast" android:enabled="true"/>
+        <receiver android:name=".lib.NotificationBroadcast" android:enabled="true"/>
 
-        <receiver android:name=".content.EnableWidget">
+        <receiver android:name=".lib.EnableWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="com.kopysoft.chronos.content.EnableWidget.CLOCK"/>

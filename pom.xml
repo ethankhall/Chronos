@@ -55,7 +55,8 @@
     </build>
 
     <modules>
-        <module>ChronosApp</module>
+			<module>ChronosApp</module>
+			<module>ChronosLib</module>
 	    <!--<module>ChronosTest</module>-->
     </modules>
 
