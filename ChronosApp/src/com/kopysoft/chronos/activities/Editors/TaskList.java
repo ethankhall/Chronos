@@ -34,8 +34,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.adapter.TaskAdapter;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.types.Task;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Task;
 
 import java.util.List;
 

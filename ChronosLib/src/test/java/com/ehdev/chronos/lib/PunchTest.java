@@ -20,8 +20,11 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types;
+package com.ehdev.chronos.lib;
 
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.Task;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;

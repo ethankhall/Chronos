@@ -37,9 +37,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Task;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Task;
 
 public class TaskEditor extends SherlockActivity {
 

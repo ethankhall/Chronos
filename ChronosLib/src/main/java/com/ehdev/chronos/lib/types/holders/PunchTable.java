@@ -20,13 +20,13 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types.holders;
+package com.ehdev.chronos.lib.types.holders;
 
 import android.util.Log;
-import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.lib.enums.Defines;
 import com.ehdev.chronos.lib.Chronos;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Punch;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 

@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types;
+package com.ehdev.chronos.lib.types;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -93,6 +93,17 @@ public class Task implements Comparable<Task>{
     @Override
     public String toString(){
         return taskName;
+    }
+
+    public Task getShallowCopy(){
+        Task sentToTask = new Task();
+        sentToTask.id = id;
+        sentToTask.taskOrder = taskOrder;
+        sentToTask.payOverride = payOverride;
+        sentToTask.enablePayOverride = enablePayOverride;
+        sentToTask.taskName = taskName;
+
+        return sentToTask;
     }
 
     @Override

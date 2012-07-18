@@ -36,14 +36,14 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.enums.PayPeriodDuration;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Note;
-import com.ehdev.chronos.types.Punch;
-import com.ehdev.chronos.types.Task;
-import com.ehdev.chronos.types.holders.PayPeriodHolder;
-import com.ehdev.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Note;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.types.holders.PayPeriodHolder;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -658,7 +658,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             // instantiate the DAO to handle Account with String id
             Dao<Task,String> taskDAO = getTaskDao();
             Dao<Job,String> jobDAO = getJobDao();
-            
 
             //accountDao.refresh(order.getAccount());
             retValue = taskDAO.queryForAll();
@@ -667,6 +666,61 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 
             }
 
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
+    public List<Task> getAllTasks(Job curJob){
+
+        List<Task> retValue = null;
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+
+            //accountDao.refresh(order.getAccount());
+            retValue = taskDAO.queryForAll();
+
+            QueryBuilder<Task, String> queryBuilder = taskDAO.queryBuilder();
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, curJob.getID());
+            PreparedQuery<Task> preparedQuery = queryBuilder.prepare();
+
+            retValue = taskDAO.query(preparedQuery);
+            for(Task work : retValue){
+                jobDAO.refresh(work.getJob());
+            }
+
+        } catch(SQLException e){
+            if(enableLog) Log.e(TAG, e.getMessage());
+        } catch (Exception e) {
+            if(enableLog) Log.e(TAG,e.getMessage());
+        }
+        return retValue;
+    }
+
+    public List<Note> getAllNotes(Job curJob){
+
+        List<Note> retValue = null;
+        try{
+            // instantiate the DAO to handle Account with String id
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+            Dao<Note,String> noteDAO = getNoteDao();
+
+            //accountDao.refresh(order.getAccount());
+
+            QueryBuilder<Note, String> queryBuilder = noteDAO.queryBuilder();
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, curJob.getID());
+            PreparedQuery<Note> preparedQuery = queryBuilder.prepare();
+
+            retValue = noteDAO.query(preparedQuery);
+            for(Note work : retValue){
+                jobDAO.refresh(work.getJob());
+            }
 
         } catch(SQLException e){
             if(enableLog) Log.e(TAG, e.getMessage());
@@ -754,6 +808,42 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
         //Log.d(TAG, "Number of punches: " + punches.size());
         return punches;
     }
+
+    public List<Punch> getPunchesByJob(Job jobId){
+        List<Punch> punches = new LinkedList<Punch>();
+
+
+        // instantiate the DAO to handle Account with String id
+        try {
+            Dao<Punch,String> punchDao = getPunchDao();
+            Dao<Task,String> taskDAO = getTaskDao();
+            Dao<Job,String> jobDAO = getJobDao();
+
+            QueryBuilder<Punch, String> queryBuilder = punchDao.queryBuilder();
+            queryBuilder.where().eq(Job.JOB_FIELD_NAME, jobId.getID());
+
+            PreparedQuery<Punch> preparedQuery = queryBuilder.prepare();
+
+            punches = punchDao.query(preparedQuery);
+            if(enableLog) Log.d(TAG, "Punches for this day: " + punches.size());
+            for(Punch work : punches){
+                taskDAO.refresh(work.getTask());
+                jobDAO.refresh(work.getTask().getJob());
+                jobDAO.refresh(work.getJob());
+                //if(enableLog) Log.d(TAG, "in loop Pay Rate: " + work.getJob().getPayRate());
+
+            }
+            Collections.sort(punches);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+        }
+
+        //Log.d(TAG, "Number of punches: " + punches.size());
+        return punches;
+    }
+
 
     public PunchTable getAllPunchesForThisPayPeriodByJob(Job jobId){
 

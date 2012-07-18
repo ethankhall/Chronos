@@ -32,7 +32,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import com.kopysoft.chronos.R;
-import com.ehdev.chronos.enums.Defines;
+import com.ehdev.chronos.lib.enums.Defines;
 
 /**
  * Created by IntelliJ IDEA.

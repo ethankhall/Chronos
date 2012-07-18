@@ -22,11 +22,11 @@
 
 package com.kopysoft.chronos.adapter.clock;
 
-import com.ehdev.chronos.enums.PayPeriodDuration;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Punch;
-import com.ehdev.chronos.types.Task;
-import com.ehdev.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.junit.Before;

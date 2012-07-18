@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types;
+package com.ehdev.chronos.lib.types;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,7 +28,7 @@ import android.preference.PreferenceManager;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ehdev.chronos.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -56,8 +56,6 @@ public class Job implements Serializable{
     DateTime startOfPayPeriod;
     @DatabaseField(dataType= DataType.SERIALIZABLE)
     PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
-
-
 
     /**
      * Normal constructor for the object Job. By default the overtime is calculated.

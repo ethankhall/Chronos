@@ -37,6 +37,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.ehdev.chronos.lib.JsonToSql;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
@@ -44,10 +45,10 @@ import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
 import com.ehdev.chronos.lib.Chronos;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.holders.PayPeriodHolder;
-import com.ehdev.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.holders.PayPeriodHolder;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import com.kopysoft.chronos.lib.Email;
@@ -70,6 +71,9 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         setContentView(R.layout.header);
 
         Chronos chronos = new Chronos(this);
+        JsonToSql json = new JsonToSql(chronos);
+        Log.d(TAG, "JSON " + json.getJson());
+
         Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob;
         localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
@@ -350,7 +354,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         invalidateOptionsMenu();    //Redo the menu
+
         if(tab.getPosition() == 0){
+            Chronos chronos = new Chronos(this);
+            Job curJob = chronos.getAllJobs().get(0);
+            jobId = curJob;
+            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
+            chronos.close();
+
             setContentView(new DatePairView(this,
                     localPunchTable.getPunchesByDay(new DateTime()),
                     DateTime.now()));

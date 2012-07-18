@@ -20,8 +20,41 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.enums;
+package com.ehdev.chronos.lib;
 
-public enum TimeFormat {
-	HOUR_MIN_SEC, HOUR_MIN, HOUR_DECIMAL
+import com.ehdev.chronos.lib.types.*;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class JsonToSql {
+    private Chronos gChronos;
+
+    public JsonToSql(Chronos chron){
+        gChronos = chron;
+    }
+
+    public String getJson(){
+        List<Job> listOfJobs = gChronos.getAllJobs();
+        String jsonOutput = "";
+        Gson gson = new Gson();
+        List<JsonObj> json = new ArrayList<JsonObj>();
+
+        for(Job j : listOfJobs){
+            List<Task> tasks = gChronos.getAllTasks(j);
+            List<Note> notes = gChronos.getAllNotes(j);
+            List<Punch> punches = gChronos.getPunchesByJob(j);
+
+            json.add(new JsonObj(j, punches, tasks, notes));
+        }
+
+        JsonObj[] jsonArray = new JsonObj[json.size()];
+        for(int i = 0; i < json.size(); i++){
+            jsonArray[i] = json.get(i);
+        }
+
+        return gson.toJson(jsonArray);
+    }
+
 }

@@ -22,9 +22,8 @@
 
 package com.ehdev.chronos.lib;
 
-import com.ehdev.chronos.lib.Chronos;
-import com.ehdev.chronos.enums.PayPeriodDuration;
-import com.ehdev.chronos.types.Job;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.types.Job;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;

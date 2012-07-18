@@ -30,9 +30,9 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.enums.PayPeriodDuration;
-import com.ehdev.chronos.types.Job;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.types.Job;
 import org.joda.time.DateTime;
 
 public class JobEditor extends SherlockPreferenceActivity  {

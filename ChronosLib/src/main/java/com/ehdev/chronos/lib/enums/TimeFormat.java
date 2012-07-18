@@ -20,8 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.enums;
+package com.ehdev.chronos.lib.enums;
 
-public enum Verbosity {
-	ONLY_DAY, EVERY_PUNCH
+public enum TimeFormat {
+	HOUR_MIN_SEC, HOUR_MIN, HOUR_DECIMAL
 }

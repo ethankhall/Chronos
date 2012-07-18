@@ -38,10 +38,10 @@ import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.QuickBreakActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Punch;
-import com.ehdev.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
 import com.kopysoft.chronos.lib.NotificationBroadcast;
 import org.joda.time.DateTime;
@@ -145,6 +145,7 @@ public class DateViewerActivity extends SherlockActivity{
         PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
         //List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
         List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
+        Log.d(TAG, "Number of punches:" + punches.size());
 
         chronos.close();
 

@@ -35,11 +35,11 @@ import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Editors.PairEditorActivity;
 import com.kopysoft.chronos.adapter.clock.TodayAdapterPair;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Punch;
-import com.ehdev.chronos.types.Task;
-import com.ehdev.chronos.types.holders.PunchPair;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.types.holders.PunchPair;
 import com.kopysoft.chronos.lib.NotificationBroadcast;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -121,6 +121,7 @@ public class DatePairView extends LinearLayout {
 
         TextView tx = (TextView)header.findViewById(R.id.timeViewTotal);
         Duration dur = adapter.getTime(true);
+
         if(dur.getMillis() < 0 && gDate.toDateMidnight().isEqual(new DateMidnight())){
             dur = dur.plus(DateTime.now().getMillis());
         }

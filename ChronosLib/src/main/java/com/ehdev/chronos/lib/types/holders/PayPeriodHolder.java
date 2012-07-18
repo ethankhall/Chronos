@@ -20,10 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types.holders;
+package com.ehdev.chronos.lib.types.holders;
 
-import com.ehdev.chronos.enums.PayPeriodDuration;
-import com.ehdev.chronos.types.Job;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.types.Job;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

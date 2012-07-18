@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.enums;
+package com.ehdev.chronos.lib.enums;
 
 public class Defines {
 	

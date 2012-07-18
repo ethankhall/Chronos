@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types;
+package com.ehdev.chronos.lib.types;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -41,6 +41,14 @@ public class Note implements Comparable<Note> {
     @DatabaseField(canBeNull = false, foreign = true, columnName = Job.JOB_FIELD_NAME)
     private Job job;
 
+
+    public Note getShallowCopy(){
+        Note n = new Note();
+        n.id = id;
+        n.noteString = noteString;
+        n.gDateTime = gDateTime;
+        return n;
+    }
 
     /**
      * Constructor needed for ORMLite

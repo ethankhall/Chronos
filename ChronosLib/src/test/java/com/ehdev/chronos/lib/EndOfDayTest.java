@@ -20,11 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types;
+package com.ehdev.chronos.lib;
 
-import com.ehdev.chronos.enums.PayPeriodDuration;
-import com.ehdev.chronos.types.holders.PayPeriodHolder;
-import com.ehdev.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.types.holders.PayPeriodHolder;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 

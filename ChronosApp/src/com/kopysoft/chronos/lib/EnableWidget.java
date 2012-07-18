@@ -34,11 +34,11 @@ import android.widget.RemoteViews;
 import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
-import com.ehdev.chronos.enums.Defines;
-import com.ehdev.chronos.types.Job;
-import com.ehdev.chronos.types.Punch;
-import com.ehdev.chronos.types.Task;
-import com.ehdev.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 

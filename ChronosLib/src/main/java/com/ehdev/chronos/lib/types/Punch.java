@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.ehdev.chronos.types;
+package com.ehdev.chronos.lib.types;
 
 import android.content.Context;
 import android.text.format.DateFormat;
@@ -50,8 +50,17 @@ public class Punch implements Comparable<Punch> {
     private Job job;
     @DatabaseField(canBeNull = false, foreign = true, columnName = Task.TASK_FIELD_NAME)
     private Task punchTask;
+    private int taskId;
 
     //DateTime(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minuteOfHour, int secondOfMinute)
+
+    public Punch getShallowCopy(){
+        Punch p = new Punch();
+        p.id = id;
+        p.time = time;
+        p.taskId = punchTask.getID();
+        return p;
+    }
 
     public Punch() {
     }
