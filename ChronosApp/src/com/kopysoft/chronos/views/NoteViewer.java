@@ -30,13 +30,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import com.ehdev.chronos.lib.Chronos;
 import com.j256.ormlite.dao.Dao;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.adapter.note.NoteAdapter;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.Note;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Note;
 
 import java.util.List;
 

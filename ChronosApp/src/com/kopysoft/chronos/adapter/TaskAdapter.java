@@ -27,8 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Task;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Task;
 import com.kopysoft.chronos.views.helpers.RowElement;
 
 import java.util.LinkedList;

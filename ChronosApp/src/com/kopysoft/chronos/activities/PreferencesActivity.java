@@ -24,18 +24,28 @@ package com.kopysoft.chronos.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.Preference;
 import android.util.Log;
 import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.ehdev.chronos.lib.JsonToSql;
+import com.ehdev.chronos.lib.types.Punch;
 import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.Chronos;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 
 public class PreferencesActivity extends SherlockPreferenceActivity  {
 
@@ -93,13 +103,68 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
             }
         });
 
+        Preference fullBackup = (Preference) findPreference("fullBackup");
+        fullBackup.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                if(Chronos.getCardWriteStatus() == false){
+
+                    CharSequence text = "Could not write to SD Card!.";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                    toast.show();
+                    return false;
+                }
+
+                Toast.makeText(getApplicationContext(),
+                        "Processing...", Toast.LENGTH_LONG).show();
+
+                Chronos chrono = new Chronos(getApplicationContext());
+                JsonToSql json = new JsonToSql(chrono);
+                String jsonOutput = json.getJson();
+
+                File directory =  Environment.getExternalStorageDirectory();
+                //File backup = new File(directory, "Chronos_Backup.csv");
+                File backup = new File(directory, "chronosBackup.json");
+                BufferedWriter br;
+
+                try{
+                    br = new BufferedWriter( new FileWriter(backup));
+                    br.write(jsonOutput);
+                    br.close();
+                } catch (IOException e){
+                    Toast.makeText(getApplicationContext(),
+                            "Backup Failed! Please Contact developer.", Toast.LENGTH_LONG).show();
+                    Log.e(TAG, e.getMessage());
+
+                    return false;
+                }
+
+                Toast.makeText(getApplicationContext(),
+                        "Backup Succeeded!", Toast.LENGTH_SHORT).show();
+
+                return true;
+            }
+        });
+
+        Preference fullRestore = (Preference) findPreference("fullRestore");
+        fullRestore.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                showDialog(RESTORE_LEGACY);
+                return true;
+            }
+        });
+
+
         Preference emailDev = (Preference) findPreference("emailDev");
         emailDev.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
                 Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
                 emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
-                        new String[] { "ethan@ehdev.io" });
+                        new String[] { "ethan+chronos@ehdev.io" });
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Chronos");
                 emailIntent.setType("message/rfc822");
                 startActivity(emailIntent);

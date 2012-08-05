@@ -37,21 +37,22 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.ehdev.chronos.lib.JsonToSql;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.Editors.TaskList;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.content.Email;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.enums.PayPeriodDuration;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.holders.PayPeriodHolder;
-import com.kopysoft.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.Chronos;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.holders.PayPeriodHolder;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.PayPeriod.PayPeriodSummaryView;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
+import com.kopysoft.chronos.lib.Email;
+import com.kopysoft.chronos.lib.NotificationBroadcast;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -70,6 +71,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         setContentView(R.layout.header);
 
         Chronos chronos = new Chronos(this);
+
         Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob;
         localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
@@ -110,7 +112,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
         Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
         Intent runIntent = new Intent().setClass(this,
-                com.kopysoft.chronos.content.NotificationBroadcast.class);
+                NotificationBroadcast.class);
         runIntent.putExtra("timeToday", dur.getMillis());
         this.sendBroadcast(runIntent);
     }
@@ -193,74 +195,6 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         } else if(requestCode == JobEditor.UPDATE_JOB){
             Chronos chron = new Chronos(this);
             Job thisJob = chron.getAllJobs().get(0);
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-            try{
-            thisJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
-            } catch (NumberFormatException e){
-                thisJob.setPayRate(7.25f);
-                Log.d(TAG, e.getMessage());
-            }
-
-            try{
-                thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
-            } catch (NumberFormatException e){
-                thisJob.setOvertimeEnabled(true);
-                Log.d(TAG, e.getMessage());
-            }
-
-            try{
-                thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
-            } catch (NumberFormatException e){
-                thisJob.setOvertime(40f);
-                Log.d(TAG, e.getMessage());
-            }
-
-            try{
-                thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
-            } catch (NumberFormatException e){
-                thisJob.setDoubletimeThreshold( 60f );
-                Log.d(TAG, e.getMessage());
-            }
-
-            try{
-                thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
-            } catch (NumberFormatException e){
-                thisJob.setFortyHourWeek(true);
-                Log.d(TAG, e.getMessage());
-            }
-
-            String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
-            String time[] = pref.getString("time", "00:00").split("\\p{Punct}");
-            thisJob.setStartOfPayPeriod(new DateTime(Integer.parseInt(date[0]),
-                    Integer.parseInt(date[1]),
-                    Integer.parseInt(date[2]),
-                    Integer.parseInt(time[0]),
-                    Integer.parseInt(time[1])
-            ));
-            switch (Integer.parseInt(pref.getString("len_of_month", "2"))){
-                case 1:
-                    thisJob.setDuration(PayPeriodDuration.ONE_WEEK);
-                    break;
-                case 2:
-                    thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
-                    break;
-                case 3:
-                    thisJob.setDuration(PayPeriodDuration.THREE_WEEKS);
-                    break;
-                case 4:
-                    thisJob.setDuration(PayPeriodDuration.FOUR_WEEKS);
-                    break;
-                case 5:
-                    thisJob.setDuration(PayPeriodDuration.FULL_MONTH);
-                    break;
-                case 6:
-                    thisJob.setDuration(PayPeriodDuration.FIRST_FIFTEENTH);
-                    break;
-                default:
-                    thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
-                    break;
-            }
-            chron.updateJob(thisJob);
             localPunchTable = chron.getAllPunchesForThisPayPeriodByJob(thisJob);
             payHolder = new PayPeriodHolder(thisJob);
             chron.close();
@@ -278,7 +212,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         //Send intent to create notification
         Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
         Intent runIntent = new Intent().setClass(this,
-                com.kopysoft.chronos.content.NotificationBroadcast.class);
+                NotificationBroadcast.class);
         runIntent.putExtra("timeToday", dur.getMillis());
         this.sendBroadcast(runIntent);
 
@@ -409,7 +343,7 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     public void onPause(){
         super.onPause();
         /*
-        Intent runIntent = new Intent(this, com.kopysoft.chronos.content.EnableWidget.class);
+        Intent runIntent = new Intent(this, com.ehdev.chronos.lib.EnableWidget.class);
         runIntent.setAction(EnableWidget.UPDATE_FROM_APP);
         this.sendBroadcast(runIntent);
         */
@@ -418,7 +352,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         invalidateOptionsMenu();    //Redo the menu
+
         if(tab.getPosition() == 0){
+            Chronos chronos = new Chronos(this);
+            Job curJob = chronos.getAllJobs().get(0);
+            jobId = curJob;
+            localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(curJob);
+            chronos.close();
+
             setContentView(new DatePairView(this,
                     localPunchTable.getPunchesByDay(new DateTime()),
                     DateTime.now()));

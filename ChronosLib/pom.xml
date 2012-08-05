@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.kopysoft</groupId>
+        <artifactId>Chronos</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.kopysoft</groupId>
+    <artifactId>Chronos.lib</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <packaging>apklib</packaging>
+    <name>Chronos Lib</name>
+
+    <developers>
+        <developer>
+            <name>Ethan Hall</name>
+            <email>ethan@ehdev.io</email>
+            <id>ethankhall</id>
+            <url>http://ethankhall.com</url>
+            <timezone>-5</timezone>
+            <roles>
+                <role>developer</role>
+                <role>manager</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <repositories>
+        <repository>
+            <id>com.jakewharton</id>
+            <url>http://r.jakewharton.com/maven/release</url>
+        </repository>
+
+        <repository>
+            <id>jakewharton</id>
+            <url>http://r.jakewharton.com/maven/snapshot</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+            <artifactId>android-maven-plugin</artifactId>
+            <version>3.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Time Management -->
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-android</artifactId>
+            <version>4.35</version>
+        </dependency>
+
+        <!-- Android -->
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>4.0.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <!-- TEST scope -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+	
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <!--<version>3.0.0-alpha-13</version>-->
+                <configuration>
+                    <sdk>
+                        <path>${env.ANDROID_HOME}</path>
+                        <platform>4.0</platform>
+                    </sdk>
+                    <undeployBeforeDeploy> true </undeployBeforeDeploy>
+                    <proguard>
+                        <skip>true</skip>
+                    </proguard>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

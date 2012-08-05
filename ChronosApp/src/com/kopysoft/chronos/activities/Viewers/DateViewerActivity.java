@@ -32,17 +32,18 @@ import android.util.Log;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.ehdev.chronos.lib.Chronos;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.QuickBreakActivity;
 import com.kopysoft.chronos.adapter.clock.PayPeriodAdapterList;
-import com.kopysoft.chronos.content.Chronos;
-import com.kopysoft.chronos.enums.Defines;
-import com.kopysoft.chronos.types.Job;
-import com.kopysoft.chronos.types.Punch;
-import com.kopysoft.chronos.types.holders.PunchTable;
+import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.types.Punch;
+import com.ehdev.chronos.lib.types.holders.PunchTable;
 import com.kopysoft.chronos.views.ClockFragments.Today.DatePairView;
+import com.kopysoft.chronos.lib.NotificationBroadcast;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -144,12 +145,13 @@ public class DateViewerActivity extends SherlockActivity{
         PunchTable localPunchTable = chronos.getAllPunchesForThisPayPeriodByJob(chronos.getAllJobs().get(0));
         //List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
         List<Punch> punches = chronos.getPunchesByJobAndDate(curJob, new DateTime(date));
+        Log.d(TAG, "Number of punches:" + punches.size());
 
         chronos.close();
 
         Duration dur = PayPeriodAdapterList.getTime(localPunchTable.getPunchPair(new DateTime()), true);
         Intent runIntent = new Intent().setClass(this,
-                com.kopysoft.chronos.content.NotificationBroadcast.class);
+                NotificationBroadcast.class);
         runIntent.putExtra("timeToday", dur.getMillis());
         this.sendBroadcast(runIntent);
 

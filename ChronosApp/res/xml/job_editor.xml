@@ -40,13 +40,14 @@
                 android:summary="Normally midnight. This field is in 24 hours time."
                 android:defaultValue="00:00" />
 
-        <ListPreference android:title="Length of Month"
+        <ListPreference android:title="Length of Pay Period"
                         android:key="len_of_month" android:entries="@array/periodTimes"
                         android:entryValues="@array/NumOneToSix" android:summary="Length of a Pay Period"
                         android:defaultValue="2" />
 
         <CheckBoxPreference android:title="Enable Overtime"
-                            android:key="enable_overtime" />
+                            android:key="enable_overtime"
+                            android:defaultValue="true"/>
 
         <EditTextPreference
                 android:title="Overtime threshold"

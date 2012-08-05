@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.kopysoft.chronos"
-          android:versionCode="43"
-          android:versionName="2.0.8">
+          android:versionCode="44"
+          android:versionName="2.0.9">
     <application android:icon="@drawable/icon"
                  android:label="Chronos"
                  android:allowBackup="true"
-                 android:debuggable="false"
                  android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
 
         <activity android:name=".activities.ClockActivity"
@@ -67,9 +66,9 @@
         <activity android:name=".activities.ShowEULA"
                   android:label="EULA"/>
 
-        <receiver android:name=".content.NotificationBroadcast" android:enabled="true"/>
+        <receiver android:name=".lib.NotificationBroadcast" android:enabled="true"/>
 
-        <receiver android:name=".content.EnableWidget">
+        <receiver android:name=".lib.EnableWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="com.kopysoft.chronos.content.EnableWidget.CLOCK"/>
