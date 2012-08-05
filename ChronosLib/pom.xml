@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.jayway.maven.plugins.android.generation2</groupId>
             <artifactId>android-maven-plugin</artifactId>
-            <version>3.1.0</version>
+            <version>3.3.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -119,6 +119,9 @@
                         <platform>4.0</platform>
                     </sdk>
                     <undeployBeforeDeploy> true </undeployBeforeDeploy>
+                    <proguard>
+                        <skip>true</skip>
+                    </proguard>
                 </configuration>
             </plugin>
         </plugins>

@@ -37,6 +37,7 @@ import java.io.Serializable;
 public class Job implements Serializable{
 
     public final static String JOB_FIELD_NAME = "job_id";
+    public final static String DURATION_FIELD_NAME = "payPeriodDuration";
 
     @DatabaseField( columnName = JOB_FIELD_NAME, generatedId = true)
     int id = -1;
@@ -54,7 +55,7 @@ public class Job implements Serializable{
     float doubleTime;  //Start double time at...
     @DatabaseField(dataType= DataType.SERIALIZABLE)
     DateTime startOfPayPeriod;
-    @DatabaseField(dataType= DataType.SERIALIZABLE)
+    @DatabaseField(dataType= DataType.SERIALIZABLE, columnName = DURATION_FIELD_NAME)
     PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
 
     /**

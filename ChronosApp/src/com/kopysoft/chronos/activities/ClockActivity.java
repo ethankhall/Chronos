@@ -71,8 +71,6 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
         setContentView(R.layout.header);
 
         Chronos chronos = new Chronos(this);
-        JsonToSql json = new JsonToSql(chronos);
-        Log.d(TAG, "JSON " + json.getJson());
 
         Job curJob = chronos.getAllJobs().get(0);
         jobId = curJob;

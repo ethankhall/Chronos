@@ -26,29 +26,40 @@ import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.lifecycle.internal.TaskSegment;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JsonObj {
 
+    /*
     private String jobName;
     private float doubleTime;
     private boolean fourtyHourWeek;
     private PayPeriodDuration payPeriodDuration;
+    private boolean overtimeEnabled;
     private float overtime;
     private float payrate;
     private long startOfPayperiod;
+    */
     private Task[] taskList;
     private Punch[] punchList;
     private Note[] noteList;
+    private Job job;
 
     public JsonObj(Job thisJob, List<Punch> punches, List<Task> tasks, List<Note> notes){
+
+        job = thisJob;
+        /*
         jobName = thisJob.getName();
         doubleTime = thisJob.doubleTime;
         fourtyHourWeek = thisJob.fourtyHourWeek;
         payPeriodDuration = thisJob.getDuration();
         overtime = thisJob.getOvertime();
+        overtimeEnabled = thisJob.isOverTimeEnabled();
         payrate = thisJob.getPayRate();
         startOfPayperiod = thisJob.getStartOfPayPeriod().getMillis();
+         */
 
         taskList = new Task[tasks.size()];
         for(int i = 0; i < tasks.size(); i++){
@@ -65,5 +76,21 @@ public class JsonObj {
             noteList[i] = notes.get(i).getShallowCopy();
         }
 
+    }
+
+    public List<Task> getTasks(){
+        return Arrays.asList(taskList);
+    }
+
+    public List<Punch> getPunches(){
+        return Arrays.asList(punchList);
+    }
+
+    public List<Note> getNote(){
+        return Arrays.asList(noteList);
+    }
+
+    public Job getJob(){
+        return job;
     }
 }

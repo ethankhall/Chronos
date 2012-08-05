@@ -63,7 +63,12 @@ public class ChronosTest {
 
     @Test
     public void testGetDateFromStartOfPayPeriodDateDateWithoutMidnight() throws Exception {
-        DateTime startOfPP = DateTime.now().minusDays(1).minusHours(1);
+        DateTime startOfPP;
+        if(DateTime.now().getHourOfDay() == 0){
+            startOfPP = DateTime.now().minusDays(1).minusMinutes(10);
+        } else {
+            startOfPP = DateTime.now().minusDays(1).minusHours(1);
+        }
         DateTime date = DateTime.now();
         DateTime retValue = Chronos.getDateFromStartOfPayPeriod(startOfPP, date);
 

@@ -37,7 +37,6 @@ public class JsonToSql {
 
     public String getJson(){
         List<Job> listOfJobs = gChronos.getAllJobs();
-        String jsonOutput = "";
         Gson gson = new Gson();
         List<JsonObj> json = new ArrayList<JsonObj>();
 

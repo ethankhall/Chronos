@@ -22,6 +22,8 @@
 
 package com.ehdev.chronos.lib.enums;
 
-public enum PayPeriodDuration {
+import java.io.Serializable;
+
+public enum PayPeriodDuration implements Serializable{
     ONE_WEEK, TWO_WEEKS, THREE_WEEKS, FOUR_WEEKS, FULL_MONTH, FIRST_FIFTEENTH
 }

@@ -48,11 +48,23 @@ public class JobEditor extends SherlockPreferenceActivity  {
         addPreferencesFromResource(R.xml.job_editor);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Chronos chron = new Chronos(this);
+        Job thisJob = chron.getAllJobs().get(0);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("normal_pay", String.format("%.2f", thisJob.getPayRate()));
+        editor.putBoolean("enable_overtime", thisJob.isOverTimeEnabled());
+
+        chron.close();
     }
 
     //set the settings into the DB
     @Override
     public void onPause(){
+        super.onPause();
 
         Chronos chron = new Chronos(this);
         Job thisJob = chron.getAllJobs().get(0);

@@ -63,7 +63,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //1.2.0	= 11
     //2.0.0RC1 = 15
 
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
     public static final String DATABASE_NAME = "Chronos";
     private Context gContext;
 
@@ -384,9 +384,108 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                         taskDAO.createOrUpdate(t);
                     }
                 }
+            } else if(oldVersion == 19){
+
+                /*
+                Cursor cursor = db.query("jobs", null,
+                        null, null, null, null, Job.JOB_FIELD_NAME +" desc");
+                final int colid= cursor.getColumnIndex(Job.JOB_FIELD_NAME);
+
+                if (cursor.moveToFirst()) {
+                    long id = cursor.getLong(colid);
+                    db.execSQL("UPDATE jobs SET " + Job.DURATION_FIELD_NAME + " = '" + PayPeriodDuration.FIRST_FIFTEENTH
+                            + "' WHERE " + Job.JOB_FIELD_NAME + "=" + id );
+                */
+                try {
+                    TableUtils.dropTable(connectionSource, Job.class, true); //Job - Create Table
+
+                    TableUtils.createTable(connectionSource, Job.class); //Job - Create Table
+
+
+                    DateTime jobMidnight = new DateMidnight().toDateTime().minusWeeks(1).withZone(DateTimeZone.getDefault());
+
+                    Job thisJob = new Job("", 7.25f,
+                            jobMidnight, PayPeriodDuration.TWO_WEEKS);
+
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(gContext);
+                    try{
+                        thisJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
+                    } catch (NumberFormatException e){
+                        thisJob.setPayRate(7.25f);
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    try{
+                        thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
+                    } catch (NumberFormatException e){
+                        thisJob.setOvertimeEnabled(true);
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    try{
+                        thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
+                    } catch (NumberFormatException e){
+                        thisJob.setOvertime(40f);
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    try{
+                        thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
+                    } catch (NumberFormatException e){
+                        thisJob.setDoubletimeThreshold( 60f );
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    try{
+                        thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
+                    } catch (NumberFormatException e){
+                        thisJob.setFortyHourWeek(true);
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    String date[] = pref.getString("date", "2011.1.17").split("\\p{Punct}");
+                    String time[] = pref.getString("time", "00:00").split("\\p{Punct}");
+                    thisJob.setStartOfPayPeriod(new DateTime(Integer.parseInt(date[0]),
+                            Integer.parseInt(date[1]),
+                            Integer.parseInt(date[2]),
+                            Integer.parseInt(time[0]),
+                            Integer.parseInt(time[1])
+                    ));
+                    switch (Integer.parseInt(pref.getString("len_of_month", "2"))){
+                        case 1:
+                            thisJob.setDuration(PayPeriodDuration.ONE_WEEK);
+                            break;
+                        case 2:
+                            thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
+                            break;
+                        case 3:
+                            thisJob.setDuration(PayPeriodDuration.THREE_WEEKS);
+                            break;
+                        case 4:
+                            thisJob.setDuration(PayPeriodDuration.FOUR_WEEKS);
+                            break;
+                        case 5:
+                            thisJob.setDuration(PayPeriodDuration.FULL_MONTH);
+                            break;
+                        case 6:
+                            thisJob.setDuration(PayPeriodDuration.FIRST_FIFTEENTH);
+                            break;
+                        default:
+                            thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
+                            break;
+                    }
+
+                    getJobDao().create(thisJob);
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             Log.e(TAG, "Could not upgrade the table for Thing", e);
         }
 
@@ -906,6 +1005,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
         } catch(SQLException e){
             Log.e(TAG, e.getMessage());
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
