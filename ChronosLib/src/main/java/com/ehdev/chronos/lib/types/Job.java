@@ -58,6 +58,9 @@ public class Job implements Serializable{
     @DatabaseField(dataType= DataType.SERIALIZABLE, columnName = DURATION_FIELD_NAME)
     PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
 
+    public void setName(String name){
+        jobName = name;
+    }
     /**
      * Normal constructor for the object Job. By default the overtime is calculated.
      *  To change the overtime setting use the {@link #setOvertimeEnabled(boolean)}.
