@@ -61,6 +61,11 @@ public class BackupOptions extends AsyncTask<BackupOptions.ASYNC_TASK, Void, Boo
         gContext = con;
     }
 
+
+    protected void onPreExecute(){
+        Toast.makeText(gContext, "Running operation in background...", Toast.LENGTH_SHORT).show();
+    }
+
     protected void onPostExecute(Boolean result){
         Log.d(TAG, "onPostExecute");
 

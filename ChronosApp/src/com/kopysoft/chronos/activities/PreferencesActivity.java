@@ -71,7 +71,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
             public boolean onPreferenceClick(Preference preference) {
                 BackupOptions opt = new BackupOptions(getApplicationContext());
-                opt.doInBackground(BackupOptions.ASYNC_TASK.CVS_BACKUP);
+                opt.execute(BackupOptions.ASYNC_TASK.CVS_BACKUP);
                 return true;
             }
 
@@ -81,7 +81,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
             public boolean onPreferenceClick(Preference preference) {
                 BackupOptions opt = new BackupOptions(getApplicationContext());
-                opt.doInBackground(BackupOptions.ASYNC_TASK.CSV_RESTORE);
+                opt.execute(BackupOptions.ASYNC_TASK.CSV_RESTORE);
                 return true;
             }
         });
@@ -91,7 +91,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
             public boolean onPreferenceClick(Preference preference) {
                 BackupOptions opt = new BackupOptions(getApplicationContext());
-                opt.doInBackground(BackupOptions.ASYNC_TASK.CVS_BACKUP);
+                opt.execute(BackupOptions.ASYNC_TASK.CVS_BACKUP);
                 return true;
             }
         });
@@ -101,7 +101,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
             public boolean onPreferenceClick(Preference preference) {
                 BackupOptions opt = new BackupOptions(getApplicationContext());
-                opt.doInBackground(BackupOptions.ASYNC_TASK.CVS_RESTORE);
+                opt.execute(BackupOptions.ASYNC_TASK.CVS_RESTORE);
                 return true;
             }
         });
@@ -110,7 +110,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         fullBackup.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 BackupOptions opt = new BackupOptions(getApplicationContext());
-                opt.doInBackground(BackupOptions.ASYNC_TASK.JSON_BACKUP);
+                opt.execute(BackupOptions.ASYNC_TASK.JSON_BACKUP);
                 return true;
             }
         });
@@ -120,7 +120,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
 
             public boolean onPreferenceClick(Preference preference) {
                 BackupOptions opt = new BackupOptions(getApplicationContext());
-                opt.doInBackground(BackupOptions.ASYNC_TASK.JSON_RESTORE);
+                opt.execute(BackupOptions.ASYNC_TASK.JSON_RESTORE);
                 return true;
             }
         });
