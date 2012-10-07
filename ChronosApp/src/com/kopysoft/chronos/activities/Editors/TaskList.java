@@ -39,6 +39,7 @@ import com.ehdev.chronos.lib.types.Task;
 
 import java.util.List;
 
+@Deprecated
 public class TaskList extends SherlockActivity {
 
     private static String TAG = Defines.TAG + " - TaskList";

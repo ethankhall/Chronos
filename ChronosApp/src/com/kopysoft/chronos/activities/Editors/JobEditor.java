@@ -35,6 +35,7 @@ import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import com.ehdev.chronos.lib.types.Job;
 import org.joda.time.DateTime;
 
+@Deprecated
 public class JobEditor extends SherlockPreferenceActivity  {
 
     private static String TAG = Defines.TAG + " - JobEditor";
