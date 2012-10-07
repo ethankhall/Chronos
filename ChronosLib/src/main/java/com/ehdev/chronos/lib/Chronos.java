@@ -30,8 +30,10 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
@@ -44,6 +46,7 @@ import com.ehdev.chronos.lib.types.Punch;
 import com.ehdev.chronos.lib.types.Task;
 import com.ehdev.chronos.lib.types.holders.PayPeriodHolder;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
+import org.apache.commons.jxpath.ri.model.dom.DOMAttributeIterator;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -62,8 +65,10 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
     //1.0.1 - 1.1.0 = 10
     //1.2.0	= 11
     //2.0.0RC1 = 15
+    //2.0.0 = 20
+    //2.1.0 = 21
 
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
     public static final String DATABASE_NAME = "Chronos";
     private Context gContext;
 
@@ -108,7 +113,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     jobMidnight, PayPeriodDuration.TWO_WEEKS);
             currentJob.setDoubletimeThreshold(60);
             currentJob.setOvertimeThreshold(40);
-            currentJob.setOvertimeEnabled(true);
+            currentJob.setOvertimeOptions(OvertimeOptions.WEEK);
             jobDAO.create(currentJob);
             
             Log.d(TAG, "Pay Rate: " + currentJob.getPayRate());
@@ -193,7 +198,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
 
                 SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(gContext);
                 currentJob.setPayRate(Float.valueOf(pref.getString("normal_pay", "7.25")) );
-                currentJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
                 currentJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
                 currentJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
                 SharedPreferences.Editor edit = pref.edit();
@@ -416,13 +420,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                     }
 
                     try{
-                        thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
-                    } catch (NumberFormatException e){
-                        thisJob.setOvertimeEnabled(true);
-                        Log.d(TAG, e.getMessage());
-                    }
-
-                    try{
                         thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
                     } catch (NumberFormatException e){
                         thisJob.setOvertime(40f);
@@ -433,13 +430,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                         thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
                     } catch (NumberFormatException e){
                         thisJob.setDoubletimeThreshold( 60f );
-                        Log.d(TAG, e.getMessage());
-                    }
-
-                    try{
-                        thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
-                    } catch (NumberFormatException e){
-                        thisJob.setFortyHourWeek(true);
                         Log.d(TAG, e.getMessage());
                     }
 
@@ -482,6 +472,30 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 }
 
 
+            } else if(oldVersion == 20 ){
+                getJobDao().executeRaw("ALTER TABLE 'jobs' ADD COLUMN '" + Job.OVERTIME_OPTIONS + "'  VARCHAR default 'NONE';");
+                getJobDao().executeRaw("ALTER TABLE 'jobs' ADD COLUMN '" + Job.SATURDAY_OVERRIDE_FIELD + "'  VARCHAR default 'NONE';");
+                getJobDao().executeRaw("ALTER TABLE 'jobs' ADD COLUMN '" + Job.SUNDAY_OVERRIDE_FIELD + "'  VARCHAR default 'NONE';");
+                List<Job> jobList = getAllJobs();
+                for(Job job : jobList){
+                    GenericRawResults<String[]> rawResults =
+                            getJobDao().queryRaw(
+                                    "select fourtyHourWeek,overTimeEnabled  from jobs where job_id = " + job.getID());
+                    String[] results = rawResults.getResults().get(0);
+                    if(results[0] == "0"){
+                        job.setOvertimeOptions(OvertimeOptions.NONE);
+                    } else {
+                        if(results[1] == "0"){
+                            job.setOvertimeOptions(OvertimeOptions.DAY);
+                        } else if(results[1] == "1"){ //being paranoid
+                            job.setOvertimeOptions(OvertimeOptions.WEEK);
+                        }
+                    }
+                }
+
+                //delete stuff
+                getJobDao().executeRaw("ALTER TABLE 'jobs' DROP COLUMN 'fourtyHourWeek';");
+                getJobDao().executeRaw("ALTER TABLE 'jobs' DROP COLUMN 'overTimeEnabled';");
             }
 
         } catch (SQLException e) {
@@ -1120,7 +1134,7 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 jobMidnight, PayPeriodDuration.TWO_WEEKS);
         currentJob.setDoubletimeThreshold(60);
         currentJob.setOvertimeThreshold(40);
-        currentJob.setOvertimeEnabled(true);
+        currentJob.setOvertimeOptions(OvertimeOptions.WEEK);
 
         List<Punch> punches = new LinkedList<Punch>();
         List<Task> tasks = new LinkedList<Task>();

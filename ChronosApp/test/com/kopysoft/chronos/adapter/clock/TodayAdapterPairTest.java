@@ -22,6 +22,7 @@
 
 package com.kopysoft.chronos.adapter.clock;
 
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import com.ehdev.chronos.lib.types.Job;
 import com.ehdev.chronos.lib.types.Punch;
@@ -172,7 +173,7 @@ public class TodayAdapterPairTest {
 
     @Test
     public void testGetPayableTimeOvertimeHourly() throws Exception  {
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         thisJob.setPayRate(30);
@@ -212,7 +213,7 @@ public class TodayAdapterPairTest {
 
     @Test
     public void testGetPayableTimeDoubleTimeHourly() throws Exception {
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         DateTime workFrom = DateMidnight.now().toDateTime();

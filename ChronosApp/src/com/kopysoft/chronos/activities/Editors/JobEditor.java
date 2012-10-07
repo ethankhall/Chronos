@@ -77,13 +77,6 @@ public class JobEditor extends SherlockPreferenceActivity  {
         }
 
         try{
-            thisJob.setOvertimeEnabled(pref.getBoolean("enable_overtime", true));
-        } catch (NumberFormatException e){
-            thisJob.setOvertimeEnabled(true);
-            Log.d(TAG, e.getMessage());
-        }
-
-        try{
             thisJob.setOvertime(Float.valueOf(pref.getString("over_time_threshold", "40")) );
         } catch (NumberFormatException e){
             thisJob.setOvertime(40f);
@@ -94,13 +87,6 @@ public class JobEditor extends SherlockPreferenceActivity  {
             thisJob.setDoubletimeThreshold(Float.valueOf(pref.getString("double_time_threshold", "60")) );
         } catch (NumberFormatException e){
             thisJob.setDoubletimeThreshold( 60f );
-            Log.d(TAG, e.getMessage());
-        }
-
-        try{
-            thisJob.setFortyHourWeek(pref.getBoolean("8_or_40_hours", true));
-        } catch (NumberFormatException e){
-            thisJob.setFortyHourWeek(true);
             Log.d(TAG, e.getMessage());
         }
 

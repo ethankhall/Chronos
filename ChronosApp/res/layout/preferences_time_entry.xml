@@ -28,29 +28,42 @@
               android:orientation="vertical"
               android:layout_margin="10dip">
 
-    <LinearLayout
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:layout_weight="1">
-        <TextView
-                android:id="@+id/name"
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+        <LinearLayout
+                android:layout_alignParentLeft="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Street"
-                android:layout_gravity="left"
-                android:textSize="20dip" />
-        <TextView
-                android:id="@+id/summary"
+                android:orientation="vertical">
+            <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Street"
+                    android:textSize="20dip" />
+
+            <TextView
+                    android:id="@+id/summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dip"
+                    android:text="Summary"
+                    android:layout_gravity="left"/>
+        </LinearLayout>
+        <CheckBox
+                android:id="@+id/lock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dip"
-                android:text="Summary"
-                android:layout_gravity="left"/>
-    </LinearLayout>
+                android:text="Lock"
+                android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
-    <DatePicker
-            android:id="@+id/date"
+    <TimePicker
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_weight="2"
             android:layout_height="wrap_content"

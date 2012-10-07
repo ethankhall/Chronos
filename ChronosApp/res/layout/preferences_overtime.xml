@@ -32,24 +32,43 @@
                   android:orientation="vertical">
 
         <include
-            android:id="@+id/payRate"
-            layout="@layout/preferences_number_entry" />
-
-        <include
-                android:id="@+id/pp_length"
+                android:id="@+id/overtime_type"
                 layout="@layout/preferences_spinner_entry" />
 
-        <include
-                android:id="@+id/start_of_pp"
-                layout="@layout/preferences_date_entry" />
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/overtimeOptions">
 
-        <include
-                android:id="@+id/workOverMidnight"
-                layout="@layout/preferences_check_entry" />
+            <include
+                android:id="@+id/overtimeThreshold"
+                layout="@layout/preferences_number_entry" />
 
-        <include
-                android:id="@+id/startOfDay"
-                layout="@layout/preferences_time_entry" />
+            <include
+                    android:id="@+id/doubleThreshold"
+                    layout="@layout/preferences_number_entry" />
+
+            <include
+                    android:id="@+id/specialTimeForWeekend"
+                    layout="@layout/preferences_check_entry" />
+
+            <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/specialTimeForWeekendLayout">
+
+                <include
+                        android:id="@+id/saturdayDefined"
+                        layout="@layout/preferences_spinner_entry" />
+
+                <include
+                        android:id="@+id/sundayDefined"
+                        layout="@layout/preferences_spinner_entry" />
+            </LinearLayout>
+
+        </LinearLayout>
 
 
     </LinearLayout>

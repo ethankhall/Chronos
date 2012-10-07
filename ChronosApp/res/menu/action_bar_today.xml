@@ -56,6 +56,7 @@
                   android:text="@string/menu_preferences"
                   android:showAsAction="ifRoom|withText"/>
 
+            <!--
             <item android:id="@+id/menu_configure_job"
                   android:title="@string/menu_configure_job"
                   android:text="@string/menu_configure_job"
@@ -64,6 +65,12 @@
             <item android:id="@+id/menu_configure_task"
                   android:title="@string/menu_configure_tasks"
                   android:text="@string/menu_configure_tasks"
+                  android:showAsAction="ifRoom|withText"/>
+                  -->
+
+            <item android:id="@+id/menu_configure_wizard"
+                  android:title="@string/menu_configure_wizard"
+                  android:text="@string/menu_configure_wizard"
                   android:showAsAction="ifRoom|withText"/>
 
             <item android:id="@+id/menu_email"

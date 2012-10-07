@@ -45,6 +45,12 @@
         <item>6</item>
     </string-array>
 
+    <string-array name="NumOneToThree">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
     <string-array name="breaks">
         <item>5 Min</item>
         <item>10 Min</item>
@@ -67,5 +73,17 @@
         <item>Add to time/pay</item>
         <item>Ignore it</item>
         <item>Subtract time/pay</item>
+    </string-array>
+
+    <string-array name="overtime_options">
+        <item>Hours/Week</item>
+        <item>Hours/Day</item>
+        <item>Hours/Week or Hours/Day</item>
+    </string-array>
+
+    <string-array name="weekend_override">
+        <item>None</item>
+        <item>Overtime</item>
+        <item>Double Time</item>
     </string-array>
 </resources>

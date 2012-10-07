@@ -34,7 +34,8 @@
     <string name="menu_email">Email</string>
 
     <string name="menu_configure_job">Configure Pay</string>
-    <string name="menu_configure_tasks">Configure Tasks </string>
+    <string name="menu_configure_tasks">Configure Tasks</string>
+    <string name="menu_configure_wizard">Configure Work Wizard</string>
 
 
     <string name="clock_title">Clock</string>

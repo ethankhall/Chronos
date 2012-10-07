@@ -18,6 +18,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activities.PreferenceWizardActivity"
+                  android:label="Preference Wizard"
+                  android:uiOptions="splitActionBarWhenNarrow"
+                  android:configChanges="orientation"
+                  android:windowSoftInputMode="stateHidden"/>
+
         <activity android:name=".activities.Editors.PairEditorActivity"
                   android:label="Edit Punches"
                   android:uiOptions="splitActionBarWhenNarrow"

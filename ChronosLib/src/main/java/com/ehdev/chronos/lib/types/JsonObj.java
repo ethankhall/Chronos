@@ -22,6 +22,7 @@
 
 package com.ehdev.chronos.lib.types;
 
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.lifecycle.internal.TaskSegment;
@@ -36,9 +37,8 @@ public class JsonObj {
 
     private String jobName;
     private float doubleTime;
-    private boolean fourtyHourWeek;
     private PayPeriodDuration payPeriodDuration;
-    private boolean overtimeEnabled;
+    private OvertimeOptions overtimeOptions;
     private float overtime;
     private float payrate;
     private long startOfPayperiod;
@@ -54,10 +54,9 @@ public class JsonObj {
 
         jobName = thisJob.getName();
         doubleTime = thisJob.doubleTime;
-        fourtyHourWeek = thisJob.fourtyHourWeek;
+        overtimeOptions = thisJob.getOvertimeOptions();
         payPeriodDuration = thisJob.getDuration();
         overtime = thisJob.getOvertime();
-        overtimeEnabled = thisJob.isOverTimeEnabled();
         payrate = thisJob.getPayRate();
         startOfPayperiod = thisJob.getStartOfPayPeriod().getMillis();
 
@@ -95,9 +94,8 @@ public class JsonObj {
         newJob.setDuration(payPeriodDuration);
         newJob.setPayRate(payrate);
         newJob.setOvertime(overtime);
-        newJob.setOvertimeEnabled(overtimeEnabled);
+        newJob.setOvertimeOptions(overtimeOptions);
         newJob.setDoubletimeThreshold(doubleTime);
-        newJob.setFortyHourWeek(fourtyHourWeek);
         newJob.setName(jobName);
         newJob.setStartOfPayPeriod(new DateTime(startOfPayperiod) );
 

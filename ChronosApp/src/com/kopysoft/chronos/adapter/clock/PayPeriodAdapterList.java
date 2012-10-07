@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.types.Job;
 import com.ehdev.chronos.lib.types.holders.PunchPair;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
@@ -144,7 +145,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
 
         for(DateTime date : punchTable.getDays()){
 
-            if(curJob.isOverTimeEnabled() && !curJob.isFortyHourWeek()){
+            if(curJob.getOvertimeOptions() == OvertimeOptions.DAY){
                 totalPay += getPay(getTime(punchTable.getPunchPair(date), false).getMillis(),
                         curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
 
@@ -154,7 +155,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
             //Log.d(TAG, "pay: " + totalPay);;
         }
 
-        if(curJob.isOverTimeEnabled() &&  curJob.isFortyHourWeek()){
+        if(curJob.getOvertimeOptions() == OvertimeOptions.WEEK){
             totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
         }  else if(!curJob.isOverTimeEnabled()){
             totalPay = getPay((long)totalPay, curJob.getPayRate(), 1000, 1000);

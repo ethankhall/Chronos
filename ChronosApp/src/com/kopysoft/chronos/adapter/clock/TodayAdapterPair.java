@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.types.Job;
 import com.ehdev.chronos.lib.types.Punch;
 import com.ehdev.chronos.lib.types.Task;
@@ -196,7 +197,7 @@ public class TodayAdapterPair extends BaseAdapter {
         System.out.println("overtime: " + curJob.getOvertime());
         System.out.println("doubletime: " + curJob.getDoubleTime());
         */
-        if(curJob.isOverTimeEnabled() && !curJob.isFortyHourWeek())
+        if(curJob.getOvertimeOptions() == OvertimeOptions.DAY)
             totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
         else
             totalPay = getPay((long)totalPay, curJob.getPayRate(), 1000, 1000);
