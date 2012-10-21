@@ -22,9 +22,11 @@
 
 package com.ehdev.chronos.lib.types;
 
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.lifecycle.internal.TaskSegment;
+import org.joda.time.DateTime;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -32,34 +34,31 @@ import java.util.List;
 
 public class JsonObj {
 
-    /*
+
     private String jobName;
     private float doubleTime;
-    private boolean fourtyHourWeek;
     private PayPeriodDuration payPeriodDuration;
-    private boolean overtimeEnabled;
+    private OvertimeOptions overtimeOptions;
     private float overtime;
     private float payrate;
     private long startOfPayperiod;
-    */
+
     private Task[] taskList;
     private Punch[] punchList;
     private Note[] noteList;
-    private Job job;
+    //private Job job;
 
     public JsonObj(Job thisJob, List<Punch> punches, List<Task> tasks, List<Note> notes){
 
-        job = thisJob;
-        /*
+        //job = thisJob;
+
         jobName = thisJob.getName();
         doubleTime = thisJob.doubleTime;
-        fourtyHourWeek = thisJob.fourtyHourWeek;
+        overtimeOptions = thisJob.getOvertimeOptions();
         payPeriodDuration = thisJob.getDuration();
         overtime = thisJob.getOvertime();
-        overtimeEnabled = thisJob.isOverTimeEnabled();
         payrate = thisJob.getPayRate();
         startOfPayperiod = thisJob.getStartOfPayPeriod().getMillis();
-         */
 
         taskList = new Task[tasks.size()];
         for(int i = 0; i < tasks.size(); i++){
@@ -91,6 +90,15 @@ public class JsonObj {
     }
 
     public Job getJob(){
-        return job;
+        Job newJob = new Job();
+        newJob.setDuration(payPeriodDuration);
+        newJob.setPayRate(payrate);
+        newJob.setOvertime(overtime);
+        newJob.setOvertimeOptions(overtimeOptions);
+        newJob.setDoubletimeThreshold(doubleTime);
+        newJob.setName(jobName);
+        newJob.setStartOfPayPeriod(new DateTime(startOfPayperiod) );
+
+        return newJob;
     }
 }

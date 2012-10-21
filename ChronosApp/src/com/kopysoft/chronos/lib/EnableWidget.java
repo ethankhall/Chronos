@@ -75,7 +75,7 @@ public class EnableWidget extends AppWidgetProvider {
             PunchTable punchTable = chron.getAllPunchesForThisPayPeriodByJob(currentJob);
             chron.close();
 
-            Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+            Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()));
             if(printDebugMessages) Log.d(TAG, "Time: " + dur.getMillis());
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
@@ -101,7 +101,7 @@ public class EnableWidget extends AppWidgetProvider {
         PunchTable punchTable = chron.getAllPunchesForThisPayPeriodByJob(currentJob);
         chron.close();
 
-        Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+        Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()));
         if(printDebugMessages) Log.d(TAG, "Time: " + dur.getMillis());
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
@@ -136,7 +136,7 @@ public class EnableWidget extends AppWidgetProvider {
         PunchTable punchTable = chron.getAllPunchesForThisPayPeriodByJob(currentJob);
         Task defaultTask = chron.getAllTasks().get(0);
 
-        Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+        Duration dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()));
         if(printDebugMessages) Log.d(TAG, "Time: " + dur.getMillis());
 
         if (intent.getAction().compareTo(SEND_CLOCK) == 0) {
@@ -152,7 +152,7 @@ public class EnableWidget extends AppWidgetProvider {
 
             punchTable.insert(newPunch);
 
-            dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()), true);
+            dur = PayPeriodAdapterList.getTime(punchTable.getPunchPair(DateTime.now()));
 
         } else if (intent.getAction().compareTo(UPDATE_FROM_APP) == 0) {
             if ( dur.getMillis() < 0) {

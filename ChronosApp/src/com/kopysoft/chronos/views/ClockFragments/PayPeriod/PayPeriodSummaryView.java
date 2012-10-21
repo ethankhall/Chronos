@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.ehdev.chronos.lib.Chronos;
+import com.ehdev.chronos.lib.overtime.DurationHolder;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.ClockActivity;
 import com.kopysoft.chronos.activities.Viewers.DateViewerActivity;
@@ -41,7 +42,6 @@ import com.ehdev.chronos.lib.enums.Defines;
 import com.ehdev.chronos.lib.types.Job;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
 
 import java.util.Currency;
 import java.util.Locale;
@@ -93,8 +93,8 @@ public class PayPeriodSummaryView extends LinearLayout {
         TextView centerHeader = (TextView)header.findViewById(R.id.headerCenter);
         TextView rightHeader = (TextView)header.findViewById(R.id.headerRight);
 
-        Duration dur = adapter.getTime();
-        int seconds = dur.toStandardSeconds().getSeconds();
+        DurationHolder dur = adapter.getTime(thisJob.getSaturdayOverride(), thisJob.getSundayOverride());
+        int seconds = dur.getTotalTimeWorked().toStandardSeconds().getSeconds();
         int minutes = (seconds / 60) % 60;
         int hours = (seconds / 60 / 60);
         String output = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
@@ -108,7 +108,7 @@ public class PayPeriodSummaryView extends LinearLayout {
         if(enableLog) Log.d(TAG, "dur: " + dur.toString());
         if(enableLog) Log.d(TAG, "pay rate: " + thisJob.getPayRate());
 
-        double money = adapter.getPayableTime();
+        double money = adapter.getPayableTime(dur, thisJob);
         Currency moneyCurrency = Currency.getInstance(Locale.getDefault());
         output = String.format("%s %.2f", moneyCurrency.getSymbol(), money);
 
@@ -123,7 +123,8 @@ public class PayPeriodSummaryView extends LinearLayout {
         addView(retView);
     }
 
-    AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+    AdapterView.OnItemClickListener listener =
+            new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             if(enableLog) Log.d(TAG, "Clicked: " + position);

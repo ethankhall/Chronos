@@ -25,6 +25,8 @@ package com.ehdev.chronos.lib.types;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
+import com.ehdev.chronos.lib.enums.WeekendOverride;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -38,6 +40,9 @@ public class Job implements Serializable{
 
     public final static String JOB_FIELD_NAME = "job_id";
     public final static String DURATION_FIELD_NAME = "payPeriodDuration";
+    public final static String OVERTIME_OPTIONS = "overtime_options";
+    public final static String SATURDAY_OVERRIDE_FIELD = "saturday_override";
+    public final static String SUNDAY_OVERRIDE_FIELD = "sunday_override";
 
     @DatabaseField( columnName = JOB_FIELD_NAME, generatedId = true)
     int id = -1;
@@ -45,22 +50,29 @@ public class Job implements Serializable{
     String jobName;
     @DatabaseField(defaultValue = "7.25", canBeNull = false)
     float payRate;
-    @DatabaseField
-    boolean overTimeEnabled = true; //Should overtime be used for this job
-    @DatabaseField
-    boolean fourtyHourWeek = true; //do overtime by 40 hour week or by 8 hour day
     @DatabaseField(defaultValue = "40")
     float overTime;    //Start overtime at...
     @DatabaseField(defaultValue = "60")
     float doubleTime;  //Start double time at...
     @DatabaseField(dataType= DataType.SERIALIZABLE)
     DateTime startOfPayPeriod;
+    @DatabaseField(dataType = DataType.ENUM_STRING, columnName = OVERTIME_OPTIONS, defaultValue = "NONE")
+    OvertimeOptions overtimeOptions = OvertimeOptions.NONE;
     @DatabaseField(dataType= DataType.SERIALIZABLE, columnName = DURATION_FIELD_NAME)
     PayPeriodDuration payPeriodDuration = PayPeriodDuration.TWO_WEEKS;
 
+    @DatabaseField(dataType = DataType.ENUM_STRING, columnName = SATURDAY_OVERRIDE_FIELD, defaultValue = "NONE")
+    WeekendOverride saturdayOverride = WeekendOverride.NONE;
+
+    @DatabaseField(dataType = DataType.ENUM_STRING, columnName = SUNDAY_OVERRIDE_FIELD, defaultValue = "NONE")
+    WeekendOverride sundayOverride = WeekendOverride.NONE;
+
+    public void setName(String name){
+        jobName = name;
+    }
     /**
      * Normal constructor for the object Job. By default the overtime is calculated.
-     *  To change the overtime setting use the {@link #setOvertimeEnabled(boolean)}.
+     *  To change the overtime setting use the {@link #setOvertimeOptions(OvertimeOptions)}.
      *  The default overtime value will be set to 40, and the double time value will be
      *  set to 60. To change this see their respective methods.
      * @param iJobName Name the user want to call this job.
@@ -77,6 +89,14 @@ public class Job implements Serializable{
         payPeriodDuration = ppd;
         doubleTime = 60;
         overTime = 40;
+    }
+
+    public void setOvertimeOptions( OvertimeOptions oto){
+        overtimeOptions = oto;
+    }
+
+    public OvertimeOptions getOvertimeOptions(){
+        return overtimeOptions;
     }
     
     public void setStartOfPayPeriod(DateTime date){
@@ -96,7 +116,7 @@ public class Job implements Serializable{
     }
 
     public boolean isOverTimeEnabled(){
-        return overTimeEnabled;
+        return overtimeOptions != OvertimeOptions.NONE ? true : false;
     }
 
     public void setPayRate(float in){
@@ -133,15 +153,6 @@ public class Job implements Serializable{
      */
     public void setOvertimeThreshold(float value){
         overTime = value;
-    }
-
-    /**
-     * Sets the overtime setting to the parameter "setting"
-     *
-     * @param setting TRUE to enable overtime calculations, otherwise false.
-     */
-    public void setOvertimeEnabled(boolean setting){
-        overTimeEnabled = setting;
     }
 
     /**
@@ -190,12 +201,21 @@ public class Job implements Serializable{
         return jobName;
     }
 
-    public boolean isFortyHourWeek(){
-        return fourtyHourWeek;
+    public WeekendOverride getSundayOverride() {
+        return sundayOverride;
     }
 
-    public void setFortyHourWeek(boolean setFortyHourWeek){
-        fourtyHourWeek = setFortyHourWeek;
+    public void setSundayOverride(WeekendOverride sundayOverride) {
+        this.sundayOverride = sundayOverride;
     }
+
+    public WeekendOverride getSaturdayOverride() {
+        return saturdayOverride;
+    }
+
+    public void setSaturdayOverride(WeekendOverride saturdayOverride) {
+        this.saturdayOverride = saturdayOverride;
+    }
+
 
 }

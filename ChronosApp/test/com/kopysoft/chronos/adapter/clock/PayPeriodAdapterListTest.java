@@ -22,10 +22,13 @@
 
 package com.kopysoft.chronos.adapter.clock;
 
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import com.ehdev.chronos.lib.types.Job;
 import com.ehdev.chronos.lib.types.Punch;
 import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.overtime.DurationHolder;
+import com.ehdev.chronos.lib.types.holders.PunchPair;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -145,6 +148,7 @@ public class PayPeriodAdapterListTest {
         DateTime workFrom = startDate.plusDays(5);
         List<Punch> punches = new LinkedList<Punch>();
         Punch temp;
+        DurationHolder holder = new DurationHolder();
 
         //make 10 punches adding up to 5 hours.
         for(int i = 10; i < 20; i++){
@@ -158,12 +162,21 @@ public class PayPeriodAdapterListTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = PayPeriodAdapterList.getTime(table.getPunchPair(workFrom));
         if( dur.getStandardHours() != 5){
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         if (payableTime != thisJob.getPayRate() * 5){
             fail("Pay didn't match");
         }
@@ -174,6 +187,7 @@ public class PayPeriodAdapterListTest {
         DateTime workFrom = startDate.plusDays(5);
         List<Punch> punches = new LinkedList<Punch>();
         Punch temp;
+        DurationHolder holder = new DurationHolder();
 
         //make 10 punches adding up to 5 hours.
         for(int j = 0; j < 10; j++){
@@ -190,13 +204,22 @@ public class PayPeriodAdapterListTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = PayPeriodAdapterList.getTime(table);
         if( dur.getStandardHours() != 50){
             System.out.println("Time returned:" + dur.getStandardHours());
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         if (payableTime != thisJob.getPayRate() * 40 + thisJob.getPayRate() * 1.5 * 10){
             System.out.println("Pay Rate: " + payableTime);
             fail("Pay didn't match");
@@ -207,6 +230,7 @@ public class PayPeriodAdapterListTest {
     public void testGetPayableTimeDoubleTime() throws Exception {
         DateTime workFrom = startDate.plusDays(5);
         List<Punch> punches = new LinkedList<Punch>();
+        DurationHolder holder = new DurationHolder();
         Punch temp;
 
         //make 80 punches adding up to 80 hours.
@@ -224,13 +248,22 @@ public class PayPeriodAdapterListTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = PayPeriodAdapterList.getTime(table);
         if( dur.getStandardHours() != 80){
             System.out.println("Time returned:" + dur.getStandardHours());
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         float payForDoubleTime = (float)((80 - 60 ) * thisJob.getPayRate() * 2
                 + 20 * thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 40);
         if (Math.abs(payableTime - payForDoubleTime) > .001){
@@ -243,11 +276,12 @@ public class PayPeriodAdapterListTest {
     @Test
     public void testGetPayableTimeOvertimeHourly() throws Exception {
         DateTime workFrom = startDate.plusDays(5);
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         List<Punch> punches = new LinkedList<Punch>();
         Punch temp;
+        DurationHolder holder = new DurationHolder();
 
         //make 6 punches adding up to 30 hours.
         for(int j = 0; j < 3; j++){
@@ -266,13 +300,22 @@ public class PayPeriodAdapterListTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = PayPeriodAdapterList.getTime(table);
         if( dur.getStandardHours() != 30){
             System.out.println("Time returned:" + dur.getStandardHours());
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         float payForDoubleTime = (float)(6 * thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 3 * 8);
         if (Math.abs(payableTime - payForDoubleTime) > .001){
             System.out.println("Pay Rate: " + thisJob.getPayRate());
@@ -284,12 +327,13 @@ public class PayPeriodAdapterListTest {
 
     @Test
     public void testGetPayableTimeDoubleTimeHourly() throws Exception {
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         DateTime workFrom = startDate.plusDays(5);
         List<Punch> punches = new LinkedList<Punch>();
         Punch temp;
+        DurationHolder holder = new DurationHolder();
 
         //make 6 punches adding up to 60 hours.
         for(int j = 0; j < 3; j++){
@@ -308,13 +352,22 @@ public class PayPeriodAdapterListTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = PayPeriodAdapterList.getTime(table);
         if( dur.getStandardHours() != 60){
             System.out.println("Time returned:" + dur.getStandardHours());
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         float payForDoubleTime = (float)((3 * 10) * thisJob.getPayRate() * 2
                 + 6 * thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 8 * 3);
         if (Math.abs(payableTime - payForDoubleTime) > .001){
@@ -326,13 +379,14 @@ public class PayPeriodAdapterListTest {
 
     @Test
     public void testGetPayableTimeDoubleTimeHourly2() throws Exception {
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         thisJob.setPayRate(30);
         DateTime workFrom = startDate.plusDays(5);
         List<Punch> punches = new LinkedList<Punch>();
         Punch temp;
+        DurationHolder holder = new DurationHolder();
 
         //make 2 punches adding up to 20 hours.
         for(int j = 0; j < 5; j++){
@@ -351,13 +405,22 @@ public class PayPeriodAdapterListTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = PayPeriodAdapterList.getTime(table);
         if( dur.getStandardHours() != 45){
             System.out.println("Time returned:" + dur.getStandardHours());
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         float payForDoubleTime = (float)(5 * thisJob.getPayRate() * 1.5 + thisJob.getPayRate() * 8 * 5);
         if (Math.abs(payableTime - payForDoubleTime) > .001){
             System.out.println("Pay Rate: " + payableTime);

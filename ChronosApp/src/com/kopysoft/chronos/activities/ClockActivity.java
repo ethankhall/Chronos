@@ -115,6 +115,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                 NotificationBroadcast.class);
         runIntent.putExtra("timeToday", dur.getMillis());
         this.sendBroadcast(runIntent);
+
+        /*
+        Intent newIntent =
+                new Intent().setClass(this,
+                        PreferenceWizardActivity.class);
+
+        this.startActivity(newIntent);
+        */
     }
 
     @Override
@@ -260,17 +268,18 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
                 startActivity(newIntent);
                 return true;
-            case R.id.menu_configure_job:
-                newIntent =
-                        new Intent().setClass(this,
-                                JobEditor.class);
-
-                startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
-                return true;
             case R.id.menu_preferences:
                 newIntent =
                         new Intent().setClass(this,
                                 PreferencesActivity.class);
+
+                startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
+                return true;
+            /*
+            case R.id.menu_configure_job:
+                newIntent =
+                        new Intent().setClass(this,
+                                JobEditor.class);
 
                 startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
                 return true;
@@ -280,6 +289,14 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
                                 TaskList.class);
 
                 startActivity(newIntent);
+                return true;
+            */
+            case R.id.menu_configure_wizard:
+                newIntent =
+                        new Intent().setClass(this,
+                                PreferenceWizardActivity.class);
+
+                startActivityForResult(newIntent, JobEditor.UPDATE_JOB);
                 return true;
 
             case R.id.menu_quick_note:

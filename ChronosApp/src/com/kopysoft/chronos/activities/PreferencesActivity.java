@@ -70,8 +70,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         backupDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
-                showDialog(BACKUP);
-
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.CVS_BACKUP);
                 return true;
             }
 
@@ -80,7 +80,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         restoreDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
-                showDialog(RESTORE);
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.CSV_RESTORE);
                 return true;
             }
         });
@@ -89,7 +90,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         BackupLegacyDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
-                showDialog(BACKUP_LEGACY);
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.CVS_BACKUP);
                 return true;
             }
         });
@@ -98,52 +100,17 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         restoreLegacyDB.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
-                showDialog(RESTORE_LEGACY);
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.CVS_RESTORE);
                 return true;
             }
         });
 
         Preference fullBackup = (Preference) findPreference("fullBackup");
         fullBackup.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
             public boolean onPreferenceClick(Preference preference) {
-                if(Chronos.getCardWriteStatus() == false){
-
-                    CharSequence text = "Could not write to SD Card!.";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-                    toast.show();
-                    return false;
-                }
-
-                Toast.makeText(getApplicationContext(),
-                        "Processing...", Toast.LENGTH_LONG).show();
-
-                Chronos chrono = new Chronos(getApplicationContext());
-                JsonToSql json = new JsonToSql(chrono);
-                String jsonOutput = json.getJson();
-
-                File directory =  Environment.getExternalStorageDirectory();
-                //File backup = new File(directory, "Chronos_Backup.csv");
-                File backup = new File(directory, "chronosBackup.json");
-                BufferedWriter br;
-
-                try{
-                    br = new BufferedWriter( new FileWriter(backup));
-                    br.write(jsonOutput);
-                    br.close();
-                } catch (IOException e){
-                    Toast.makeText(getApplicationContext(),
-                            "Backup Failed! Please Contact developer.", Toast.LENGTH_LONG).show();
-                    Log.e(TAG, e.getMessage());
-
-                    return false;
-                }
-
-                Toast.makeText(getApplicationContext(),
-                        "Backup Succeeded!", Toast.LENGTH_SHORT).show();
-
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.JSON_BACKUP);
                 return true;
             }
         });
@@ -152,7 +119,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
         fullRestore.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
-                showDialog(RESTORE_LEGACY);
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.JSON_RESTORE);
                 return true;
             }
         });
@@ -195,8 +163,32 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                 return true;
             }
         });
+
+        Preference email_raw_json = findPreference("email_raw_json");
+        email_raw_json.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.EMAIL_JSON);
+                return true;
+            }
+        });
+
+        Preference email_raw_csv = findPreference("email_raw_csv");
+        email_raw_csv.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+
+                BackupOptions opt = new BackupOptions(getApplicationContext());
+                opt.execute(BackupOptions.ASYNC_TASK.EMAIL_CSV);
+
+                return true;
+            }
+        });
     }
 
+    /*
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case BACKUP:
@@ -204,19 +196,12 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setTitle("Are you sure?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-
-                                if (Chronos.putDataOnSDCard(getApplicationContext(), false)) {
-                                    Toast.makeText(getApplicationContext(), "Backup Successful!",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(),
-                                            "Backup Failed! Contact developer.", Toast.LENGTH_LONG).show();
-                                }
+                                BackupOptions opt = new BackupOptions(getApplicationContext());
+                                opt.doInBackground(BackupOptions.ASYNC_TASK.CSV_BACKUP);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                /* User clicked Cancel so do some stuff */
                             }
                         })
                         .create();
@@ -226,13 +211,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setMessage("This will replace all your punches. You will loose everything!")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if (Chronos.getDataOnSDCard(getApplicationContext(), false)) {
-                                    Toast.makeText(getApplicationContext(), "Restore Successful!",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(),
-                                            "Restore Failed! Contact developer.", Toast.LENGTH_LONG).show();
-                                }
+                                BackupOptions opt = new BackupOptions(getApplicationContext());
+                                opt.doInBackground(BackupOptions.ASYNC_TASK.CSV_RESTORE);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -245,19 +225,12 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                     .setTitle("Are you sure?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-
-                            if (Chronos.putDataOnSDCard(getApplicationContext(), true )) {
-                                Toast.makeText(getApplicationContext(), "Backup Successful!",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "Backup Failed! Contact developer.", Toast.LENGTH_LONG).show();
-                            }
+                            BackupOptions opt = new BackupOptions(getApplicationContext());
+                            opt.doInBackground(BackupOptions.ASYNC_TASK.CVS_BACKUP);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            /* User clicked Cancel so do some stuff */
                         }
                     })
                     .create();
@@ -267,13 +240,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                         .setMessage("This will replace all your punches. You will loose everything!")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if (Chronos.getDataOnSDCard(getApplicationContext(), true)) {
-                                    Toast.makeText(getApplicationContext(), "Restore Successful!",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(),
-                                            "Restore Failed! Contact developer.", Toast.LENGTH_LONG).show();
-                                }
+                                BackupOptions opt = new BackupOptions(getApplicationContext());
+                                opt.doInBackground(BackupOptions.ASYNC_TASK.CVS_RESTORE);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -285,6 +253,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
                 return null;
         }
     }
+    */
 
 
 

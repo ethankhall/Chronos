@@ -1,5 +1,5 @@
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ~ Copyright (c) 2011 Ethan Hall
+  ~ Copyright (c) 2011-2012 Ethan Hall
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a
   ~ copy of this software and associated documentation files (the "Software"),
@@ -21,26 +21,4 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <resources>
-    <string name="menu_insert">Insert</string>
-    <string name="menu_note">Note</string>
-    <string name="menu_send">Send</string>
-    <string name="menu_preferences">Preferences</string>
-    <string name="menu_quick_break">Add Break</string>
-
-    <string name="menu_cancel">Cancel</string>
-    <string name="menu_save">Save</string>
-    <string name="menu_delete">Delete</string>
-
-    <string name="menu_email">Email</string>
-
-    <string name="menu_configure_job">Configure Pay</string>
-    <string name="menu_configure_tasks">Configure Tasks</string>
-    <string name="menu_configure_wizard">Configure Work Wizard</string>
-
-
-    <string name="clock_title">Clock</string>
-    <string-array name="navigation">
-        <item>Clock</item>
-        <item>Other</item>
-    </string-array>
 </resources>

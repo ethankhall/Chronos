@@ -46,7 +46,7 @@
         <Preference android:title="Backup" android:summary="Full Backup"
                     android:key="fullBackup" />
         <Preference android:title="Restore" android:summary="Restore Everything"
-                    android:key="fullRestore" android:enabled="false"/>
+                    android:key="fullRestore" android:enabled="true"/>
         <PreferenceScreen
             android:title="Legacy Formats">
             <Preference android:title="Export Times" android:summary="Creates an CSV file of punches"
@@ -58,13 +58,28 @@
             <Preference android:title="Restore from Legacy" android:summary="Restores punches from old version of Chronos"
                         android:key="restoreLegacyDB" />
         </PreferenceScreen>
-
-
     </PreferenceCategory>
-    <Preference android:title="Read EULA" android:summary="Read the End User License Agreement"
-                android:key="readULA" />
 
-    <Preference android:title="Support!" android:summary="Support Chronos if you like!"
-                android:key="donate" />
+    <PreferenceCategory android:title="Email Backup File">
+        <PreferenceScreen
+                android:title="Email Backup File">
+            <Preference
+                    android:key="email_raw_json"
+                    android:title="Email JSON file"
+                    android:summary="This will generate the JSON file and then email it"/>
+            <Preference
+                    android:key="email_raw_csv"
+                    android:title="Email CSV file"
+                    android:summary="This will generate the CSV file and then email it"/>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Other">
+        <Preference android:title="Read EULA" android:summary="Read the End User License Agreement"
+                    android:key="readULA" />
+
+        <Preference android:title="Support!" android:summary="Support Chronos if you like!"
+                    android:key="donate" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

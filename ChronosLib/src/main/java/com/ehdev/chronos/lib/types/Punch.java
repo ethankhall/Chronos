@@ -103,6 +103,7 @@ public class Punch implements Comparable<Punch> {
      */
     public void setTime(DateTime inputTime){
         time = inputTime.getMillis();
+        timeZone = inputTime.getZone();
     }
 
     /**

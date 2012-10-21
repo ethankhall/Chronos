@@ -20,80 +20,62 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.kopysoft.chronos.activities.Editors;
+package com.kopysoft.chronos.activities.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.ehdev.chronos.lib.Chronos;
-import com.kopysoft.chronos.R;
-import com.kopysoft.chronos.adapter.TaskAdapter;
-import com.ehdev.chronos.lib.enums.Defines;
 import com.ehdev.chronos.lib.types.Task;
+import com.kopysoft.chronos.R;
+import com.kopysoft.chronos.activities.Editors.TaskEditor;
+import com.kopysoft.chronos.adapter.TaskAdapter;
 
 import java.util.List;
 
-@Deprecated
-public class TaskList extends SherlockActivity {
-
-    private static String TAG = Defines.TAG + " - TaskList";
-    private final boolean enableLog = Defines.DEBUG_PRINT;
+/**
+ * Created with IntelliJ IDEA.
+ * User: ethan
+ * Date: 10/7/12
+ * Time: 1:33 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class TaskFragment  extends SherlockFragment {
 
     TaskAdapter adapter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        if(enableLog) Log.d(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.task_list);
-
-        Chronos chron = new Chronos(this);
-        List<Task> listOfTasks = chron.getAllTasks();
-        chron.close();
-
-        adapter = new TaskAdapter(getApplicationContext(), listOfTasks);
-        ListView list = (ListView)findViewById(R.id.taskList);
-        list.setAdapter(adapter);
-        list.setOnItemClickListener(listener);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener(){
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             Task thisTask = adapter.getItem(position);
-            Intent newIntent = 
-                    new Intent().setClass(getApplicationContext(), TaskEditor.class);
+            Intent newIntent =
+                    new Intent().setClass(getActivity(), TaskEditor.class);
             newIntent.putExtra("task",thisTask.getID());
             startActivity(newIntent);
         }
     };
 
     @Override
-    public void onResume(){
-        super.onResume();
-
-        Chronos chron = new Chronos(this);
-        List<Task> listOfTasks = chron.getAllTasks();
-        chron.close();
-        adapter.updateTasks(listOfTasks);
-
+    public void onCreate (Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        this.setHasOptionsMenu(true);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.action_bar_task_list, menu);
 
-        getSupportMenuInflater().inflate(R.menu.action_bar_task_list, menu);
-
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -101,14 +83,42 @@ public class TaskList extends SherlockActivity {
         switch (item.getItemId()){
             case R.id.menu_insert:
                 Intent newIntent =
-                        new Intent().setClass(getApplicationContext(), TaskEditor.class);
+                        new Intent().setClass(getActivity(), TaskEditor.class);
                 newIntent.putExtra("task", -1);
                 startActivity(newIntent);
                 return true;
-            case android.R.id.home:
-                finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        Chronos chron = new Chronos(getActivity());
+        List<Task> listOfTasks = chron.getAllTasks();
+        chron.close();
+        adapter.updateTasks(listOfTasks);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.task_list, container, false);
+
+        Chronos chron = new Chronos(getActivity());
+        List<Task> listOfTasks = chron.getAllTasks();
+        chron.close();
+
+        adapter = new TaskAdapter(getActivity(), listOfTasks);
+        ListView list = (ListView)v.findViewById(R.id.taskList);
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(listener);
+
+
+        return v;
+    }
+
+
 }

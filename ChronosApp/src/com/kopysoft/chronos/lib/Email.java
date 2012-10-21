@@ -59,6 +59,7 @@ public class Email {
         String retString = "";
         List<DateTime> dates = punchTable.getDays();
         Chronos chron = new Chronos(gContext);
+        Duration totalDuration = new Duration(0);
 
         for(DateTime date : dates){
             DateTimeFormatter fmt = DateTimeFormat.forPattern("E, MMM d, yyyy");
@@ -68,12 +69,16 @@ public class Email {
             retString += time +  String.format(" - %02d:%02d\n",
                     dur.toPeriod().getHours(), dur.toPeriod().getMinutes());
 
+            totalDuration = totalDuration.plus(dur);
             Note note = chron.getNoteByDay(date);
 
             if(! note.getNote().equalsIgnoreCase("")){
                 retString += "\tNote: " + note.getNote() + "\n";
             }
         }
+
+        retString += String.format("Total time - %02d:%02d\n",
+                totalDuration.getStandardHours(), totalDuration.getStandardMinutes() % 60);
 
         chron.close();
         return retString;
@@ -91,6 +96,7 @@ public class Email {
             fmt = DateTimeFormat.forPattern("HH:mm");
 
         Chronos chron = new Chronos(gContext);
+        Duration totalDuration = new Duration(0);
         
         for(DateTime date : dates){
             if( punchTable.getPunchPair(date).size() > 0)
@@ -105,12 +111,18 @@ public class Email {
                 }
             }
 
+            totalDuration = totalDuration.plus(PayPeriodAdapterList.getTime(punchTable.getPunchPair(date)));
+
             Note note = chron.getNoteByDay(date);
 
             if(! note.getNote().equalsIgnoreCase("")){
                 retString += "\tNote: " + note.getNote() + "\n";
             }
         }
+
+        retString += String.format("Total time - %02d:%02d\n",
+                totalDuration.getStandardHours(), totalDuration.getStandardMinutes() % 60);
+
         chron.close();
         return retString;
     }

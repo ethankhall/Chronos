@@ -22,10 +22,13 @@
 
 package com.kopysoft.chronos.adapter.clock;
 
+import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import com.ehdev.chronos.lib.types.Job;
 import com.ehdev.chronos.lib.types.Punch;
 import com.ehdev.chronos.lib.types.Task;
+import com.ehdev.chronos.lib.overtime.DurationHolder;
+import com.ehdev.chronos.lib.types.holders.PunchPair;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -146,6 +149,7 @@ public class TodayAdapterPairTest {
         DateTime workFrom = startDate.plusDays(5);
         List<Punch> punches = new LinkedList<Punch>();
         Punch temp;
+        DurationHolder holder = new DurationHolder();
 
         //make 10 punches adding up to 5 hours.
         for(int i = 10; i < 20; i++){
@@ -159,12 +163,21 @@ public class TodayAdapterPairTest {
             table.insert(p);
         }
 
+        for(DateTime date:  table.getDays()){
+            Duration day = new Duration(0);
+            for(PunchPair pp : table.getPunchPair(date)){
+                day = day.plus(pp.getDuration());
+            }
+
+            holder.addNormalPay(date.toDateMidnight(), day);
+        }
+
         Duration dur = TodayAdapterPair.getTime(table.getPunchPair(workFrom), true);
         if( dur.getStandardHours() != 5){
             fail("Times didn't match up");
         }
 
-        float payableTime = PayPeriodAdapterList.getPayableTime(table, thisJob);
+        float payableTime = PayPeriodAdapterList.getPayableTime(holder, thisJob);
         if (payableTime != thisJob.getPayRate() * 5){
             fail("Pay didn't match");
         }
@@ -172,7 +185,7 @@ public class TodayAdapterPairTest {
 
     @Test
     public void testGetPayableTimeOvertimeHourly() throws Exception  {
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         thisJob.setPayRate(30);
@@ -212,7 +225,7 @@ public class TodayAdapterPairTest {
 
     @Test
     public void testGetPayableTimeDoubleTimeHourly() throws Exception {
-        thisJob.setFortyHourWeek(false);
+        thisJob.setOvertimeOptions(OvertimeOptions.DAY);
         thisJob.setOvertime(8);
         thisJob.setDoubletimeThreshold(10);
         DateTime workFrom = DateMidnight.now().toDateTime();
