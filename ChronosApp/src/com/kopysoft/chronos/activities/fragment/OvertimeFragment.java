@@ -23,7 +23,6 @@
 package com.kopysoft.chronos.activities.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class OvertimeFragment extends SherlockFragment {
     private static String TAG = Defines.TAG + " - " + OvertimeFragment.class.getSimpleName();
 
     //used for disableing
-    View overtimeOptions;
+    View weeklyOvertimeOptions;
 
     public class WeekendOverrideListener implements AdapterView.OnItemSelectedListener {
         CheckBox viewToChange;
@@ -128,12 +127,12 @@ public class OvertimeFragment extends SherlockFragment {
         Job thisJob = chrono.getAllJobs().get(0);
 
         //we need to define things that are used globally
-        overtimeOptions = v.findViewById(R.id.overtimeOptions);
+        weeklyOvertimeOptions = v.findViewById(R.id.weeklyOvertimeOptions);
 
         //select overtime type
         View overtimeType = v.findViewById(R.id.overtime_type);
         ((TextView)overtimeType.findViewById(R.id.name)).setText("Overtime Type");
-        ((TextView)overtimeType.findViewById(R.id.summary)).setText("How does your overtime get calculated.");
+        ((TextView)overtimeType.findViewById(R.id.summary)).setText("How does your overtime get calculated?");
         String[] ppLengthArray = getResources().getStringArray(R.array.overtime_options);
         ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(getActivity(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -141,32 +140,32 @@ public class OvertimeFragment extends SherlockFragment {
 
         dataOvertimeOptions = ((Spinner)overtimeType.findViewById(R.id.spinnerValue));
         dataOvertimeOptions.setAdapter(spinnerArrayAdapter);
-        dataOvertimeOptions.setOnItemSelectedListener(new onClickHider(overtimeOptions));
+        dataOvertimeOptions.setOnItemSelectedListener(new onClickHider(weeklyOvertimeOptions));
         dataOvertimeOptions.setSelection(thisJob.getOvertimeOptions().ordinal());
 
         if(thisJob.getOvertimeOptions() == OvertimeOptions.NONE){
-            overtimeOptions.setVisibility(View.GONE);
+            weeklyOvertimeOptions.setVisibility(View.GONE);
         } else {
-            overtimeOptions.setVisibility(View.VISIBLE);
+            weeklyOvertimeOptions.setVisibility(View.VISIBLE);
         }
         //overtimetime
-        View overtimeThreshold = v.findViewById(R.id.overtimeThreshold);
+        View overtimeThreshold = weeklyOvertimeOptions.findViewById(R.id.overtimeThreshold);
         ((TextView)overtimeThreshold.findViewById(R.id.name)).setText("Overtime threshold");
         ((TextView)overtimeThreshold.findViewById(R.id.summary)).setText("When do you start making overtime?");
         dataOvertimeThreshold =((EditText)overtimeThreshold.findViewById(R.id.editText));
         dataOvertimeThreshold.setText(Float.toString(thisJob.getOvertime()));
 
         //doubletime
-        View doubletimeThreshold = v.findViewById(R.id.doubleThreshold);
-        ((TextView)doubletimeThreshold.findViewById(R.id.name)).setText("Double Time threshold");
-        ((TextView)doubletimeThreshold.findViewById(R.id.summary)).setText("When do you start making dubletime?");
+        View doubletimeThreshold = weeklyOvertimeOptions.findViewById(R.id.doubleThreshold);
+        ((TextView)doubletimeThreshold.findViewById(R.id.name)).setText("Double-Time threshold");
+        ((TextView)doubletimeThreshold.findViewById(R.id.summary)).setText("When do you start making double-time?");
         dataDoubletimeThreshold =((EditText)doubletimeThreshold.findViewById(R.id.editText));
         dataDoubletimeThreshold.setText(Float.toString(thisJob.getDoubleTime()));
 
         //special changes for weekend
         View specialWeekendTimes = v.findViewById(R.id.specialTimeForWeekend);
         ((TextView)specialWeekendTimes.findViewById(R.id.name)).setText("Weekend overtime");
-        ((TextView)specialWeekendTimes.findViewById(R.id.summary)).setText("Do you always make overtime/doubletime on weekends?");
+        ((TextView)specialWeekendTimes.findViewById(R.id.summary)).setText("Do you always make overtime/double-time on weekends?");
         CheckBox specialWeekendTimesEnable = (CheckBox)specialWeekendTimes.findViewById(R.id.checkbox);
         specialWeekendTimesEnable.setOnCheckedChangeListener(new ViewButton(v.findViewById(R.id.specialTimeForWeekendLayout)));
         if(thisJob.getSundayOverride() != WeekendOverride.NONE || thisJob.getSaturdayOverride() != WeekendOverride.NONE){
@@ -245,7 +244,7 @@ public class OvertimeFragment extends SherlockFragment {
         WeekendOverride sun = WeekendOverride.values()[dataSundaySpinner.getSelectedItemPosition()];
         thisJob.setSundayOverride(sun);
 
-
+        chrono.updateJob(thisJob);
         chrono.close();
     }
 }

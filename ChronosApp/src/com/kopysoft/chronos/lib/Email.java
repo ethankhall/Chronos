@@ -78,7 +78,7 @@ public class Email {
         }
 
         retString += String.format("Total time - %02d:%02d\n",
-                totalDuration.getStandardHours(), totalDuration.getStandardMinutes());
+                totalDuration.getStandardHours(), totalDuration.getStandardMinutes() % 60);
 
         chron.close();
         return retString;
@@ -121,7 +121,7 @@ public class Email {
         }
 
         retString += String.format("Total time - %02d:%02d\n",
-                totalDuration.getStandardHours(), totalDuration.getStandardMinutes());
+                totalDuration.getStandardHours(), totalDuration.getStandardMinutes() % 60);
 
         chron.close();
         return retString;

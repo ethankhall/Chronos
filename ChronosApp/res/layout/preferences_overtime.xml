@@ -39,7 +39,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/overtimeOptions">
+                android:id="@+id/weeklyOvertimeOptions">
 
             <include
                 android:id="@+id/overtimeThreshold"
@@ -52,24 +52,22 @@
             <include
                     android:id="@+id/specialTimeForWeekend"
                     layout="@layout/preferences_check_entry" />
-
-            <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/specialTimeForWeekendLayout">
-
-                <include
-                        android:id="@+id/saturdayDefined"
-                        layout="@layout/preferences_spinner_entry" />
-
-                <include
-                        android:id="@+id/sundayDefined"
-                        layout="@layout/preferences_spinner_entry" />
-            </LinearLayout>
-
         </LinearLayout>
 
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/specialTimeForWeekendLayout">
+
+            <include
+                    android:id="@+id/saturdayDefined"
+                    layout="@layout/preferences_spinner_entry" />
+
+            <include
+                    android:id="@+id/sundayDefined"
+                    layout="@layout/preferences_spinner_entry" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

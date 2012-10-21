@@ -30,12 +30,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.ehdev.chronos.lib.enums.Defines;
 import com.ehdev.chronos.lib.enums.OvertimeOptions;
+import com.ehdev.chronos.lib.enums.WeekendOverride;
 import com.ehdev.chronos.lib.types.Job;
+import com.ehdev.chronos.lib.overtime.DurationHolder;
 import com.ehdev.chronos.lib.types.holders.PunchPair;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
 import com.kopysoft.chronos.views.helpers.RowElement;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
+import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -90,7 +91,30 @@ public class PayPeriodAdapterList extends BaseAdapter {
     public boolean hasStableIds() {
         return false;
     }
-    
+
+    public DurationHolder getTime(WeekendOverride sat, WeekendOverride sun){
+        DurationHolder durHolder = new DurationHolder();
+
+        for(DateTime date : gPunchesByDay.getDays()){
+
+            if(date.getDayOfWeek() == DateTimeConstants.SATURDAY && sat != WeekendOverride.NONE){
+                Duration temp = getTime(gPunchesByDay.getPunchPair(date));
+                durHolder.addSaturdayPay(date.toDateMidnight(), temp);
+
+            } else if(date.getDayOfWeek() == DateTimeConstants.SUNDAY && sun != WeekendOverride.NONE){
+                Duration temp = getTime(gPunchesByDay.getPunchPair(date));
+                durHolder.addSundayPay(date.toDateMidnight(), temp);
+
+            } else {
+                Duration temp = getTime(gPunchesByDay.getPunchPair(date));
+                durHolder.addNormalPay(date.toDateMidnight(), temp);
+            }
+        }
+
+        return durHolder;
+    }
+
+    @Deprecated
     public Duration getTime(){
         Duration dur = new Duration(0);
 
@@ -136,21 +160,22 @@ public class PayPeriodAdapterList extends BaseAdapter {
         return dur;
     }
 
-    public float getPayableTime(){
-        return getPayableTime(gPunchesByDay, thisJob);
-    }
+    static public float getPayableTime(DurationHolder durationHolder, Job curJob){
 
-    public static float getPayableTime(PunchTable punchTable, Job curJob){
         float totalPay = 0.0f;
+        float savedTime = 0.0f;
 
-        for(DateTime date : punchTable.getDays()){
+        for(DurationHolder.DurationWrapper date : durationHolder.getNormalDates()){
 
             if(curJob.getOvertimeOptions() == OvertimeOptions.DAY){
-                totalPay += getPay(getTime(punchTable.getPunchPair(date), false).getMillis(),
+                totalPay += getPay(date.duration.getMillis(),
                         curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
-
+            } else if(curJob.getOvertimeOptions() == OvertimeOptions.WEEK_DAY) {
+                savedTime += getPay(date.duration.getMillis(),
+                        curJob.getPayRate(), 8, 10);
+                totalPay += date.duration.getMillis();
             } else {
-                totalPay += getTime(punchTable.getPunchPair(date), false).getMillis();
+                totalPay += date.duration.getMillis();
             }
             //Log.d(TAG, "pay: " + totalPay);;
         }
@@ -159,7 +184,38 @@ public class PayPeriodAdapterList extends BaseAdapter {
             totalPay = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
         }  else if(!curJob.isOverTimeEnabled()){
             totalPay = getPay((long)totalPay, curJob.getPayRate(), 1000, 1000);
+        }  else if (curJob.getOvertimeOptions() == OvertimeOptions.WEEK_DAY){
+            float week = getPay((long)totalPay, curJob.getPayRate(), curJob.getOvertime(), curJob.getDoubleTime());
+            //float day = getPay((long)savedTime, curJob.getPayRate(), 1000, 1000);
+            totalPay = (week > savedTime) ? week : savedTime;
+
+            Log.d(TAG, "Week time: " + week);
+            //Log.d(TAG, "Day time: " + day);
+            Log.d(TAG, "Total Pay: " + totalPay);
+            Log.d(TAG, "Saved Time: " + savedTime);
         }
+
+
+        if(curJob.getSaturdayOverride() == WeekendOverride.OVERTIME){
+            float dur = durationHolder.getSaturdayDuration().getMillis();
+            dur = (long)(dur * 1.5 * curJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += dur;
+        } else if(curJob.getSaturdayOverride() == WeekendOverride.DOUBLETIME){
+            float dur = durationHolder.getSaturdayDuration().getMillis();
+            dur = (long)(dur * 2 * curJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += dur;
+        }
+
+        if(curJob.getSundayOverride() == WeekendOverride.OVERTIME){
+            float dur = durationHolder.getSundayDuration().getMillis();
+            dur = (long)(dur * 1.5 * curJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += dur;
+        } else if(curJob.getSundayOverride() == WeekendOverride.DOUBLETIME){
+            float dur = durationHolder.getSundayDuration().getMillis();
+            dur = (long)(dur * 2 * curJob.getPayRate() / 60 / 60 / 1000);
+            totalPay += dur;
+        }
+
 
         if(totalPay < 0)
             totalPay = 0;
@@ -186,6 +242,7 @@ public class PayPeriodAdapterList extends BaseAdapter {
         } else {
             totalPay = payRate / 60 / 60 / 1000 * inputTime;
         }
+        Log.d(TAG, "Input: " + inputTime + ", output: " + totalPay);
         return totalPay;
     }
 

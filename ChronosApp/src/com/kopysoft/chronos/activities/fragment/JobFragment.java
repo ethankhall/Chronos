@@ -54,6 +54,7 @@ public class JobFragment extends SherlockFragment {
     //used for disableing
     View startOfPayPeriod;
     View startOfDay;
+    View baseSelection;
 
     //to get data
     EditText dataPayRate;
@@ -108,6 +109,7 @@ public class JobFragment extends SherlockFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //create view
         View v = inflater.inflate(R.layout.preferences_job, container, false);
+        baseSelection = v;
         Chronos chrono = new Chronos(getActivity());
         Job thisJob = chrono.getAllJobs().get(0);
 
@@ -170,16 +172,19 @@ public class JobFragment extends SherlockFragment {
 
         //startOfDay = (LinearLayout)v.findViewById(R.id.startOfDay); @ start of file
         ((TextView)startOfDay.findViewById(R.id.name)).setText("When are you off work by?");
-        ((TextView)startOfDay.findViewById(R.id.summary)).setText("Add a few hours to be sure...\n" +
+        ((TextView)startOfDay.findViewById(R.id.summary)).setText("Add a few hours to be sure.\n" +
+                "For example, if you get off at 5am, put 7am or 8am.\n"+
                 "Lock keeps you from accidentally changing it");
         dataTimePicker = ((TimePicker)startOfDay.findViewById(R.id.time));
-        dataTimePicker.setCurrentHour(thisJob.getStartOfPayPeriod().getHourOfDay());
-        dataTimePicker.setCurrentMinute(thisJob.getStartOfPayPeriod().getMinuteOfHour());
-        dataTimePicker.setCurrentMinute(thisJob.getStartOfPayPeriod().getMinuteOfHour());
+
         if (!DateFormat.is24HourFormat(getActivity())){
             dataTimePicker.setIs24HourView(false);
+            dataTimePicker.setCurrentHour(thisJob.getStartOfPayPeriod().getHourOfDay());
+            dataTimePicker.setCurrentMinute(thisJob.getStartOfPayPeriod().getMinuteOfHour());
         } else {
             dataTimePicker.setIs24HourView(true);
+            dataTimePicker.setCurrentHour(thisJob.getStartOfPayPeriod().getHourOfDay());
+            dataTimePicker.setCurrentMinute(thisJob.getStartOfPayPeriod().getMinuteOfHour());
         }
         ((CheckBox)startOfDay.findViewById(R.id.lock)).setOnCheckedChangeListener(
                 new LockButton(dataTimePicker)
@@ -203,10 +208,19 @@ public class JobFragment extends SherlockFragment {
         DatePicker dataStartOfPayPeriod;
         TimePicker dataTimePicker;
         */
+
+        Log.d(TAG, "onPause()");
+
+        dataPayRate.clearFocus();
+        dataPayPeriodLength.clearFocus();
+        dataStartOfPayPeriod.clearFocus();
+        dataTimePicker.clearFocus();
+
         try{
             thisJob.setPayRate(Float.parseFloat(dataPayRate.getText().toString()));
+            Log.d(TAG, "Pay Rate: " + thisJob.getPayRate());
         } catch (NumberFormatException e){
-            Toast.makeText(getActivity(), "Pay Rate format incorrect", Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), "Pay Rate format incorrect", Toast.LENGTH_SHORT).show();
         }
 
         PayPeriodDuration duration = PayPeriodDuration.values()[dataPayPeriodLength.getSelectedItemPosition()];
@@ -221,6 +235,7 @@ public class JobFragment extends SherlockFragment {
         newTime = newTime.withMinuteOfHour(dataTimePicker.getCurrentMinute());
 
         thisJob.setStartOfPayPeriod(newTime);
+        chrono.updateJob(thisJob);
         chrono.close();
     }
 }
