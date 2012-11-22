@@ -502,7 +502,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
             Log.e(TAG, "Could not upgrade the table for Thing", e);
         }
-
     }
 
     @SuppressWarnings("unchecked")

@@ -38,6 +38,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.ehdev.chronos.lib.JsonToSql;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.kopysoft.chronos.R;
 import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
@@ -95,6 +96,13 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
             getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
         }
 
+        //enable google drive
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        int areServicesEnabled = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        editor.putInt("GooglePlay", areServicesEnabled);
+        editor.commit();
+
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         ActionBar.Tab tab = getSupportActionBar().newTab();
         tab.setText("Today");
@@ -123,6 +131,18 @@ public class ClockActivity extends SherlockActivity implements ActionBar.TabList
 
         this.startActivity(newIntent);
         */
+    }
+
+    @Override
+    public void onResume(){
+        //enable google drive
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        int areServicesEnabled = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        editor.putInt("GooglePlay", areServicesEnabled);
+        editor.commit();
+
+        super.onResume();
     }
 
     @Override

@@ -16,6 +16,7 @@
     <packaging>apk</packaging>
     <name>Chronos App</name>
 
+
     <developers>
         <developer>
             <name>Ethan Hall</name>
@@ -40,9 +41,35 @@
             <id>jakewharton</id>
             <url>http://r.jakewharton.com/maven/snapshot</url>
         </repository>
+
+        <repository>
+            <id>google-api-services</id>
+            <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
+        </repository>
+
+        <repository>
+            <id>googleapis</id>
+            <url>http://mavenrepo.google-api-java-client.googlecode.com/hg/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-drive</artifactId>
+            <version>v2-rev22-1.12.0-beta</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.play</groupId>
+            <artifactId>services</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/google-play-services.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>com.jayway.maven.plugins.android.generation2</groupId>

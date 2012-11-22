@@ -57,6 +57,7 @@ import com.kopysoft.chronos.activities.Editors.JobEditor;
 import com.kopysoft.chronos.activities.Editors.NewPunchActivity;
 import com.kopysoft.chronos.activities.Editors.NoteEditor;
 import com.kopysoft.chronos.activities.Editors.TaskList;
+import com.kopysoft.chronos.activities.fragment.BackupFragment;
 import com.kopysoft.chronos.activities.fragment.JobFragment;
 import com.kopysoft.chronos.activities.fragment.OvertimeFragment;
 import com.kopysoft.chronos.activities.fragment.TaskFragment;
@@ -97,6 +98,8 @@ public class PreferenceWizardActivity extends SherlockFragmentActivity {
                 OvertimeFragment.class, null);
         mTabsAdapter.addTab(mTabHost.newTabSpec("tasks").setIndicator("Tasks"),
                 TaskFragment.class, null);
+        mTabsAdapter.addTab(mTabHost.newTabSpec("backup").setIndicator("Backup"),
+                BackupFragment.class, null);
         /*mTabsAdapter.addTab(mTabHost.newTabSpec("contacts").setIndicator("Contacts"),
                 LoaderCursorSupport.CursorLoaderListFragment.class, null);
         mTabsAdapter.addTab(mTabHost.newTabSpec("custom").setIndicator("Custom"),
