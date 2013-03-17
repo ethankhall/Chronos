@@ -73,6 +73,11 @@
                   android:text="@string/menu_configure_wizard"
                   android:showAsAction="ifRoom|withText"/>
 
+            <item android:id="@+id/menu_backup_pref"
+                  android:title="@string/menu_backup_pref"
+                  android:text="@string/menu_backup_pref"
+                  android:showAsAction="ifRoom|withText"/>
+
             <item android:id="@+id/menu_email"
                   android:title="@string/menu_email"
                   android:text="@string/menu_email"

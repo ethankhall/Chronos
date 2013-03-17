@@ -317,7 +317,7 @@ public class PayPeriodHolderTest {
         PayPeriodHolder holder = new PayPeriodHolder(currentJob);
         DateTime startOfPP = holder.getStartOfPayPeriod();
 
-        if(!startOfPP.isEqual(new DateTime(2012, DateTime.now().getMonthOfYear(), 1, 0, 0)))  {
+        if(!startOfPP.isEqual(new DateTime(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), 1, 0, 0)))  {
             System.out.println(startOfPP);
             fail("Start of month didn't match");
         }
@@ -329,7 +329,7 @@ public class PayPeriodHolderTest {
         holder = new PayPeriodHolder(currentJob);
         startOfPP = holder.getStartOfPayPeriod();
 
-        if(!startOfPP.isEqual(new DateTime(2012, DateTime.now().getMonthOfYear(), 1, 0, 0)))
+        if(!startOfPP.isEqual(new DateTime(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), 1, 0, 0)))
             fail("Start of month didn't match");
 
 

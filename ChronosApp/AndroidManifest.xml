@@ -69,6 +69,10 @@
                   android:label="Quick Break"
                   android:uiOptions="splitActionBarWhenNarrow" />
 
+        <activity android:name=".activities.BackupPreferenceActivity"
+                  android:label="Backup Preferences"
+                  android:uiOptions="splitActionBarWhenNarrow" />
+
         <activity android:name=".activities.ShowEULA"
                   android:label="EULA"/>
 
@@ -91,5 +95,7 @@
               android:targetSdkVersion="11" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest> 

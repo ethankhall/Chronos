@@ -46,7 +46,6 @@ import com.ehdev.chronos.lib.types.Punch;
 import com.ehdev.chronos.lib.types.Task;
 import com.ehdev.chronos.lib.types.holders.PayPeriodHolder;
 import com.ehdev.chronos.lib.types.holders.PunchTable;
-import org.apache.commons.jxpath.ri.model.dom.DOMAttributeIterator;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;

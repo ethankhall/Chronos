@@ -24,12 +24,9 @@ package com.ehdev.chronos.lib.types;
 
 import com.ehdev.chronos.lib.enums.OvertimeOptions;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.maven.lifecycle.internal.TaskSegment;
 import org.joda.time.DateTime;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class JsonObj {
