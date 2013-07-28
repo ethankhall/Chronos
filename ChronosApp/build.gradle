@@ -1,0 +1,41 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+    }
+}
+
+apply plugin: 'android'
+android {
+    compileSdkVersion 14
+    buildToolsVersion = "17"
+
+    defaultConfig {
+        versionCode 45
+        versionName "2.6"
+        minSdkVersion 14
+        targetSdkVersion 17
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven{ url "http://www.eecs.qmul.ac.uk/~jamief/mvn/repo/" }
+}
+
+dependencies{
+    compile 'com.google.android:support-v4:r7'
+    compile 'commons-lang:commons-lang:2.2'
+    compile 'joda-time:joda-time:2.0'
+    compile 'com.j256.ormlite:ormlite-android:4.35'
+    compile 'com.google.code.gson:gson:2.2.2'
+    compile project(':ActionBarSherlock')
+}
+
+task wrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
+    gradleVersion = '1.6'
+}

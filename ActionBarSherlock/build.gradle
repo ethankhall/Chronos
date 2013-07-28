@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+    }
+}
+
+apply plugin: 'android-library'
+
+repositories {
+    mavenCentral()
+    maven{ url "http://www.eecs.qmul.ac.uk/~jamief/mvn/repo/" }
+}
+
+dependencies {
+  compile 'com.google.android:support-v4:r12'
+}
+
+android {
+  buildToolsVersion "17.0.0"
+  compileSdkVersion 14
+}
+
+
