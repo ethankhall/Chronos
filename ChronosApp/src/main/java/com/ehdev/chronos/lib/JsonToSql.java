@@ -134,7 +134,7 @@ public class JsonToSql {
         if( null == thisJob.getDuration())
             thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
 
-        if(null == thisJob.getStartOfPayPeriod())
+        if(null == thisJob.getStartOfPayPeriod() || 2010 > thisJob.getStartOfPayPeriod().getYear())
             thisJob.setStartOfPayPeriod(
                     DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime().withZone(DateTimeZone.getDefault())
             );

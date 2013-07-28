@@ -35,6 +35,10 @@ android {
 
 }
 
+signingFile = file('signing.gradle')
+if(signingFile.exists())
+    apply from: signingFile
+
 repositories {
     mavenCentral()
     maven{ url "http://www.eecs.qmul.ac.uk/~jamief/mvn/repo/" }
