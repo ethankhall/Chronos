@@ -18,3 +18,10 @@ pom.xml.*
 
 #Backup Files
 *~
+
+#Android
+signing.gradle
+
+#build folder
+build
+
