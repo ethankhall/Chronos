@@ -389,16 +389,6 @@ public class Chronos extends OrmLiteSqliteOpenHelper {
                 }
             } else if(oldVersion == 19){
 
-                /*
-                Cursor cursor = db.query("jobs", null,
-                        null, null, null, null, Job.JOB_FIELD_NAME +" desc");
-                final int colid= cursor.getColumnIndex(Job.JOB_FIELD_NAME);
-
-                if (cursor.moveToFirst()) {
-                    long id = cursor.getLong(colid);
-                    db.execSQL("UPDATE jobs SET " + Job.DURATION_FIELD_NAME + " = '" + PayPeriodDuration.FIRST_FIFTEENTH
-                            + "' WHERE " + Job.JOB_FIELD_NAME + "=" + id );
-                */
                 try {
                     TableUtils.dropTable(connectionSource, Job.class, true); //Job - Create Table
 

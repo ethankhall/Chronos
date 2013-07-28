@@ -24,13 +24,14 @@ package com.ehdev.chronos.lib;
 
 import android.util.Log;
 import com.ehdev.chronos.lib.enums.Defines;
+import com.ehdev.chronos.lib.enums.PayPeriodDuration;
 import com.ehdev.chronos.lib.types.*;
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
-import java.security.KeyStore;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +91,7 @@ public class JsonToSql {
 
             for(JsonObj data : jsonData){
                 Job thisJob = data.getJob();
+                prepareJob(thisJob);
                 jobDAO.create(thisJob);
                 jobDAO.refresh(thisJob);
 
@@ -123,6 +125,19 @@ public class JsonToSql {
         } catch (SQLException e){
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    private void prepareJob(Job thisJob) {
+        if(null == thisJob.getName())
+            thisJob.setName("Default Job");
+
+        if( null == thisJob.getDuration())
+            thisJob.setDuration(PayPeriodDuration.TWO_WEEKS);
+
+        if(null == thisJob.getStartOfPayPeriod())
+            thisJob.setStartOfPayPeriod(
+                    DateTime.now().withDayOfWeek(7).minusWeeks(1).toDateMidnight().toDateTime().withZone(DateTimeZone.getDefault())
+            );
     }
 
 }
