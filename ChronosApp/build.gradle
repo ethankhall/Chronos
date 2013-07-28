@@ -35,7 +35,7 @@ android {
 
 }
 
-signingFile = file('signing.gradle')
+signingFile = file('../keystore/signing.gradle')
 if(signingFile.exists())
     apply from: signingFile
 
