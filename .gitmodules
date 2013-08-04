@@ -1,3 +1,6 @@
 [submodule "keystore"]
 	path = keystore
 	url = git@github.com:ethankhall/private-storage.git
+[submodule "private-storage"]
+	path = private-storage
+	url = git@github.com:ethankhall/private-storage.git

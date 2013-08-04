@@ -35,7 +35,7 @@ android {
 
 }
 
-signingFile = file('../keystore/kopysoft-signing.gradle')
+signingFile = file('../private-storage/kopysoft-signing.gradle')
 if(signingFile.exists())
     apply from: signingFile
 
