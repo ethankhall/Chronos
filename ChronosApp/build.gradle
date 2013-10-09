@@ -5,18 +5,18 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath 'com.android.tools.build:gradle:0.6.+'
     }
 }
 
 apply plugin: 'android'
 android {
     compileSdkVersion 14
-    buildToolsVersion = "17"
+    buildToolsVersion = "18.0.1"
 
     defaultConfig {
-        versionCode 46
-        versionName "2.2.0"
+        versionCode 47
+        versionName "2.2.1"
         minSdkVersion 7
         targetSdkVersion 17
     }

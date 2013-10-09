@@ -23,8 +23,6 @@
 package com.kopysoft.chronos.activities.fragment;
 
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.ehdev.chronos.lib.Chronos;
 import com.ehdev.chronos.lib.enums.Defines;
 import com.ehdev.chronos.lib.enums.PayPeriodDuration;
@@ -153,7 +150,7 @@ public class JobFragment extends SherlockFragment {
         }
         dataStartOfPayPeriod.init(
                 thisJob.getStartOfPayPeriod().getYear(),
-                thisJob.getStartOfPayPeriod().getMonthOfYear(),
+                thisJob.getStartOfPayPeriod().getMonthOfYear() - 1,
                 thisJob.getStartOfPayPeriod().getDayOfMonth(),
                 null
         );
@@ -228,7 +225,7 @@ public class JobFragment extends SherlockFragment {
 
         DateTime newTime = thisJob.getStartOfPayPeriod();
         newTime = newTime.withDayOfMonth(dataStartOfPayPeriod.getDayOfMonth());
-        newTime = newTime.withMonthOfYear(dataStartOfPayPeriod.getMonth());
+        newTime = newTime.withMonthOfYear(dataStartOfPayPeriod.getMonth() + 1);
         newTime = newTime.withYear(dataStartOfPayPeriod.getYear());
 
         newTime = newTime.withHourOfDay(dataTimePicker.getCurrentHour());
