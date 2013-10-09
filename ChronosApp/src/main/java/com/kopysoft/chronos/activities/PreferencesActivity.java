@@ -22,30 +22,15 @@
 
 package com.kopysoft.chronos.activities;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.Preference;
 import android.util.Log;
-import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.ehdev.chronos.lib.JsonToSql;
-import com.ehdev.chronos.lib.types.Punch;
-import com.kopysoft.chronos.R;
 import com.ehdev.chronos.lib.enums.Defines;
-import com.ehdev.chronos.lib.Chronos;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
+import com.kopysoft.chronos.R;
 
 public class PreferencesActivity extends SherlockPreferenceActivity  {
 
@@ -132,7 +117,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity  {
             public boolean onPreferenceClick(Preference preference) {
                 Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
                 emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
-                        new String[] { "ethan+chronos@ehdev.io" });
+                        new String[] { "android@ehdev.io" });
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Chronos");
                 emailIntent.setType("message/rfc822");
                 startActivity(emailIntent);
