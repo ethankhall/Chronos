@@ -24,4 +24,10 @@ signing.gradle
 
 #build folder
 build
-
+.gradle
+gen-external-apklibs
+libs/
+out
+.directory
+*.apk
+local.properties
