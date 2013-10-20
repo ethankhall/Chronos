@@ -12,11 +12,11 @@ buildscript {
 apply plugin: 'android'
 android {
     compileSdkVersion 14
-    buildToolsVersion = "18.0.1"
+    buildToolsVersion = "18.1.1"
 
     defaultConfig {
-        versionCode 47
-        versionName "2.2.1"
+        versionCode 48
+        versionName "2.2.2"
         minSdkVersion 7
         targetSdkVersion 17
     }
