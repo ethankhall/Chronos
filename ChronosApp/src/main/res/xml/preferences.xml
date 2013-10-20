@@ -35,7 +35,7 @@
 
     <PreferenceCategory android:title="E-mail Setings">
         <Preference android:title="Send e-mail to developer"
-                    android:key="c" />
+                    android:key="emailDev" />
 
         <ListPreference android:title="Report Level"
                         android:key="reportLevel" android:entries="@array/VerbosLevel"
